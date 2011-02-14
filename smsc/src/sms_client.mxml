@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="absolute" minWidth="800" minHeight="600" backgroundColor="#FFFFFF"
+				applicationComplete="init();">
+	<mx:Style>
+		Label {fontSize: 14pt}
+		TextInput {fontSize: 14pt}
+		Button {fontSize: 14pt}
+		Alert {fontSize: 14pt}
+		DataGrid {fontSize: 14pt}
+		DateField {textAlign: 'center'}
+	</mx:Style>
+	<mx:Script source="sms_client.as" />
+
+	<mx:Canvas width="370" height="200" horizontalCenter="0" verticalCenter="0"
+			   visible="{stage_id == 0}" borderColor="0x000000" borderStyle="solid">
+		<mx:Label text="短信群发管理登陆" horizontalCenter="0" verticalCenter="-50"/>
+		<mx:Label x="71" y="86" text="用户名"/>
+		<mx:Label x="71" y="116" text="密码"/>
+		<mx:TextInput x="137" y="84" id="login_user"
+					  enter="login(login_user.text, login_pass.text);"
+					  change="login_btn.enabled = login_chk(login_user.text, login_pass.text);"/>
+		<mx:TextInput x="137" y="114" id="login_pass" displayAsPassword="true"
+					  enter="login(login_user.text, login_pass.text);"
+					  change="login_btn.enabled = login_chk(login_user.text, login_pass.text);"/>
+		<mx:Button x="137" y="144" id="login_btn" label="登陆" enabled="false"
+				   click="login(login_user.text, login_pass.text);"/>
+		<mx:Label x="197" y="146" text="{login_prompt}"/>
+		
+		
+	</mx:Canvas>
+	
+	<mx:VBox visible="{stage_id > 0}" width="150" x="10" top="10" borderColor="0x000000" borderStyle="solid">
+		<mx:VBox width="100%" borderColor="0x000000" borderStyle="solid" horizontalAlign="left" verticalGap="6">
+			<mx:Button label="用户管理" visible="{(user_flags &amp; 2) != 0}"  width="100%" click="myViewStack.selectedChild=user_manage_view" />
+			<mx:Button label="发送管理" width="100%" click="myViewStack.selectedChild=message_manage_view" />
+			<mx:Button label="发送信息" width="100%" click="myViewStack.selectedChild=send_message_view" />
+			<mx:Button label="日志" width="100%" click="myViewStack.selectedChild=user_log_view" />
+			<mx:Button label="修改密码" width="100%" click="myViewStack.selectedChild=change_password_view" />
+			<mx:Button label="注销" width="100%" click="logout()" />		
+		</mx:VBox>
+		
+		<mx:VBox width="100%"  left="10" borderColor="0x000000" borderStyle="solid" horizontalAlign="left" textAlign="center">
+			<mx:Label text="当前用户" width="100%"/>
+			<mx:Label text = "{user_name}" width="100%" color="#FF0000"/>
+			<mx:Label text="可用条数" width="100%"/>
+			<mx:Label text = "{user_msg_num}" width="100%"  color="#FF0000"/>
+			<mx:Label text="用户角色" width="100%"/>
+			<mx:Label text = "{display_role(user_flags)}" width="100%"  color="#FF0000"/>
+			<mx:Label text="用户创建时间" width="100%"/>
+			<mx:Label text="{user_create_time}" width="100%"  color="#FF0000"/>
+		</mx:VBox>
+	</mx:VBox>
+	
+	<mx:Canvas visible="{stage_id > 0}" left="220" right="10" top="10" height="100%" >
+		
+		<mx:ViewStack id="myViewStack" borderStyle="solid" width="100%" height="100%" color="0x323232">
+
+			<mx:VBox id="user_manage_view" width="100%" height="100%">
+				<mx:Label text="用户管理" />			
+				<mx:HBox>
+					<mx:Button label="显示用户列表" click = "request_listchildren()" />  
+					<mx:Button label="添加用户" click = "user_manage_viewstack.selectedChild=add_user_form" />
+				</mx:HBox>
+				<mx:ViewStack id="user_manage_viewstack" width="100%" height="100%">
+
+					<mx:Form  id="add_user_form" >
+						<mx:FormItem label="用户账号">
+							<mx:TextInput id="add_user_id" />
+						</mx:FormItem>		
+						<mx:FormItem label="密码">
+							<mx:TextInput id="add_user_password1" />
+						</mx:FormItem>	
+						<mx:FormItem label="再次输入密码">
+							<mx:TextInput id="add_user_password2" />
+						</mx:FormItem>	
+						<mx:FormItem visible="{(user_flags &amp; 2) != 0}">
+							<mx:Button label="添加普通用户" click = "request_adduser(add_user_id.text, 0, add_user_password1.text, add_user_password2.text)" />
+						</mx:FormItem>
+						<mx:FormItem visible="{(user_flags &amp; 4) != 0}">
+							<mx:Button label="添加代理用户" click = "request_adduser(add_user_id.text, 3, add_user_password1.text, add_user_password2.text)" />
+						</mx:FormItem>
+					</mx:Form>
+					<mx:Panel id="user_list_data_grid_view" width="100%" height="100%" layout="absolute">
+
+						<mx:DataGrid id="user_list_data_grid" width="100%" height="100%" />
+
+						<mx:Form visible="false" id="managage_user_view" height="100%"  width="100%" color="0x323232" paddingTop="0">
+							<mx:FormHeading label="用户详情" paddingTop="0" />
+							<mx:FormItem label="名字">
+								<mx:Label id="managage_user_form_name" />
+							</mx:FormItem>
+							<mx:FormItem label="角色">
+								<mx:Label id="mangage_user_form_role" />
+							</mx:FormItem>		
+							<mx:FormItem label="创建日期">
+								<mx:Label id="mangage_user_form_create_time" />
+							</mx:FormItem>
+							<mx:FormItem label="上次登录日期">
+								<mx:Label id="managage_user_form_last_login_time" />
+							</mx:FormItem>
+							<mx:FormItem label="剩余条数">
+								<mx:Label id="managage_user_form_remain_message" width="200"/>
+							</mx:FormItem>
+							<mx:FormItem label="请输入要充值条数" visible="{(user_flags &amp; 1) != 0}">
+								<mx:TextInput id="managage_user_form_add_message" width="200"/>
+								<mx:Button label="确定充值" click="request_addmessage(managage_user_form_name.text, parseInt(managage_user_form_add_message.text))"/>
+							</mx:FormItem>
+							<mx:FormItem label="未处理的请求数">
+								<mx:Label id="managage_user_form_commit_times" />
+							</mx:FormItem>
+							<mx:FormItem label="管理用户提交的请求">
+								<mx:Button label="管理"/>
+							</mx:FormItem>
+							<mx:FormItem label="修改密码">
+								<mx:TextInput id="managage_user_form_changepwd" />
+								<mx:Button label="修改密码" click= "request_changepwd_admin(managage_user_form_name.text, managage_user_form_changepwd.text)"/>
+							</mx:FormItem>
+							<mx:FormItem label="查看用户操作历史">
+								<mx:Button label="查看"/>
+							</mx:FormItem>
+							<mx:FormItem >
+								<mx:Button label="返回" click="user_list_data_grid.visible = true; managage_user_view.visible = false;"/>
+							</mx:FormItem>
+						</mx:Form>
+					</mx:Panel>
+
+				</mx:ViewStack>
+
+			</mx:VBox>	
+		
+			<mx:VBox id="message_manage_view" width="100%" height="100%">
+				<mx:Label text="短信管理" />			
+				<mx:HBox>
+					<mx:Button label="全部" click = "request_listmsg(user_name, 0);" />  
+					<mx:Button label="待审核的" click = "request_listmsg(user_name, 1)" />
+					<mx:Button label="已拒绝的" click = "request_listmsg(user_name, 3)" />  
+					<mx:Button label="已成功的" click = "request_listmsg(user_name, 2)" />
+					<mx:Button label="已通过的" click = "request_listmsg(user_name, 4)" />
+				</mx:HBox>
+				<mx:Panel id="message_manage_viewstack"  height="100%"  width="100%" layout="absolute">
+					
+					<mx:DataGrid id="message_manage_data_grid"  />
+					
+					<mx:VBox visible="false" id="managage_msg_view" color="0x323232">
+	
+					<mx:Form paddingTop="0">
+						<mx:FormHeading label="消息详情" paddingTop="0" />
+						<mx:FormItem label="消息ID">
+							<mx:Label id="managage_msg_form_id" />
+						</mx:FormItem>
+						<mx:FormItem label="消息发送者">
+							<mx:Label id="managage_msg_form_name" />
+						</mx:FormItem>
+						<mx:FormItem label="状态">
+							<mx:Label id="managage_msg_form_status" />
+						</mx:FormItem>		
+						<mx:FormItem label="地址">
+							<mx:TextArea id="managage_msg_form_addr" width="200" height="100"/>
+						</mx:FormItem>
+						<mx:FormItem label="信息内容">
+							<mx:TextArea id="managage_msg_form_msg" width="200" height="100"/>
+						</mx:FormItem>
+						<mx:FormItem label="创建时间">
+							<mx:Label id="managage_msg_form_create_time" />
+						</mx:FormItem>
+						<mx:FormItem label="上次修改时间">
+							<mx:Label id="managage_msg_form_last_update" />
+						</mx:FormItem>
+						<mx:FormItem label="总信息数">
+							<mx:Label id="managage_msg_form_num" />
+						</mx:FormItem>
+					</mx:Form>
+					<mx:HBox>
+						<mx:Button label="拒绝" 
+								   click="request_managemsg(parseInt(managage_msg_form_id.text), 3)"/>
+						<mx:Button label="通过"  
+								   click="request_managemsg(parseInt(managage_msg_form_id.text), 4)"/>
+
+						<mx:Button label="取消" click="request_managemsg(parseInt(managage_msg_form_id.text), 6)"/>
+						<mx:Button label="返回" click="message_manage_data_grid.visible = true; managage_msg_view.visible= false;"/>
+					</mx:HBox>
+					</mx:VBox>
+				</mx:Panel>
+			</mx:VBox>
+			
+			<mx:Form  id="change_password_view" height="100%"  width="100%" color="0x323232" paddingTop="0">
+				<mx:FormHeading   label="修改密码" paddingTop="0" />
+				
+				<mx:FormItem label="当前密码">
+					<mx:TextInput id="user_pwd_now" displayAsPassword="true"/>
+				</mx:FormItem>
+				
+				<mx:FormItem label="修改后密码">
+					<mx:TextInput id="user_pwd_after_1" displayAsPassword="true"/>
+				</mx:FormItem>
+				
+				<mx:FormItem label="再次输入修改后密码">
+					<mx:TextInput id="user_pwd_after_2" displayAsPassword="true"/>
+				</mx:FormItem>
+				
+				<mx:FormItem >
+					<mx:Button label="确认修改" click = "request_changepwd(user_pwd_now.text, user_pwd_after_1.text, user_pwd_after_2.text)" />
+				</mx:FormItem>
+				
+				<mx:FormItem >
+					<mx:Label id="user_pwd_prompt"/>
+				</mx:FormItem>
+			</mx:Form>
+			
+			<mx:VBox id="send_message_view" width="100%" height="100%">
+				<mx:Label text="发送信息" />
+				<mx:HBox >
+					<mx:Button label="普通发送" click="send_message_viewstack.selectedChild=normal_message_form"/>
+					<mx:Button label="文件列表发送" click="send_message_viewstack.selectedChild=file_message_form"/>
+				</mx:HBox>
+				<mx:ViewStack id="send_message_viewstack" width="100%" height="100%">
+					<mx:Form id="normal_message_form" top = "0" height="100%"  width="500" color="0x323232" paddingTop="0" borderColor="0x000000" borderStyle="solid">
+						<mx:FormHeading   label="普通发送" paddingTop="0" />
+						<mx:FormItem label="号码">
+							<mx:Label text="请输入要发送的号码,英文分号（;）分隔，最多50个" />
+							<mx:TextArea id="user_normal_phone_numbers" height="100" width="300" change="check_char_count(user_normal_message_content, normal_message_count, user_normal_phone_numbers.text)"/>
+							<mx:Button label="清空号码" click="clear_content(user_normal_phone_numbers)"/>
+						</mx:FormItem>
+						<mx:FormItem label="信息内容">
+							<mx:Label text="请输入内容文本,超过70字将作为多条信息拆分" />
+							<mx:TextArea id="user_normal_message_content" height="100" width="300" change="check_char_count(user_normal_message_content, normal_message_count, user_normal_phone_numbers.text)"/>
+							<mx:Label id="normal_message_count" text="总字数: 0 总条数 0" />
+							<mx:Button label="清空内容" click="clear_content(user_normal_message_content)"/>
+						</mx:FormItem>
+						<mx:FormItem>
+							<mx:Button label="确认发送" click="request_sendmessage('normal')"/>
+							<mx:Label id="user_normal_message_prompt"/>
+						</mx:FormItem>
+					</mx:Form>
+					<mx:Form id="file_message_form" top = "0" height="100%"  width="500" color="0x323232" paddingTop="0" borderColor="0x000000" borderStyle="solid">
+						<mx:FormHeading   label="文件列表发送" paddingTop="0" />
+						<mx:FormItem label="号码">
+							<mx:Label text="上传文本文件,每行一个号码，换行符分隔，最多10,000个" />
+							<mx:Label text="未选择文件" id="file_name_label"/>	
+							<mx:Button label="清空文件" click="clear_file()"/>
+						</mx:FormItem>
+						<mx:FormItem label="信息内容">
+							<mx:Label text="请输入内容文本,超过70字将作为多条信息拆分" />
+							<mx:TextArea id="user_file_message_content" height="100" width="300" change="check_char_count(user_normal_message_content, normal_message_count, '')"/>
+							<mx:Label id="file_message_count" text="总字数: 0 总条数 0" />
+							<mx:Button label="清空内容" click="clear_content(user_file_message_content)"/>
+						</mx:FormItem>
+						<mx:FormItem>
+							<mx:Button label="确认发送" click="request_sendmessage('file')"/>
+							<mx:Label id="user_file_message_prompt"/>
+						</mx:FormItem>
+					</mx:Form>	
+				</mx:ViewStack>
+			</mx:VBox>
+			
+			<mx:VBox id="user_log_view" width="100%" height="100%">
+				<mx:Label text="日志:" />
+				<mx:HBox>
+					<mx:Label text="选择开始日期:"/>
+					<mx:DateField id="date_from" formatString="YYYY-MM-DD" width="110" selectedDate="{new Date()}" />
+					<mx:Label text="选择结束日期:"/>
+					<mx:DateField id="date_to" formatString="YYYY-MM-DD" width="110" selectedDate="{new Date()}" />
+				</mx:HBox>
+				<mx:HBox>
+					<mx:Button label="查询所有"
+							   click="get_user_log(date_from.selectedDate, date_to.selectedDate, 'all');" />
+					
+					<mx:Button label="查询自己"
+							   click="get_user_log(date_from.selectedDate, date_to.selectedDate, 'self');" />
+					
+					<mx:Button label="查询下级用户"
+							   click="get_user_log(date_from.selectedDate, date_to.selectedDate, 'children');" />
+				</mx:HBox>	
+				<mx:HBox  id="user_log_data_grid_view" width="100%" height="100%">
+					<mx:DataGrid id="user_log_data_grid" width="100%" height="100%" />
+				</mx:HBox>
+			</mx:VBox>	
+			
+		</mx:ViewStack>
+	</mx:Canvas>
+</mx:Application>
