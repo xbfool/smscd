@@ -279,6 +279,7 @@
 									<mx:DataGridColumn minWidth="50" dataField="username" itemRenderer="mx.controls.Text" headerText="发送人" editable="false"/>
 									<mx:DataGridColumn minWidth="90" dataField="last_update" itemRenderer="mx.controls.Text" headerText="发出时间" editable="false"/>
 									<mx:DataGridColumn minWidth="100" dataField="address" itemRenderer="mx.controls.Text" headerText="手机号码" editable="false"/>
+									<mx:DataGridColumn minWidth="100" dataField="channel" itemRenderer="mx.controls.Text" headerText="通道" editable="false"/>
 									<mx:DataGridColumn minWidth="50" dataField="status" itemRenderer="msg_status_render" headerText="状态" editable="false"/>
 									<mx:DataGridColumn minWidth="40" dataField="msg_num" itemRenderer="mx.controls.Text" headerText="条数" editable="false"/>
 									<mx:DataGridColumn minWidth="90" dataField="create_time" itemRenderer="mx.controls.Text" headerText="创建时间" editable="false"/>
