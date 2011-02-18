@@ -768,6 +768,7 @@ private function processor_listmsg(param:Object):void{
 		var dp:Array = new Array;
 		for (var j:int = 0;j < param.msg.length; j++){
 			var co:Object = param.msg[j];
+			co.channel = channel_select_data[get_channel_index(co.channel)].label
 			co.selected = 0;
 			dp.push(co);
 		}
