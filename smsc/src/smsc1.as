@@ -826,7 +826,7 @@ private function export_msg_log():void{
 	var dataProviderCollection:ArrayCollection =  
 		message_log_data as ArrayCollection; 
 	var rowCount:int =  dataProviderCollection.length;
-	file.writeUTFBytes("编号,发送人,发出时间,手机号码,状态,条数,创建时间,短信内容\r\n");
+	file.writeUTFBytes("编号,发送人,发出时间,手机号码,通道,状态,条数,创建时间,短信内容\r\n");
 	for(var r:int=0;r<rowCount;r++)  
 	{  
 		var record:Object =  
@@ -837,6 +837,7 @@ private function export_msg_log():void{
 		ra.push(record.username);
 		ra.push(record.last_update.toString());
 		ra.push(record.address);
+		ra.push(record.channel);
 		ra.push(status);
 		ra.push(record.msg_num.toString());
 		ra.push(record.create_time.toString());
