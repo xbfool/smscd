@@ -78,6 +78,48 @@ public var message_send_status:ArrayCollection = new ArrayCollection(
 	//	{label:"被拒绝", data:3}
 	]);
 [Bindable]
+public var message_mobile_type:ArrayCollection = new ArrayCollection(
+	[ {label:"全部", data:0},
+	  {label:"移动", data:1},
+	  {label:"联通", data:2},
+	  {label:"电信", data:3},
+	]);
+
+private var cm_list:ArrayCollection = new ArrayCollection(
+	[ {label:"134", data:0},
+		{label:"135", data:1},
+		{label:"136", data:2},
+		{label:"137", data:3},
+		{label:"138", data:4},
+		{label:"139", data:5},
+		{label:"150", data:6},
+		{label:"151", data:7},
+		{label:"152", data:8},
+		{label:"157", data:9},
+		{label:"158", data:10},
+		{label:"159", data:11},
+		{label:"187", data:12},
+		{label:"188", data:13},
+		{label:"147", data:14},
+		{label:"182", data:16},
+	]);
+
+private var cu_list:ArrayCollection = new ArrayCollection(
+	[ {label:"130", data:0},
+		{label:"131", data:1},
+		{label:"132", data:2},
+		{label:"155", data:3},
+		{label:"156", data:4},
+		{label:"186", data:5},
+		{label:"145", data:6},
+	]);
+private var ct_list:ArrayCollection = new ArrayCollection(
+	[ {label:"133", data:0},
+		{label:"153", data:1},
+		{label:"189", data:2},
+	]);
+
+[Bindable]
 public var message_report_type:ArrayCollection = new ArrayCollection(
 	[ {label:"短信发送统计表", data:0}, 
 		{label:"每日发送流量统计表", data:1}, 
@@ -766,14 +808,16 @@ private function processor_listmsg(param:Object):void{
 		Alert.show("遇到未知错误");
 	else{	
 		var dp:Array = new Array;
+		var list:Array = new Array;
 		for (var j:int = 0;j < param.msg.length; j++){
 			var co:Object = param.msg[j];
+			list.push(co);
 			co.channel = channel_select_data[get_channel_index(co.channel)].label
 			co.selected = 0;
 			dp.push(co);
 		}
 		message_log_data.source = dp;
-
+		export_msg_list = list;
 	}
 }
 
@@ -849,6 +893,143 @@ private function export_msg_log():void{
     var fr:FileReference = new FileReference();  
 	
     fr.save(file,"msglog.txt");  
+}
+
+private var export_msg_list:Array;
+
+private function check_mobile(mobile:String, mobileType:int):Boolean {
+	var pattern:RegExp = /1[3458]\d{9}/;
+	var result:Boolean = pattern.test(mobile);
+	if ( !result ) {
+		return false;
+	}
+	
+	if ( mobileType == 0 ) {
+		return true;
+	}
+	
+	var prefix:String = mobile.substr(0, 3);
+	if ( mobileType == 1 ){
+		for ( var i:int =0; i < cm_list.length; i++ ) {
+			if ( prefix == cm_list[i].label) 
+				return true;
+		}
+		return false
+	}
+	if ( mobileType == 2 ){
+		for ( var j:int =0; j < cu_list.length; j++ ) {
+			if ( prefix == cu_list[j].label) 
+				return true;
+		}
+		return false
+	}
+	if ( mobileType == 3 ){
+		for ( var k:int =0; k < ct_list.length; k++ ) {
+			if ( prefix == ct_list[k].label) 
+				return true;
+		}
+		return false
+	}
+	return false;
+}
+
+private function get_address_by_mobile(address:String, mobileType:int):String{
+	var list:Array = address.split(';');
+	var list_new:Array = new Array();
+	for ( var i:int = 0; i < list.length; ++i ) {
+		if ( check_mobile(list[i], mobileType) ) {
+			list_new.push(list[i]);
+		}
+	}
+	
+	var addrs:String = list.join(";");
+	return addrs;
+	
+}
+
+private function export_report_log(user:String, channel:int, status:int, begin:Date, end:Date):void{	
+	if(begin.time > end.time)
+	{
+		Alert.show("起始日期必须大于或等于截至日期");
+		return;
+	}           
+	var file:ByteArray = new ByteArray;
+	var fr:FileReference = new FileReference();  
+	var dataProviderCollection:ArrayCollection =  
+		message_log_data as ArrayCollection; 
+	var rowCount:int =  dataProviderCollection.length;
+/*	
+	var excelFile:ExcelFile = new ExcelFile();
+	var sheet:Sheet = new Sheet();
+	sheet.resize(export_msg_list.length+1, 10);
+	var index:int = 1;	
+	sheet.setCell(0, 0, "编号");
+	sheet.setCell(0, 1, "发送人");
+	sheet.setCell(0, 2, "发出时间");
+	sheet.setCell(0, 3, "手机号码");
+	sheet.setCell(0, 4, "通道");
+	sheet.setCell(0, 5, "状态");
+	sheet.setCell(0, 6, "条数");
+	sheet.setCell(0, 7, "创建时间");
+	sheet.setCell(0, 8, "短信内容");
+	for ( var j:int = 0; j < export_msg_list.length;j++) {
+		var record:Object = export_msg_list[j];
+		if ( status != 0 && status != record.status) {
+			continue;
+		}
+			
+		var statusStr:String = msg_status_display(record.status);
+		sheet.setCell(index, 0, index.toString());
+		sheet.setCell(index, 1, record.username);
+		sheet.setCell(index, 2, record.last_update.toString());
+		var address:String = get_address_by_mobile(record.address, channel);
+		sheet.setCell(index, 3, address);
+		sheet.setCell(index, 4, channel_select_data[get_channel_index(record.channel)].label);
+		sheet.setCell(index, 5, statusStr);
+		sheet.setCell(index, 6, record.msg_num.toString());
+		sheet.setCell(index, 7, record.create_time.toString());
+		sheet.setCell(index, 8, record.msg);
+		index++;
+	}
+	excelFile.sheets.addItem(sheet);            
+	var mbytes:ByteArray = excelFile.saveToByteArray();
+	var results:ByteArray = new ByteArray();
+	results.writeMultiByte(mbytes.toString(), "gb2312");
+	fr.save(results, "report.xls");
+*/
+
+//	file.writeMultiByte("'编号','发送人','发出时间','手机号码','通道','状态','条数','创建时间','短信内容'\r\n", "gb2312");
+	file.writeUTFBytes("编号,发送人,发出时间,手机号码,通道,状态,条数,创建时间,短信内容\r\n");
+	for(var j:int=0;j<export_msg_list.length;j++)  
+	{  
+		var record:Object = export_msg_list[j];
+		if ( status != 0 && status != record.status) {
+			continue;
+		}
+		
+		var statusStr:String = msg_status_display(record.status);
+		var ra:Array = new Array();
+		ra.push(j.toString());
+		ra.push(record.username);
+		ra.push(record.last_update.toString());
+		var address:String = get_address_by_mobile(record.address, channel);
+		ra.push(record.address);
+		ra.push(channel_select_data[get_channel_index(record.channel)].label);
+		ra.push(statusStr);
+		ra.push(record.msg_num.toString());
+		ra.push(record.create_time.toString());
+		ra.push(record.msg);
+		ra.push("\r\n");
+		ra.join(",");
+//		file.writeMultiByte(ra.join(","), "gb2312");  
+		file.writeUTFBytes(ra.join(","));  
+	} 
+	fr.save(file, "report.txt");
+	message_report_mobile_type_field.visible = false;
+	message_report_mobile_type_select.visible = false;
+	message_report_log_status_field.visible = false;
+	message_report_log_status_select.visible = false;
+	export_message_report_log_btn.visible = false;
 }
 
 private function export_check_msg():void{
@@ -978,7 +1159,9 @@ private function change_view_stack(view:String):void{
 		if(message_report_date_from != null)
 			message_report_date_from.selectedDate = new Date();
 		if(message_report_date_to != null)
-			message_report_date_to.selectedDate = new Date()	
+			message_report_date_to.selectedDate = new Date();
+		if(message_report_log_status_select != null)
+			message_report_log_status_select.selectedIndex = 0;
 		message_phone_number.removeAll();
 			
 	} else if(view == "addmsglog"){
@@ -1047,6 +1230,12 @@ private function report_query(username:String, start:Date, end:Date): void {
 	}
 	//trace(username, start.toString(), end.toString(), type.toString();
 	this.request({q:'queryreport',sid:this.session, user:username, begin:start.time, end:end.time});	
+	this.request({q:'listmsg', sid:this.session, user:username, status:0, begin:start.time, end:end.time});
+	message_report_mobile_type_field.visible = user_flags == 7;
+	message_report_mobile_type_select.visible = user_flags == 7;
+	message_report_log_status_field.visible = user_flags == 7;
+	message_report_log_status_select.visible = user_flags == 7;
+	export_message_report_log_btn.visible = user_flags == 7;
 }
 
 private function upload_msg_report_query(username:String, start:Date, end:Date): void {
