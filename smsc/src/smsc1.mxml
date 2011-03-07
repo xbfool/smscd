@@ -610,6 +610,12 @@
 											value="agent" 
 											label="代理商" 
 											width="150"/>
+							<mx:RadioButton groupName="add_user_type" 
+											id="add_user_admin" 
+											value="user" 
+											label="管理员" 
+											width="150"
+											enabled="{user_name == 'root'}"/>
 							<mx:CheckBox id="add_user_can_weblogin"
 										 label="可以web登录"/>
 							<mx:CheckBox id="add_user_can_post"
@@ -684,7 +690,7 @@
 												label="管理员" 
 												width="150"
 												selected="{select_userrole == 'admin'}"
-												enabled="false"/>
+												enabled="{channel_enabled}"/>
 								
 								<mx:CheckBox id="manage_user_can_weblogin"
 											 label="可以web登录"

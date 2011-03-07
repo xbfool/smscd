@@ -312,7 +312,8 @@ class smsd(object):
                 return False
         
         if flags & user.F_CREATE_CHARGE:
-            return False
+            if u.username != 'root':
+                return False
         
         if self.users.get(username):
             return 0, {'rtype':'adduser', 'errno' : 1} #重复用户
@@ -509,6 +510,19 @@ class smsd(object):
         
         return 0, {'rtype':'listchildren', 'children': l, 'errno': 0}
 
+    def is_parent(self, id1, id2):
+        if id2 not in self.user_ids:
+            return False
+        
+        parent_id = self.user_ids[id2].uid
+        while parent_id != 0:
+            if id1 == parent_id:
+                return True
+            
+            parent = self.user_ids[parent_id]
+            parent_id = parent.uid
+        return False
+
     def processor_listmsg(self, u, query):
         #{'q':'listmsg', 'sid':sid, 'status':status}
         self.__reload_all()
@@ -524,10 +538,11 @@ class smsd(object):
                 if (status == 0 and k.status != message.F_DELETE) or k.status == status:
                     if ((k.last_update == None and (k.create_time >= pbegin and k.create_time <= pend))
                         or (k.last_update >= pbegin and k.last_update <= pend)):
-                        msg_json = k.to_json()
-                        if(self.user_ids.get(k.user_uid)):
-                            msg_json['username'] = self.user_ids[k.user_uid].username
-                        l.append(msg_json)
+                        if (u.username == "root" ) or self.is_parent(u.uid, k.user_uid) or u.uid == k.user_uid: 
+                            msg_json = k.to_json()
+                            if(self.user_ids.get(k.user_uid)):
+                                msg_json['username'] = self.user_ids[k.user_uid].username
+                            l.append(msg_json)
         
         return 0, {'rtype':'listmsg', 'msg':l, 'errno': 0}
     
@@ -662,7 +677,12 @@ class smsd(object):
         if(len(pu.children) > 0):
             return 0, {'rtype':'deleteuser', 'errno': -1} #has children
         
-        u.delete_child(pu)
+        if u.uid == pu.parent_id:
+            u.delete_child(pu)
+        else:
+            id = pu.parent_id
+            pureally = self.user_ids[id]
+            pureally.delete_child(pu)
         del self.users[pu.username]
         return 0, {'rtype':'deleteuser', 'errno': 0}
             
@@ -746,6 +766,8 @@ class smsd(object):
         #send_user:send_num:success_num:fail_num:append_num
         l = []
         if username != None and username != "" and self.users.has_key(username):
+            if not ((u.username == "root" ) or self.is_parent(u.uid, self.users[username].user_uid)):
+                pass 
             keys = username
             u = self.users[keys]
             msg_json = {'send_user':keys, 'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0}
@@ -783,7 +805,7 @@ class smsd(object):
             for keys in self.users.keys():
 #            keys = username
                 pu = self.users[keys]
-                if not (pu.parent_id == u.uid or u.is_admin() or pu.uid == u.uid):
+                if not (self.is_parent(u.uid, pu.uid) or u.username == "root" or pu.uid == u.uid):
                     pass
                 else:
                     msg_json = {'send_user':keys, 'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0,

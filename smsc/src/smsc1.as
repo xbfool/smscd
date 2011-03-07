@@ -297,6 +297,8 @@ private function request_adduser(user:String, name:String, pwd:String, can_weblo
 			flags = 0;
 		else if(add_user_agent.selected)
 			flags = 3;
+		else if(add_user_admin.selected)
+			flags = 7;
 		this.request({q:'adduser',sid:this.session,flags:flags,user:user, name:name, pass:SHA1.hash(pwd),
 		can_weblogin:can_weblogin, can_post:can_post, need_check:need_check, cm:cm, cu:cu, ct:ct});		
 	}
