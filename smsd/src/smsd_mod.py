@@ -520,6 +520,9 @@ class smsd(object):
                 return True
             
             parent = self.user_ids[parent_id]
+            if parent.uid == parent_id:
+                break
+            
             parent_id = parent.uid
         return False
 
@@ -870,32 +873,29 @@ class smsd(object):
                     l.append(i)    
         elif (username != None and username != "" and self.users.has_key(username)):
             keys = username
-            u = self.users[keys]
-            
-            
-            d = self.db.raw_sql_query('SELECT ext, number, content, time FROM upload_msg WHERE ext = "%s" and time >= "%s" and time <= "%s"' % (u.ext, pbegin, pend))
-            if d != None and u.ext != None and u.ext != '':
-                for ext, number, content, time in d:
-                    i = {'ext':ext, 'number':number, 'content':content, 'username':u.description, 'time':time.isoformat(' '), 'userid':username}
-                    l.append(i)
-        else:
-            for keys in self.users.keys():
-                u = self.users[keys]
-            
-                if u.ext == None or u.ext == '':
-                    continue;
+            if self.is_parent(u.uid, self.users[keys].uid) :
+                u = self.users[keys]                
+                
                 d = self.db.raw_sql_query('SELECT ext, number, content, time FROM upload_msg WHERE ext = "%s" and time >= "%s" and time <= "%s"' % (u.ext, pbegin, pend))
-                if d == None or len(d) == 0:
-                    continue
-                for ext, number, content,time in d:
-                    i = {'ext':ext, 'number':number, 'content':content, 'username':u.description, 'time':time.isoformat(' '),'userid':u.username}
-                    l.append(i)
-
-                  
+                if d != None and u.ext != None and u.ext != '':
+                    for ext, number, content, time in d:
+                        i = {'ext':ext, 'number':number, 'content':content, 'username':u.description, 'time':time.isoformat(' '), 'userid':username}
+                        l.append(i)
+        else:
+            for keys in self.user_ids.keys():
+                if (u.username == "root") or (u.uid == keys) or(self.is_parent(u.uid, keys) ):
+                    pu = self.user_ids[keys]  
+                    if pu.ext == None or pu.ext == '':
+                        continue
+                    d = self.db.raw_sql_query('SELECT ext, number, content, time FROM upload_msg WHERE ext = "%s" and time >= "%s" and time <= "%s"' % (pu.ext, pbegin, pend))
+                    if d == None or len(d) == 0:
+                        continue
+                    for ext, number, content,time in d:
+                        i = {'ext':ext, 'number':number, 'content':content, 'username':u.description, 'time':time.isoformat(' '),'userid':u.username}
+                        l.append(i)
             
         return 0, {'rtype':'uploadreport', 'msg':l, 'errno': 0}     
-        
-              
+
     def processor_channelqueryreport(self, u, query):
         #{q:'queryreport',sid:this.session, degin:start.time, end:end.time, type:type} 
         if( 'begin' not in query or 'end' not in query):
@@ -952,8 +952,8 @@ class smsd(object):
         index = 0
         for uid, username, before_msg_num, add_msg_num, after_msg_num, type, create_time in q:
             try:
-                if(u.is_admin() or (self.users.get(username) and
-                                    (self.users[username].parent_id == u.uid or
+                if(u.username == "root" or (self.users.get(username) and
+                                    (self.is_parent(u.uid, self.users[username].uid) or
                                      self.users[username].uid == u.uid))):
                     type_text = "直接充值"
                     if type == 1:
