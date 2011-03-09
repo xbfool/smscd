@@ -71,7 +71,7 @@
 										   />
 							<mx:LinkButton label="上行查询" color="0x3380DD"  click='{change_view_stack("upload_report")}'
 										   />
-							<mx:LinkButton label="通道发送统计" color="0x3380DD"  click='{change_view_stack("channel_report")}' visible="{user_flags == 7}"
+							<mx:LinkButton label="通道发送统计" color="0x3380DD"  click='{change_view_stack("channel_report")}' visible="{user_name == 'root'}"
 										   />
 							
 						</mx:VBox>
