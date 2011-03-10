@@ -1074,7 +1074,11 @@ private function processor_queryreport(param:Object):void{
 			co.check = false;
 			dp.push(co);
 		}
-		message_phone_number.source = dp;
+		var hr:HierarchicalData = new HierarchicalData;
+		hr.source = dp;
+//		children_user_source = dp;
+		message_report_grid.dataProvider = hr;
+//		message_phone_number.source = dp;
 	}
 }
 

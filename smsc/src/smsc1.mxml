@@ -325,26 +325,30 @@
 								</mx:HBox>
 							</mx:HBox>
 							-->
-							<mx:DataGrid width="100%" id="message_report_grid" dataProvider="{message_phone_number}"
-										 draggableColumns="false" resizableColumns="false" height="100%"
-										 >
-								<mx:columns>		
-									<mx:DataGridColumn width="100" dataField="send_user" itemRenderer="mx.controls.Text" headerText="发件人"/>
-									<mx:DataGridColumn width="150" dataField="send_num" itemRenderer="mx.controls.Text" headerText="发送总数"/>
-									<mx:DataGridColumn dataField="success_num" itemRenderer="mx.controls.Text" headerText="成功总数"/>
-									<mx:DataGridColumn dataField="fail_num" itemRenderer="mx.controls.Text" headerText="失败总数"/>
-									<mx:DataGridColumn dataField="append_num" itemRenderer="mx.controls.Text" headerText="待发送总数"/>
-									<mx:DataGridColumn  dataField="cm_d_num" itemRenderer="mx.controls.Text" headerText="移动总数"/>
-									<mx:DataGridColumn dataField="cm_s_num" itemRenderer="mx.controls.Text" headerText="移动成功"/>
-									<mx:DataGridColumn dataField="cm_f_num" itemRenderer="mx.controls.Text" headerText="移动失败"/>
-									<mx:DataGridColumn dataField="cu_d_num" itemRenderer="mx.controls.Text" headerText="联通总数"/>
-									<mx:DataGridColumn  dataField="cu_s_num" itemRenderer="mx.controls.Text" headerText="联通成功"/>
-									<mx:DataGridColumn dataField="cu_f_num" itemRenderer="mx.controls.Text" headerText="联通失败"/>
-									<mx:DataGridColumn dataField="ct_d_num" itemRenderer="mx.controls.Text" headerText="电信总数"/>
-									<mx:DataGridColumn dataField="ct_s_num" itemRenderer="mx.controls.Text" headerText="电信成功"/>
-									<mx:DataGridColumn  dataField="ct_f_num" itemRenderer="mx.controls.Text" headerText="电信失败"/>
+								
+								
+							<mx:AdvancedDataGrid id="message_report_grid" width="100%" height="100%"
+												 displayItemsExpanded="true">
+								<mx:dataProvider>
+									<mx:HierarchicalData source="{message_phone_number}"/>
+								</mx:dataProvider>
+								<mx:columns>
+									<mx:AdvancedDataGridColumn  headerText="发件人" dataField="send_user"/>
+									<mx:AdvancedDataGridColumn  headerText="发送总数" dataField="send_num"/> 									
+									<mx:AdvancedDataGridColumn headerText="成功总数" dataField="success_num"/>
+									<mx:AdvancedDataGridColumn headerText="失败总数" dataField="fail_num"/>
+									<mx:AdvancedDataGridColumn headerText="待发送总数" dataField="append_num"/>
+									<mx:AdvancedDataGridColumn headerText="移动总数" dataField="cm_d_num"/>
+									<mx:AdvancedDataGridColumn headerText="移动成功" dataField="cm_s_num"/>
+									<mx:AdvancedDataGridColumn headerText="移动失败" dataField="cm_f_num"/>
+									<mx:AdvancedDataGridColumn headerText="联通总数" dataField="cu_d_num"/>
+									<mx:AdvancedDataGridColumn headerText="联通成功" dataField="cu_s_num"/>
+									<mx:AdvancedDataGridColumn headerText="联通失败" dataField="cu_f_num"/>
+									<mx:AdvancedDataGridColumn headerText="电信总数" dataField="ct_d_num"/>
+									<mx:AdvancedDataGridColumn headerText="电信成功" dataField="ct_s_num"/>
+									<mx:AdvancedDataGridColumn headerText="电信失败" dataField="ct_f_num"/>
 								</mx:columns>
-							</mx:DataGrid>
+							</mx:AdvancedDataGrid>   
 							</mx:VBox>
 						</mx:VBox>
 						<mx:VBox id="viewpage_upload_report" width="100%" height="100%">

@@ -514,16 +514,20 @@ class smsd(object):
         if id2 not in self.user_ids:
             return False
         
-        parent_id = self.user_ids[id2].uid
+        pid_dict = {}
+        parent_id = self.user_ids[id2].parent_id
+        pid_dict[parent_id] = 0
         while parent_id != 0:
             if id1 == parent_id:
                 return True
             
             parent = self.user_ids[parent_id]
-            if parent.uid == parent_id:
+            if parent.parent_id in pid_dict:
                 break
             
-            parent_id = parent.uid
+            parent_id = parent.parent_id
+            pid_dict[parent_id] = 0
+                        
         return False
 
     def processor_listmsg(self, u, query):
@@ -805,48 +809,66 @@ class smsd(object):
                             
             l.append(msg_json)   
         else:
-            for keys in self.users.keys():
-#            keys = username
-                pu = self.users[keys]
-                if not (self.is_parent(u.uid, pu.uid) or u.username == "root" or pu.uid == u.uid):
-                    pass
+            messages = {}
+            for k in self.messages.itervalues():
+                id = k.user_uid
+                if id not in messages:
+                    tmp = []
                 else:
-                    msg_json = {'send_user':keys, 'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0,
-                                'cm_d_num':0, 'ct_d_num':0, 'cu_d_num':0,
-                                'cm_s_num':0, 'ct_s_num':0, 'cu_s_num':0,
-                                'cm_f_num':0, 'ct_f_num':0, 'cu_f_num':0,
-                                'cm_a_num':0, 'ct_a_num':0, 'cu_a_num':0}
-                    for k in self.messages.itervalues():
-                        if k.user_uid == pu.uid and pbegin <= k.create_time and k.create_time <= pend:
-                            addr = k.address.split(';')
-                            split_addr = pm.split_addr(addr)
-                            msg_r = 0
-                            if len(addr) > 0:
-                                msg_r = k.msg_num / len(addr)
-                            #msg_json['send_user'] = username;                    
-                            msg_json['send_num'] = msg_json['send_num'] + k.msg_num;
-                            msg_json['cm_d_num'] = msg_json['cm_d_num'] + len(split_addr[pm.S_CM]) * msg_r
-                            msg_json['ct_d_num'] = msg_json['ct_d_num'] + len(split_addr[pm.S_CT]) * msg_r
-                            msg_json['cu_d_num'] = msg_json['cu_d_num'] + len(split_addr[pm.S_CU]) * msg_r
-                            if k.status == k.F_SEND:
-                                msg_json['success_num'] = msg_json['success_num'] + k.msg_num
-                                msg_json['cm_s_num'] = msg_json['cm_s_num'] + len(split_addr[pm.S_CM]) * msg_r
-                                msg_json['ct_s_num'] = msg_json['ct_s_num'] + len(split_addr[pm.S_CT]) * msg_r
-                                msg_json['cu_s_num'] = msg_json['cu_s_num'] + len(split_addr[pm.S_CU]) * msg_r
-                            elif k.status == k.F_FAIL:  
-                                msg_json['fail_num'] = msg_json['fail_num'] + k.msg_num
-                                msg_json['cm_f_num'] = msg_json['cm_f_num'] + len(split_addr[pm.S_CM]) * msg_r
-                                msg_json['ct_f_num'] = msg_json['ct_f_num'] + len(split_addr[pm.S_CT]) * msg_r
-                                msg_json['cu_f_num'] = msg_json['cu_f_num'] + len(split_addr[pm.S_CU]) * msg_r      
-                            elif k.status == k.F_ADMIT:
-                                msg_json['append_num'] = msg_json['append_num'] + k.msg_num
-                                msg_json['cm_a_num'] = msg_json['cm_a_num'] + len(split_addr[pm.S_CM]) * msg_r
-                                msg_json['ct_a_num'] = msg_json['ct_a_num'] + len(split_addr[pm.S_CT]) * msg_r
-                                msg_json['cu_a_num'] = msg_json['cu_a_num'] + len(split_addr[pm.S_CU]) * msg_r
-                                
-                    l.append(msg_json)
+                    tmp = messages[id]
+                tmp.append(k)
+                messages[id] = tmp
             
-        return 0, {'rtype':'queryreport', 'msg':l, 'errno': 0}     
+            pid = u.uid
+            msg_json = self.get_message(messages, pid, pbegin, pend)
+            l.append(msg_json)
+        return 0, {'rtype':'queryreport', 'msg':l, 'errno': 0} 
+    
+    def get_message(self, message, pid, pbegin, pend):
+        
+        pu = self.user_ids[pid]
+        keys = pu.username
+        msg_json = {'send_user':keys, 'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0,
+                    'cm_d_num':0, 'ct_d_num':0, 'cu_d_num':0,
+                    'cm_s_num':0, 'ct_s_num':0, 'cu_s_num':0,
+                    'cm_f_num':0, 'ct_f_num':0, 'cu_f_num':0,
+                    'cm_a_num':0, 'ct_a_num':0, 'cu_a_num':0}        
+        if pid in message:
+            pm = phonenumber.phonenumber()
+            tmp = message[pid]
+            for k in tmp:
+                if k.user_uid == pu.uid and pbegin <= k.create_time and k.create_time <= pend:
+                    addr = k.address.split(';')
+                    split_addr = pm.split_addr(addr)
+                    msg_r = 0
+                    if len(addr) > 0:
+                        msg_r = k.msg_num / len(addr)
+                    #msg_json['send_user'] = username;                    
+                    msg_json['send_num'] = msg_json['send_num'] + k.msg_num;
+                    msg_json['cm_d_num'] = msg_json['cm_d_num'] + len(split_addr[pm.S_CM]) * msg_r
+                    msg_json['ct_d_num'] = msg_json['ct_d_num'] + len(split_addr[pm.S_CT]) * msg_r
+                    msg_json['cu_d_num'] = msg_json['cu_d_num'] + len(split_addr[pm.S_CU]) * msg_r
+                    if k.status == k.F_SEND:
+                        msg_json['success_num'] = msg_json['success_num'] + k.msg_num
+                        msg_json['cm_s_num'] = msg_json['cm_s_num'] + len(split_addr[pm.S_CM]) * msg_r
+                        msg_json['ct_s_num'] = msg_json['ct_s_num'] + len(split_addr[pm.S_CT]) * msg_r
+                        msg_json['cu_s_num'] = msg_json['cu_s_num'] + len(split_addr[pm.S_CU]) * msg_r
+                    elif k.status == k.F_FAIL:  
+                        msg_json['fail_num'] = msg_json['fail_num'] + k.msg_num
+                        msg_json['cm_f_num'] = msg_json['cm_f_num'] + len(split_addr[pm.S_CM]) * msg_r
+                        msg_json['ct_f_num'] = msg_json['ct_f_num'] + len(split_addr[pm.S_CT]) * msg_r
+                        msg_json['cu_f_num'] = msg_json['cu_f_num'] + len(split_addr[pm.S_CU]) * msg_r      
+                    elif k.status == k.F_ADMIT:
+                        msg_json['append_num'] = msg_json['append_num'] + k.msg_num
+                        msg_json['cm_a_num'] = msg_json['cm_a_num'] + len(split_addr[pm.S_CM]) * msg_r
+                        msg_json['ct_a_num'] = msg_json['ct_a_num'] + len(split_addr[pm.S_CT]) * msg_r
+                        msg_json['cu_a_num'] = msg_json['cu_a_num'] + len(split_addr[pm.S_CU]) * msg_r
+        l = []
+        for i in pu.children.itervalues():
+            msg_json_children = self.get_message(message, i.uid, pbegin, pend)
+            l.append(msg_json_children)
+        msg_json['children'] = l
+        return msg_json
     
     def processor_uploadreport(self, u, query):
         if( 'begin' not in query or 'end' not in query or
