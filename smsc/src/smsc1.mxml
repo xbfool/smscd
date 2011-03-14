@@ -313,6 +313,15 @@
 								<mx:Button label="查询" click="{report_query(message_report_send_user.text, 
 										   	message_report_date_from.selectedDate, 
 										   message_report_date_to.selectedDate)}" />
+								<mx:Label text="通道"  id = "message_report_mobile_type_field" visible="false"/>
+								<mx:ComboBox height="20" id="message_report_mobile_type_select" dataProvider="{message_mobile_type}" visible="false"/>
+								<mx:Label text="短信状态" id = "message_report_log_status_field" visible="false"/>
+								<mx:ComboBox height="20" id="message_report_log_status_select" dataProvider="{message_send_status}"  visible="false"/>
+								<mx:Button label="导出" id="export_message_report_log_btn" click="{export_report_log(message_report_send_user.text, 
+										   parseInt(message_report_mobile_type_select.value.toString()), 
+										   parseInt(message_report_log_status_select.value.toString()),
+										   message_report_date_from.selectedDate, 
+										   message_report_date_to.selectedDate)}"  visible="false"/>
 								
 							</mx:HBox>
 							</mx:VBox>
