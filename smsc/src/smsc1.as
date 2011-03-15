@@ -949,12 +949,29 @@ private function get_address_by_mobile(address:String, mobileType:int):String{
 	
 }
 
+private function getTimeStr(time:Date):String{
+	var year:String = String(time.fullYear);
+	var month:String = String(time.month + 1);
+	var day:String = String(time.date);
+	if ( month.length == 1 ) {
+		month = "0" + month;
+	}
+	if ( day.length == 1 ) {
+		day = "0" + day;
+	}
+	var result:String = year + month + day;
+	return result;
+}
+
 private function export_report_log(user:String, channel:int, status:int, begin:Date, end:Date):void{	
 	if(begin.time > end.time)
 	{
 		Alert.show("起始日期必须大于或等于截至日期");
 		return;
-	}           
+	}     
+	var beginStr:String = getTimeStr(begin);
+	var endStr:String = getTimeStr(end);
+	
 	var file:ByteArray = new ByteArray;
 	var fr:FileReference = new FileReference();  
 	var dataProviderCollection:ArrayCollection =  
@@ -1026,7 +1043,8 @@ private function export_report_log(user:String, channel:int, status:int, begin:D
 //		file.writeMultiByte(ra.join(","), "gb2312");  
 		file.writeUTFBytes(ra.join(","));  
 	} 
-	fr.save(file, "report.txt");
+	var filename:String = "report" + beginStr + "-" + endStr + ".txt";
+	fr.save(file, filename);
 	message_report_mobile_type_field.visible = false;
 	message_report_mobile_type_select.visible = false;
 	message_report_log_status_field.visible = false;
