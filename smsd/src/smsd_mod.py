@@ -777,8 +777,12 @@ class smsd(object):
                 pass 
             keys = username
             u = self.users[keys]
-            msg_json = {'send_user':keys, 'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0}
-            for k in self.messages.itervalues():   
+            msg_json = {'send_user':keys, 'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0,
+                                'cm_d_num':0, 'ct_d_num':0, 'cu_d_num':0,
+                                'cm_s_num':0, 'ct_s_num':0, 'cu_s_num':0,
+                                'cm_f_num':0, 'ct_f_num':0, 'cu_f_num':0,
+                                'cm_a_num':0, 'ct_a_num':0, 'cu_a_num':0}
+            for k in self.messages.itervalues(): 
                     
                 if k.user_uid == u.uid and pbegin <= k.create_time and k.create_time <= pend:
                     addr = k.address.split(';')
