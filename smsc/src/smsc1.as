@@ -36,6 +36,7 @@ private var selected_username:String = '';
 [Bindable] private var user_create_time:String = null; //create_time
 [Bindable] private var user_last_login:String =  null; //last_login
 [Bindable] private var user_commit_msg_num:int = 0;
+private var ready_commit_msg_num:int = 0;
 
 private var address_file:FileReference = new FileReference();
 [Bindable]
@@ -207,6 +208,7 @@ private function logout(): void {
 	this.user_create_time = null; //create_time
 	this.user_last_login =  null; //last_login
 	this.user_commit_msg_num = 0;
+	this.ready_commit_msg_num = 0;
 	
 	this.user_data = new ArrayCollection();                                  
 	this.check_mssage_list = new ArrayCollection();
@@ -281,6 +283,7 @@ private function processor_userinfo(param:Object):void{
 	this.self_user_cm = get_channel_index(param.user.cm);
 	this.self_user_cu = get_channel_index(param.user.cu);
 	this.self_user_ct = get_channel_index(param.user.ct);
+	this.ready_commit_msg_num = 0;
 	channel_enable();
 }
 
@@ -608,6 +611,7 @@ private function sendmessage_alertClickHandler(event:CloseEvent):void {
 		var names:Array = phoneNames.map(toAddress);
 		this.phonename_list = names.sort();
 		conitune_sendmessage();
+		user_msg_num = user_msg_num - ready_commit_msg_num;
 	}
 }
 
@@ -710,13 +714,13 @@ private function completeHandler(event:Event):void
 }
 private function commit_message():void{
 	var dp:Array = message_phone_number.source;//.filter(is_selected);
-	if(dp.length == 0){
+	if(ready_commit_msg_num == 0){
 		Alert.show("请选择联系人");
 	}else if(message_content_input.text.length == 0){
 		Alert.show("请输入短信");
-	}else if(dp.length >= 1000000){
+	}else if(ready_commit_msg_num >= 1000000){
 		Alert.show("联系人数量超过上限(1000000个)，请删除一部分");
-	}else if(dp.length + user_commit_msg_num > user_msg_num){
+	}else if(ready_commit_msg_num + user_commit_msg_num > user_msg_num){
 		Alert.show("余额不足");
 	}else if(message_content_input.text.length > 500){
 		Alert.show("短信字数超过上限(500字),请删除多余文字");
@@ -732,7 +736,7 @@ private function toAddress(element:*, index:int, arr:Array):String {
 private function processor_sendmessage(param:Object):void{
 	if( (this.phone_address == null || this.phone_address.length == 0) 
 		&& ( this.phonename_list == null || this.phonename_list.length == 0 )){
-		this.request({q:'userinfo', sid:this.session});
+//		this.request({q:'userinfo', sid:this.session});
 		Alert.show('处理请求成功');
 	}else{
 		conitune_sendmessage();
@@ -1234,6 +1238,7 @@ private function check_char_count(text:TextArea, count:Label, address:String):vo
 	}
 	
 	var num:int = p * n;
+	ready_commit_msg_num = num;
 	count.text = "短信字数:" + (i as int).toString() + 
 		" 拆分条数: " + (p as int).toString() + 
 		" 联系人数: " + (n as int).toString() + 
@@ -1525,6 +1530,7 @@ private function processor_getaddresslistinfo(param:Object): void {
 		dp.push(co);
 	}
 	addresslist_data.source = dp;
+	check_char_count(message_content_input, message_content_count, get_address_str());
 }
 
 private var adds_array:Array = new Array();
