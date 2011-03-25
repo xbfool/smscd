@@ -612,6 +612,9 @@ private function sendmessage_alertClickHandler(event:CloseEvent):void {
 		this.phonename_list = names.sort();
 		conitune_sendmessage();
 		user_msg_num = user_msg_num - ready_commit_msg_num;
+		message_content_input.text = '';
+		message_phone_number.removeAll();
+		check_char_count(message_content_input, message_content_count, get_address_str());
 	}
 }
 
