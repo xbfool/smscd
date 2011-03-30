@@ -614,7 +614,6 @@ private function sendmessage_alertClickHandler(event:CloseEvent):void {
 		var names:Array = phoneNames.map(toAddress);
 		this.phonename_list = names.sort();
 		conitune_sendmessage();
-		user_msg_num = user_msg_num - ready_commit_msg_num;
 	}
 }
 
@@ -741,6 +740,10 @@ private function processor_sendmessage(param:Object):void{
 		&& ( this.phonename_list == null || this.phonename_list.length == 0 )){
 //		this.request({q:'userinfo', sid:this.session});
 		Alert.show('处理请求成功');
+		user_msg_num = user_msg_num - ready_commit_msg_num;
+		message_content_input.text = '';
+		message_phone_number.removeAll();
+		check_char_count(message_content_input, message_content_count, get_address_str());
 	}else{
 		conitune_sendmessage();
 	}
