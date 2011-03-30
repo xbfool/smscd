@@ -146,6 +146,18 @@ class sms_sender(object):
             'process_ret' : sms_sender.__process_ret_changshang_a
         }
         
+        settings['honglian_01'] = {
+            'name': 'honglian_01',
+            'host': '219.238.160.81',
+            'path': '/interface/limitnew.asp',
+            'mode': 'POST',
+            'sub_mode': 'honglian',
+            'username':'chen',
+            'password':'123456',
+            'epid':'539',
+            'process_ret': sms_sender.__process_ret_honglian
+        }
+        
 #        settings['dongguan_0769_01'] = {
 #            'name': 'dongguan_0769_01',
 #            'host': '61.145.168.234',
@@ -218,6 +230,31 @@ class sms_sender(object):
 
         return 1
 
+    def __process_ret_honglian(self, param):
+        print 'ret honglian'
+        status = message.F_FAIL
+        success_str = "00"
+        try:
+            resultstr = param['ret'][2]
+            result = urllib.unquote(resultstr)
+        except:
+            result = "something is error"
+            pass
+        if resultstr == success_str:
+            status = message.F_SEND
+            try:
+                self.__db.raw_sql_wo_commit('UPDATE user SET msg_num = msg_num - %s where uid = %s', \
+                                            (param['msg_num'], param['user_uid']))
+            except:
+                pass
+            
+        try:
+            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\" where uid = %s', \
+                                        (status, param['time'], result, param['uid']))
+        except:
+            pass
+
+        return 1
 
     def __process_ret_hb_tc(self, param):
         status = message.F_FAIL
@@ -393,6 +430,15 @@ class sms_sender(object):
                     self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num},
                                           address = address, content = msg, uid = '12345678901',
                                         pwd = 'fd1234')
+                    count += 1
+                    
+                elif setting.get('sub_mode') == 'honglian':
+                    print "in honglian.."
+                    self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num},
+                                          phone = address, message = msg.decode('utf8').encode('gbk'), username = 'chen',
+                                          password = '123456', epid = '539',
+                                          subcode = ext,
+                                        )
                     count += 1
                 elif setting.get('sub_mode') == 'hlyd':
                     print "in hlyd..."
