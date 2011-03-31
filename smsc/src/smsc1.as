@@ -511,9 +511,6 @@ private function open_add_user_view():void{
 	select_userdesc = "";
 	select_userpasswd = "";
 	ViewStack_main.selectedChild = viewpage_add_user;
-	
-
-
 }
 
 private function open_managerview():void{
@@ -546,7 +543,6 @@ private function open_managerview():void{
 		
 		channel_enable();
 		role_enable();
-
 	}
 }
 
@@ -1567,4 +1563,10 @@ private function completePhoneManageHandler(event:Event):void
 {
 	var adds:String = address_file.data.toString();
 	adds_array = adds.match(/1[3458]\d{9}/g);
+}
+
+private function show_addresslist_data():void
+{
+	ViewStack_phone.selectedChild = viewstack_add_addresslist;
+	Alert.show("click ok.");
 }
