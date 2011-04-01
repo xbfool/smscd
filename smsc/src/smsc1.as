@@ -1203,6 +1203,7 @@ private function change_view_stack(view:String):void{
 		ViewStack_main.selectedChild = viewpage_user_manage;
 	} else if (view == "manage_phonenumber"){
 		ViewStack_main.selectedChild = viewpage_manage_phonenumber;
+		ViewStack_phone.selectedChild = viewstack_addresslist_welcome;
 		import_phone_number_from_notesbook();
 	} else if (view == "upload_report"){
 		ViewStack_main.selectedChild = viewpage_upload_report;
@@ -1569,8 +1570,8 @@ private function completePhoneManageHandler(event:Event):void
 
 private function show_addresslist_data():void
 {
-//	ViewStack_phone.selectedChild = viewstack_add_addresslist;
-	Alert.show("click ok.");
+	ViewStack_phone.selectedChild = viewstack_contacter_list;
+//	Alert.show("click ok.");
 }
 
 private function add_new_phone_info():void

@@ -513,6 +513,8 @@
 								<mx:Panel right="0" height = "100%" width="70%"
 										  paddingTop = "0" paddingLeft="0" paddingRight="0" paddingBottom="0">
 									<mx:ViewStack id="ViewStack_phone"  width="100%" height="100%" color="0x323232">
+										<mx:VBox id = "viewstack_addresslist_welcome">
+										</mx:VBox>
 										<mx:VBox id = "viewstack_contacter_list">
 											<mx:Label text="联系人列表" fontWeight="bold"/>
 											<mx:DataGrid width="100%" height="80%" id="contacterlist_data_grid" dataProvider="{contacterlist_data}"
@@ -548,11 +550,11 @@
 											<mx:Label text="名称：" />
 											<mx:TextInput id="addresslist_new_name" />
 											<mx:Label text="备注：" />
-											<mx:TextInput id="addresslist_new_remark"  /> 
+											<mx:TextArea id="addresslist_new_remark" height="100" width="400" /> 
 											<mx:HBox width="100%">
 												<mx:Button label="添加" click="{alert_not_impl()}" />
 												<mx:Button label="重写" click="{alert_not_impl()}" />
-												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewstack_contacter_list}" />
+												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewstack_addresslist_welcome}" />
 											</mx:HBox>
 										</mx:VBox>
 										<mx:VBox id = "viewstack_manage_addresslist">											
@@ -560,15 +562,15 @@
 											<mx:Label text="名称：" />
 											<mx:TextInput id="addresslist_manage_name" />
 											<mx:Label text="备注：" />
-											<mx:TextInput id="addresslist_manage_remark"  /> 
+											<mx:TextArea id="addresslist_manage_remark" height="100" width="400" /> 
 											<mx:HBox width="100%">
 												<mx:Button label="添加" click="{alert_not_impl()}" />
 												<mx:Button label="重写" click="{alert_not_impl()}" />
-												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewstack_contacter_list}" />
+												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewstack_addresslist_welcome}" />
 											</mx:HBox>
 										</mx:VBox>
 										<mx:VBox id = "viewstack_add_phone">											
-											<mx:Label text="新增通讯录" width="120"  textAlign="center" fontWeight="bold"/>
+											<mx:Label text="新增联系人" width="120"  textAlign="center" fontWeight="bold"/>
 											<mx:Label text="姓名：" />
 											<mx:TextInput id="phone_new_name" />
 											<mx:Label text="单位名称：" />
@@ -584,7 +586,7 @@
 											</mx:HBox>
 										</mx:VBox>
 										<mx:VBox id = "viewstack_manage_phone">											
-											<mx:Label text="修改通讯录" width="120"  textAlign="center" fontWeight="bold"/>
+											<mx:Label text="修改联系人" width="120"  textAlign="center" fontWeight="bold"/>
 											<mx:Label text="姓名：" />
 											<mx:TextInput id="phone_manage_name" />
 											<mx:Label text="单位名称：" />
@@ -612,8 +614,7 @@
 											<mx:Button label="从txt文件导入" click="{import_phone_number_from_file_to_notebook()}"  visible="false"/>
 											<mx:Button label="删除" click="{delete_phonenumber_fromlist()}" visible="false" />
 											<mx:Button label="全部删除" click="{deleteall_phonenumber()}" visible="false" />
-										</mx:HBox>
-										
+										</mx:HBox>										
 									</mx:HBox>
 									<!--								<mx:DataGrid width="40%" height="80%" id="addressslist_data_grid" dataProvider="{addresslist_data}"
 									draggableColumns="false" resizableColumns="false" editable="true"
