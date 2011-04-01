@@ -166,6 +166,8 @@ public var message_phone_number:ArrayCollection = new ArrayCollection();
 public var message_log_data:ArrayCollection = new ArrayCollection();
 [Bindable]
 public var addresslist_data:ArrayCollection = new ArrayCollection();
+[Bindable]
+public var contacterlist_data:ArrayCollection = new ArrayCollection();
 
 private function init():void {
 	login_user.setFocus();
@@ -371,7 +373,7 @@ private function processor_listchildren(param:Object):void{
 		var dp:Array = new Array;
 		for (var j:int = 0;j < param.children.length; j++){
 			var co:Object = param.children[j];
-			var o:Object = new Object;
+//			var o:Object = new Object;
 			dp.push(co);
 		}
 	//	user_data = dp;
@@ -1567,6 +1569,11 @@ private function completePhoneManageHandler(event:Event):void
 
 private function show_addresslist_data():void
 {
-	ViewStack_phone.selectedChild = viewstack_add_addresslist;
+//	ViewStack_phone.selectedChild = viewstack_add_addresslist;
 	Alert.show("click ok.");
+}
+
+private function add_new_phone_info():void
+{
+	ViewStack_phone.selectedChild = viewstack_add_phone;
 }

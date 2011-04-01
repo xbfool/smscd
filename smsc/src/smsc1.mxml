@@ -504,9 +504,11 @@
 															   />								
 										</mx:columns>
 									</mx:DataGrid>
-									<mx:Button label="添加" click="{alert_not_impl()}" />
-									<mx:Button label="修改" click="{alert_not_impl()}" />
-									<mx:Button label="删除" click="{alert_not_impl()}" />
+									<mx:HBox width="100%">
+										<mx:Button label="添加" click="{ViewStack_phone.selectedChild = viewstack_add_addresslist}" />
+										<mx:Button label="修改" click="{ViewStack_phone.selectedChild = viewstack_manage_addresslist}" />
+										<mx:Button label="删除" click="{alert_not_impl()}" />
+									</mx:HBox>
 								</mx:Panel>
 								<mx:Panel right="0" height = "100%" width="70%"
 										  paddingTop = "0" paddingLeft="0" paddingRight="0" paddingBottom="0">
@@ -534,9 +536,12 @@
 																	   />								
 												</mx:columns>
 											</mx:DataGrid>	
-											<mx:Button label="添加" click="{alert_not_impl()}" />
-											<mx:Button label="删除" click="{alert_not_impl()}" />
-											<mx:Button label="发送" click="{alert_not_impl()}" />
+											<mx:HBox width="100%">
+												<mx:Button label="添加" click="{add_new_phone_info()}" />
+												<mx:Button label="修改" click="{ViewStack_phone.selectedChild = viewstack_manage_phone}" />
+												<mx:Button label="删除" click="{alert_not_impl()}" />
+												<mx:Button label="发送" click="{alert_not_impl()}" />
+											</mx:HBox>
 										</mx:VBox>
 										<mx:VBox id = "viewstack_add_addresslist">											
 											<mx:Label text="新增通讯录" width="120"  textAlign="center" fontWeight="bold"/>
@@ -544,9 +549,55 @@
 											<mx:TextInput id="addresslist_new_name" />
 											<mx:Label text="备注：" />
 											<mx:TextInput id="addresslist_new_remark"  /> 
-											<mx:Button label="添加" click="{alert_not_impl()}" />
-											<mx:Button label="重写" click="{alert_not_impl()}" />
-											<mx:Button label="返回" click="{alert_not_impl()}" />
+											<mx:HBox width="100%">
+												<mx:Button label="添加" click="{alert_not_impl()}" />
+												<mx:Button label="重写" click="{alert_not_impl()}" />
+												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewstack_contacter_list}" />
+											</mx:HBox>
+										</mx:VBox>
+										<mx:VBox id = "viewstack_manage_addresslist">											
+											<mx:Label text="修改通讯录" width="120"  textAlign="center" fontWeight="bold"/>
+											<mx:Label text="名称：" />
+											<mx:TextInput id="addresslist_manage_name" />
+											<mx:Label text="备注：" />
+											<mx:TextInput id="addresslist_manage_remark"  /> 
+											<mx:HBox width="100%">
+												<mx:Button label="添加" click="{alert_not_impl()}" />
+												<mx:Button label="重写" click="{alert_not_impl()}" />
+												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewstack_contacter_list}" />
+											</mx:HBox>
+										</mx:VBox>
+										<mx:VBox id = "viewstack_add_phone">											
+											<mx:Label text="新增通讯录" width="120"  textAlign="center" fontWeight="bold"/>
+											<mx:Label text="姓名：" />
+											<mx:TextInput id="phone_new_name" />
+											<mx:Label text="单位名称：" />
+											<mx:TextInput id="phone_new_companyname" />
+											<mx:Label text="联系电话：" />
+											<mx:TextInput id="phone_new_phone" />
+											<mx:Label text="职称：" />
+											<mx:TextInput id="phone_new_title" />
+											<mx:HBox width="100%">
+												<mx:Button label="添加" click="{alert_not_impl()}" />
+												<mx:Button label="重写" click="{alert_not_impl()}" />
+												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewstack_contacter_list}" />
+											</mx:HBox>
+										</mx:VBox>
+										<mx:VBox id = "viewstack_manage_phone">											
+											<mx:Label text="修改通讯录" width="120"  textAlign="center" fontWeight="bold"/>
+											<mx:Label text="姓名：" />
+											<mx:TextInput id="phone_manage_name" />
+											<mx:Label text="单位名称：" />
+											<mx:TextInput id="phone_manage_companyname" />
+											<mx:Label text="联系电话：" />
+											<mx:TextInput id="phone_manage_phone" />
+											<mx:Label text="职称：" />
+											<mx:TextInput id="phone_manage_title" />
+											<mx:HBox width="100%">
+												<mx:Button label="添加" click="{alert_not_impl()}" />
+												<mx:Button label="重写" click="{alert_not_impl()}" />
+												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewstack_contacter_list}" />
+											</mx:HBox>
 										</mx:VBox>
 									</mx:ViewStack>									
 								</mx:Panel>
