@@ -40,11 +40,12 @@ class zhttp(object):
         res = self.conn.getresponse()
         return res.status, res.reason, res.read(), res.getheaders()
 
-    def send_soap(self, path = None, soapaction = None, soap = None):
+    def send_soap(self, path = None, soapaction = None, soap = None, port = 80):
         # TODO: assemble soap here
         path = path or self.path
-        headers = {"Content-type": "application/soap+xml; charset=utf-8",
+        headers = {"Content-type": "text/xml; charset=utf-8",
                    "SOAPAction": soapaction}
+        self.port = port
         self.conn.request('POST', path, soap, headers)
         res = self.conn.getresponse()
         return res.status, res.reason, res.read(), res.getheaders()

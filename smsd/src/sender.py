@@ -158,6 +158,17 @@ class sms_sender(object):
             'process_ret': sms_sender.__process_ret_honglian
         }
         
+        settings['shangxintong_01'] = {
+            'name': 'shangxintong_01',
+            'host': '218.15.25.98',
+            'path': '/sxt_webservice/services/SMSService?wsdl',
+            'mode': 'soap',
+            'port': '8081',
+            'sub_mode': 'shangxintong',
+            'account': 'ykxx',
+            'password': '123789',
+            'process_ret' : sms_sender.__process_ret_shangxintong
+        }
 #        settings['dongguan_0769_01'] = {
 #            'name': 'dongguan_0769_01',
 #            'host': '61.145.168.234',
@@ -237,6 +248,7 @@ class sms_sender(object):
         try:
             resultstr = param['ret'][2]
             result = urllib.unquote(resultstr)
+            result = result.decode('gbk').encode('utf8')
         except:
             result = "something is error"
             pass
@@ -325,7 +337,28 @@ class sms_sender(object):
         status = message.F_FAIL
         try:
             result = param['ret'][2] 
-        
+            
+            if result[0] == '0':
+                status = message.F_SEND
+                self.__db.raw_sql_wo_commit('UPDATE user SET msg_num = msg_num - %s where uid = %s', \
+                                            (param['msg_num'], param['user_uid']))
+        except:
+            status = message.F_FAIL
+            pass
+        try:
+            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\" where uid = %s', \
+                                        (status, param['time'], result, param['uid']))
+        except:
+            pass
+        return 1  
+    
+    def __process_ret_shangxintong(self, param):
+        status = message.F_FAIL
+        try:
+            resultDOM = parseString(param['ret'][2])
+            result = resultDOM.firstChild.firstChild.firstChild.firstChild.firstChild.nextSibling.firstChild.data
+
+            print result
             if result[0] == '0':
                 status = message.F_SEND
                 self.__db.raw_sql_wo_commit('UPDATE user SET msg_num = msg_num - %s where uid = %s', \
@@ -463,6 +496,48 @@ class sms_sender(object):
                     self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num},
                                       soapaction = 'http://hl.my2my.cn/services/esmsservice',
                                       soap = soap)   
+                    count += 1
+                    
+                elif setting.get('sub_mode') == 'shangxintong':
+                    print "in shangxintong ..."
+                    soap = \
+'''
+<SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/" xmlns:mes="http://message.scape.gsta.com" xmlns:mul="http://www.muleumo.org" xmlns:sms="http://sms.cap.scape.gsta.com" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP:Header xmlns:Header="Header"/>
+    <SOAP:Body>
+        <mul:sendSMS>
+        <mul:in0>
+        <mes:account>%s</mes:account>
+        <mes:extendField/>
+        <mes:hashCode/>
+        <mes:password>%s</mes:password>
+        <mes:timestamp/>
+        </mul:in0>
+        <mul:in1>
+        <mes:account/>
+        <mes:id/>
+        </mul:in1>
+        <mul:in2>
+        <sms:content>%s</sms:content>
+        <sms:contentFormat>1</sms:contentFormat>
+        <sms:needFeedback>1</sms:needFeedback>
+        <sms:password/><sms:receivers>
+        <mul:string>%s</mul:string>
+        </sms:receivers><sms:areacode/>
+        <sms:sender/>
+        </mul:in2>
+        </mul:sendSMS>
+    </SOAP:Body>
+</SOAP:Envelope>
+'''\
+                    % (setting['account'],
+                       setting['password'],
+                       msg, 
+                       addr)
+                    
+                    self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num},
+                                      soapaction = 'sendSMS',
+                                      soap = soap, port = 8081)   
                     count += 1
                 elif setting.get('sub_mode') == 'changshang_a':
                     print "in changshang_a"

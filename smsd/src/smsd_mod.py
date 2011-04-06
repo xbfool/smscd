@@ -391,7 +391,15 @@ class smsd(object):
             for item in addr:
                 new_message = message()        
                 new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel)
-                self.messages[new_message.uid] = new_message      
+                self.messages[new_message.uid] = new_message  
+        elif channel in ('shangxintong_01'):
+            addr = []
+            for i in xrange(0, len(addr_list), 1):
+                addr.append(addr_list[i: min(i + 1, len(addr_list))])
+            for item in addr:
+                new_message = message()        
+                new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel)
+                self.messages[new_message.uid] = new_message     
         else:
             addr = []
             for i in xrange(0, len(addr_list), 50):
@@ -471,26 +479,38 @@ class smsd(object):
         
         pm = phonenumber.phonenumber()
         split_addr = pm.split_addr(l)
-        if p == 1:
-            #not need to check message
-            if len(split_addr[pm.S_CM]) > 0:
-                self.__split_message(u.uid, split_addr[pm.S_CM], msg, message.F_ADMIT, u.channel_cm)
-            if len(split_addr[pm.S_CU]) > 0:
-                self.__split_message(u.uid, split_addr[pm.S_CU], msg, message.F_ADMIT, u.channel_cu)
-            if len(split_addr[pm.S_CT]) > 0:
-                self.__split_message(u.uid, split_addr[pm.S_CT], msg, message.F_ADMIT, u.channel_ct)
-        else:
-            for i in range(p):
-                if len(split_addr[pm.S_CM]) > 0:
-                    self.__split_message(u.uid, split_addr[pm.S_CM], "("+str(i+1)+"/"+str(p)+")"+
-                                    msgcontent[i*65:(i+1)*65].encode('utf8'), message.F_ADMIT, u.channel_cm)
-                if len(split_addr[pm.S_CU]) > 0:
-                    self.__split_message(u.uid, split_addr[pm.S_CU], "("+str(i+1)+"/"+str(p)+")"+
-                                    msgcontent[i*65:(i+1)*65].encode('utf8'), message.F_ADMIT, u.channel_cu)
-                if len(split_addr[pm.S_CT]) > 0:
-                    self.__split_message(u.uid, split_addr[pm.S_CT], "("+str(i+1)+"/"+str(p)+")"+
-                                    msgcontent[i*65:(i+1)*65].encode('utf8'), message.F_ADMIT, u.channel_ct)
-        
+        for channel, addr in [(u.channel_cm, pm.S_CM), 
+                               (u.channel_cu, pm.S_CU), 
+                               (u.channel_ct, pm.S_CT)]:
+            if p == 1 or channel == 'shangxintong_01':
+                if len(split_addr[addr]) > 0:
+                    self.__split_message(u.uid, split_addr[addr], msg, message.F_ADMIT, channel)
+            else:
+                for i in range(p):
+                    if len(split_addr[addr]) > 0:
+                        self.__split_message(u.uid, split_addr[addr], "("+str(i+1)+"/"+str(p)+")"+
+                                    msgcontent[i*65:(i+1)*65].encode('utf8'), message.F_ADMIT, channel)
+                        
+#        if p == 1:
+#            #not need to check message
+#            if len(split_addr[pm.S_CM]) > 0:
+#                self.__split_message(u.uid, split_addr[pm.S_CM], msg, message.F_ADMIT, u.channel_cm)
+#            if len(split_addr[pm.S_CU]) > 0:
+#                self.__split_message(u.uid, split_addr[pm.S_CU], msg, message.F_ADMIT, u.channel_cu)
+#            if len(split_addr[pm.S_CT]) > 0:
+#                self.__split_message(u.uid, split_addr[pm.S_CT], msg, message.F_ADMIT, u.channel_ct)
+#        else:
+#            for i in range(p):
+#                if len(split_addr[pm.S_CM]) > 0:
+#                    self.__split_message(u.uid, split_addr[pm.S_CM], "("+str(i+1)+"/"+str(p)+")"+
+#                                    msgcontent[i*65:(i+1)*65].encode('utf8'), message.F_ADMIT, u.channel_cm)
+#                if len(split_addr[pm.S_CU]) > 0:
+#                    self.__split_message(u.uid, split_addr[pm.S_CU], "("+str(i+1)+"/"+str(p)+")"+
+#                                    msgcontent[i*65:(i+1)*65].encode('utf8'), message.F_ADMIT, u.channel_cu)
+#                if len(split_addr[pm.S_CT]) > 0:
+#                    self.__split_message(u.uid, split_addr[pm.S_CT], "("+str(i+1)+"/"+str(p)+")"+
+#                                    msgcontent[i*65:(i+1)*65].encode('utf8'), message.F_ADMIT, u.channel_ct)
+                    
         return 0, {'rtype':'sendmessage', 'num':num, 'errno': 0}
     
     def processor_userinfo(self, user, query):
