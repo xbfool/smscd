@@ -68,7 +68,7 @@ PRIMARY KEY(uid)
 create table `smsd`.`phonebook`
 (
 uid int not null auto_increment,
-user_id int not null,
+user_uid int not null,
 name char(50) not null,
 remark BLOB,
 primary key(uid)
@@ -77,7 +77,7 @@ primary key(uid)
 create table `smsd`.`phone`
 (
 uid int not null auto_increment,
-phonebook_id int not null,
+phonebook_uid int not null,
 name char(50),
 companyname char(50),
 title char(50),
