@@ -169,6 +169,8 @@ public var addresslist_data:ArrayCollection = new ArrayCollection();
 [Bindable]
 public var phonebook_data:ArrayCollection = new ArrayCollection();
 [Bindable]
+public var phone_list_data:ArrayCollection = new ArrayCollection();
+[Bindable]
 public var contacterlist_data:ArrayCollection = new ArrayCollection();
 
 private function init():void {
@@ -1205,7 +1207,7 @@ private function change_view_stack(view:String):void{
 		ViewStack_main.selectedChild = viewpage_user_manage;
 	} else if (view == "manage_phonenumber"){
 		ViewStack_main.selectedChild = viewpage_manage_phonenumber;
-		ViewStack_phone.selectedChild = viewstack_addresslist_welcome;
+		ViewStack_phone.selectedChild = viewstack_phonebook_welcome;
 		get_phone_book_info();
 	} else if (view == "upload_report"){
 		ViewStack_main.selectedChild = viewpage_upload_report;
@@ -1589,7 +1591,7 @@ private function completePhoneManageHandler(event:Event):void
 
 private function show_addresslist_data():void
 {
-	ViewStack_phone.selectedChild = viewstack_contacter_list;
+	ViewStack_phone.selectedChild = viewstack_phone_list;
 //	Alert.show("click ok.");
 }
 
