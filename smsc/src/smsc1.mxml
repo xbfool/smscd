@@ -486,14 +486,14 @@
 										  paddingTop="0" paddingRight="0" paddingBottom="0" paddingLeft="0"
 										  horizontalAlign="center" verticalAlign="top" cornerRadius="0">
 									<mx:Label text="通讯录列表" fontWeight="bold"/>
-									<mx:DataGrid width="100%" height="80%" id="addressslist_data_grid" dataProvider="{addresslist_data}"
+									<mx:DataGrid width="100%" height="80%" id="phonebook_data_grid" dataProvider="{phonebook_data}"
 												 draggableColumns="false" resizableColumns="false" editable="true"
 												 rowHeight="30" variableRowHeight="false" buttonMode="true" click="show_addresslist_data()"
 												 >
 										<mx:columns >				
 											<!-- You can define an inline component as the ItemRenderer for a DataGrid column -->
-											<mx:DataGridColumn width="80" dataField="name" itemRenderer="mx.controls.Text" headerText="手机集合" editable="false"/>
-											<mx:DataGridColumn width="80" dataField="count" itemRenderer="mx.controls.Text" headerText="手机号码个数" editable="false"/>
+											<mx:DataGridColumn width="80" dataField="name" itemRenderer="mx.controls.Text" headerText="通讯录名称" editable="false"/>
+											<mx:DataGridColumn width="80" dataField="remark" itemRenderer="mx.controls.Text" headerText="通讯录备注" editable="false"/>
 											<mx:DataGridColumn dataField="check" 
 															   itemRenderer="mx.controls.CheckBox" 
 															   rendererIsEditor="true" 

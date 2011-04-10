@@ -167,6 +167,8 @@ public var message_log_data:ArrayCollection = new ArrayCollection();
 [Bindable]
 public var addresslist_data:ArrayCollection = new ArrayCollection();
 [Bindable]
+public var phonebook_data:ArrayCollection = new ArrayCollection();
+[Bindable]
 public var contacterlist_data:ArrayCollection = new ArrayCollection();
 
 private function init():void {
@@ -1204,7 +1206,7 @@ private function change_view_stack(view:String):void{
 	} else if (view == "manage_phonenumber"){
 		ViewStack_main.selectedChild = viewpage_manage_phonenumber;
 		ViewStack_phone.selectedChild = viewstack_addresslist_welcome;
-		import_phone_number_from_notesbook();
+		get_phone_book_info();
 	} else if (view == "upload_report"){
 		ViewStack_main.selectedChild = viewpage_upload_report;
 		
@@ -1487,7 +1489,7 @@ private function delete_phonenumber_fromlist():void{
 		var co:Object = newsource[j];
 		co.selected = 0;
 		dp.push(co);
-}
+	}
 	addresslist_data.source = newsource;
 	var address:Array = target.map(toName);
 	var add_str:String = address.join(";");
@@ -1515,6 +1517,23 @@ private function deleteall_phonenumber():void{
 	var address:Array = source.map(toName);
 	var add_str:String = address.join(";");
 	this.request_deleteaddresslist(add_str);
+}
+
+private function get_phone_book_info():void{
+	this.request({q:'getphonebookinfo', sid:this.session});
+}
+
+private function processor_getphonebookinfo(param:Object): void {	
+	var dp:Array = new Array;
+	for (var j:int = 0;j < param.list.length; j++){
+		var co:Object = param.list[j];
+		co.selected = 0;
+		co.number = param.list[j].name;
+		co.type = PHONE_NAME;
+		message_phone_number.addItem(co);
+		dp.push(co);
+	}
+	phonebook_data.source = dp;
 }
 
 private function import_phone_number_from_notesbook():void{

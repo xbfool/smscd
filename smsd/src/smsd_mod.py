@@ -15,7 +15,9 @@ from dbobj import dbobj
 from user import user
 from message import message
 import phonenumber
+from phonebook import phonebook
 from addresslist import addresslist
+
 import sys
 if __name__ != '__main__':
     smsd_path = '/home/jimmyz/smsd/src'
@@ -1042,6 +1044,15 @@ class smsd(object):
             return False
         
         return 0,  {'rtype':'listlog', 'l':l}
+    
+    def processor_getphonebookinfo(self, user, query):
+        uid = user.uid
+        phonebook.set_db(self.db, 'phonebook')
+        phonebooks = phonebook.load('user_uid = %s', uid)        
+        l = []
+        for list in phonebooks:
+            l.append(list.to_json())
+        return 0,  {'rtype':'getphonebookinfo', 'list':l}
     
     def processor_getaddresslistinfo(self, user, query):
         uid = user.uid
