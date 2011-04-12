@@ -1053,7 +1053,21 @@ class smsd(object):
         for list in phonebooks:
             l.append(list.to_json())
         return 0,  {'rtype':'getphonebookinfo', 'list':l}
-    
+        
+    def processor_addphonebook(self, user, query):
+        #{'q':'addphonebook', 'sid': sid, 'name':name, 'remark':remark}  
+        if ('name' not in query or 'remark' not in query):
+            return False      
+        
+        uid = user.uid
+        phonebook.set_db(self.db, 'phonebook')
+        name = query['name']
+        remark = query['remark']
+                        
+        new_phonebook = phonebook()
+        new_phonebook.new(uid, name, remark)        
+        return 0, {'rtype':'addphonebook', 'errno' : 0} #成功
+
     def processor_getaddresslistinfo(self, user, query):
         uid = user.uid
         addresslist.set_db(self.db, 'address')

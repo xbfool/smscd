@@ -173,6 +173,11 @@ public var phone_list_data:ArrayCollection = new ArrayCollection();
 [Bindable]
 public var contacterlist_data:ArrayCollection = new ArrayCollection();
 
+[Bindable]
+private var select_phonebook_name:String;
+[Bindable]
+private var select_phonebook_remark:String;
+
 private function init():void {
 	login_user.setFocus();
 	if (this.parameters['smsd'] != null) {
@@ -511,6 +516,34 @@ private function get_channel_index(channel:String):int{
 			return 0;
 	}
 }
+
+private function open_add_new_phonebook_view():void{
+	select_phonebook_name = "";
+	select_phonebook_remark = "";
+	ViewStack_phone.selectedChild = viewpage_add_phonebook;
+}
+
+private function open_manage_phonebook_view():void{
+	if(phonebook_data_grid.selectedItem == null || 
+		phonebook_data_grid.selectedItem.name == '' || 
+		phonebook_data_grid.selectedItem.name == null){
+		Alert.show('请选择一个通讯录');
+	}else{
+		ViewStack_phone.selectedChild = viewpage_manage_phonebook;
+		var phonebook:Object = phonebook_data_grid.selectedItem;
+		select_phonebook_name = phonebook.name;
+		select_phonebook_remark = phonebook.remark;
+	}
+}
+
+private function open_add_new_phone_view():void{
+	ViewStack_phone.selectedChild = viewpage_add_phone;
+}
+
+private function open_manage_phone_view():void{
+	ViewStack_phone.selectedChild = viewpage_manage_phone;
+}
+
 private function open_add_user_view():void{
 	
 	select_username = "";
@@ -1207,7 +1240,7 @@ private function change_view_stack(view:String):void{
 		ViewStack_main.selectedChild = viewpage_user_manage;
 	} else if (view == "manage_phonenumber"){
 		ViewStack_main.selectedChild = viewpage_manage_phonenumber;
-		ViewStack_phone.selectedChild = viewstack_phonebook_welcome;
+		ViewStack_phone.selectedChild = viewpage_phonebook_welcome;
 		get_phone_book_info();
 	} else if (view == "upload_report"){
 		ViewStack_main.selectedChild = viewpage_upload_report;
@@ -1538,6 +1571,24 @@ private function processor_getphonebookinfo(param:Object): void {
 	phonebook_data.source = dp;
 }
 
+private function request_addphonebook(name:String, remark:String): void {
+	if ( name == null || name == "" ) {
+		Alert.show("通讯录名称不能为空，请重新输入");
+	} else {
+		this.request({q:'addphonebook',sid:this.session, name:name, remark:remark});
+	}
+}
+
+private function processor_addphonebook(param:Object):void{
+	if(param.errno == 0){
+		Alert.show("添加通讯录成功");
+		get_phone_book_info();
+		ViewStack_phone.selectedChild = viewpage_phonebook_welcome;
+	}else if(param.errno == 1){
+		Alert.show("不能添加重复的通讯录");
+	}
+}
+
 private function import_phone_number_from_notesbook():void{
 	this.request({q:'getaddresslistinfo', sid:this.session});
 }
@@ -1591,11 +1642,11 @@ private function completePhoneManageHandler(event:Event):void
 
 private function show_addresslist_data():void
 {
-	ViewStack_phone.selectedChild = viewstack_phone_list;
+	ViewStack_phone.selectedChild = viewpage_phone_list;
 //	Alert.show("click ok.");
 }
 
 private function add_new_phone_info():void
 {
-	ViewStack_phone.selectedChild = viewstack_add_phone;
+	ViewStack_phone.selectedChild = viewpage_add_phone;
 }
