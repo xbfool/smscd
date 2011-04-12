@@ -54,6 +54,7 @@ class sendsms(object):
         password = query.get('pass')
         recv = query.get('recv')
         msg = query.get('msg')
+        passtype = query.get('passtype')
         try:
             msgdecode = msg.decode('utf8')
         except:
@@ -70,7 +71,13 @@ class sendsms(object):
             return self.__ret(env, start_response, -99, 'invalid query, no recv')
         if msg == None or msg == '':
             return self.__ret(env, start_response, -99, 'invalid query, no msg')
-        user_uid, remain = self.__check_user(username, password)
+        if passtype == None or passtype == '':
+            passtype = 'normal'
+        elif passtype == 'sha1':
+            passtype = 'sha1'
+        else:
+            passtype = 'normal'
+        user_uid, remain = self.__check_user(username, password, passtype)
         if user_uid == None:
             return self.__ret(env, start_response, -1, 'user not exist or wrong pass')
         elif remain < 1:
@@ -99,9 +106,13 @@ class sendsms(object):
         if(len(ret) == 0):
             return None
         return ret[0][0]
-    def __check_user(self, u, p):
+    def __check_user(self, u, p,type):
+        password = p
+        if type == 'normal':
+            password = sha1(p).hexdigest()
+            
         ret = self.db.raw_sql_query('SELECT uid,msg_num FROM user WHERE username = %s AND password = %s AND can_post = TRUE AND need_check = FALSE',
-                                    (u, sha1(p).hexdigest()))
+                                    (u, password))
         if len(ret) == 0:
             return None, None
         user_uid, msg_num = ret[0]

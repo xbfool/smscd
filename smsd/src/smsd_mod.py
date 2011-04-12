@@ -462,7 +462,7 @@ class smsd(object):
         p = 0
         if len(msgcontent) == 0:
             p = 0
-        elif len(msgcontent) <= 70:
+        elif len(msgcontent) <= 70 and channel != 'shanxintong_01':
             p = 1
         elif len(msgcontent) <= 500:
             p = (len(msgcontent) - 1) / 65 + 1
@@ -482,7 +482,7 @@ class smsd(object):
         for channel, addr in [(u.channel_cm, pm.S_CM), 
                                (u.channel_cu, pm.S_CU), 
                                (u.channel_ct, pm.S_CT)]:
-            if p == 1 or channel == 'shangxintong_01':
+            if p == 1 or channel in ['shangxintong_01', 'honglian_01']:
                 if len(split_addr[addr]) > 0:
                     self.__split_message(u.uid, split_addr[addr], msg, message.F_ADMIT, channel)
             else:
