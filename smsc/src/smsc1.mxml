@@ -499,7 +499,7 @@
 									<mx:HBox width="100%">
 										<mx:Button label="添加" click="open_add_new_phonebook_view()" />
 										<mx:Button label="修改" click="open_manage_phonebook_view()" />
-										<mx:Button label="删除" click="{alert_not_impl()}" />
+										<mx:Button label="删除" click="request_deletphonebook()" />
 									</mx:HBox>
 								</mx:Panel>
 								<mx:Panel right="0" height = "100%" width="70%"

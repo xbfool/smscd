@@ -520,6 +520,7 @@ private function get_channel_index(channel:String):int{
 }
 
 private function open_add_new_phonebook_view():void{
+	select_phonebook_id = 0;
 	select_phonebook_name = "";
 	select_phonebook_remark = "";
 	ViewStack_phone.selectedChild = viewpage_add_phonebook;
@@ -1610,6 +1611,26 @@ private function processor_managephonebook(param:Object):void{
 	}
 }
 
+private function request_deletphonebook():void{
+	if(phonebook_data_grid.selectedItem == null || 
+		phonebook_data_grid.selectedItem.name == '' || 
+		phonebook_data_grid.selectedItem.name == null){
+		Alert.show('请选择一个通讯录');
+	} else {
+		var id:String = phonebook_data_grid.selectedItem.uid;
+		this.request({q:'deletephonebook', sid:this.session, id:id});
+	}
+}
+
+private function processor_deletephonebook(param:Object):void{	
+	if(param.errno == 0){
+		Alert.show("删除通讯录成功");
+		get_phone_book_info();
+		ViewStack_phone.selectedChild = viewpage_phonebook_welcome;
+	} else {
+		Alert.show('您没有删除这些信息的权限');
+	}
+}
 
 private function import_phone_number_from_notesbook():void{
 	this.request({q:'getaddresslistinfo', sid:this.session});

@@ -1076,11 +1076,26 @@ class smsd(object):
         
         uid = user.uid
         id = query['id']
-        name = query['name']
-        remark = query['remark']
-        q = self.db.raw_sql_query('update phonebook set name=%s, remark=%s where uid=%s', (name, remark, id))
-    
+        phonebook.set_db(self.db, "phonebook")
+        phonebook_old = phonebook()
+        phonebook_old.loadByID(uid, id)
+        phonebook_old.name = query['name']
+        phonebook_old.remark = query['remark']
+        phonebook_old.save('name,remark')
         return 0, {'rtype':'managephonebook', 'errno' : 0} #成功        
+    
+    def processor_deletephonebook(self, user, query):
+        if 'id' not in query:
+            return False
+        
+        uid = user.uid
+        id = query['id']
+        phonebook.set_db(self.db, 'phonebook')
+        phonebook_old = phonebook()
+        phonebook_old.loadByID(uid, id)
+        phonebook_old.delete()
+    
+        return 0,  {'rtype':'deletephonebook', 'errno':0}
     
     def processor_getaddresslistinfo(self, user, query):
         uid = user.uid
