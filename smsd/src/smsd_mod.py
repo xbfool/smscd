@@ -1068,6 +1068,20 @@ class smsd(object):
         new_phonebook.new(uid, name, remark)        
         return 0, {'rtype':'addphonebook', 'errno' : 0} #成功
 
+    def processor_managephonebook(self, user, query):
+        #{'q':'managephonebook', 'sid': sid, 'id':uid, 'name':name, 'remark':remark}  
+        
+        if ('id' not in query or 'name' not in query or 'remark' not in query):
+            return False      
+        
+        uid = user.uid
+        id = query['id']
+        name = query['name']
+        remark = query['remark']
+        q = self.db.raw_sql_query('update phonebook set name=%s, remark=%s where uid=%s', (name, remark, id))
+    
+        return 0, {'rtype':'managephonebook', 'errno' : 0} #成功        
+    
     def processor_getaddresslistinfo(self, user, query):
         uid = user.uid
         addresslist.set_db(self.db, 'address')

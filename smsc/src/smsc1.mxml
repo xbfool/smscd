@@ -494,14 +494,6 @@
 											<!-- You can define an inline component as the ItemRenderer for a DataGrid column -->
 											<mx:DataGridColumn width="80" dataField="name" itemRenderer="mx.controls.Text" headerText="通讯录名称" editable="false"/>
 											<mx:DataGridColumn width="80" dataField="remark" itemRenderer="mx.controls.Text" headerText="通讯录备注" editable="false"/>
-											<mx:DataGridColumn dataField="check" 
-															   itemRenderer="mx.controls.CheckBox" 
-															   rendererIsEditor="true" 
-															   editable="true" 
-															   editorDataField="selected"
-															   headerText="选择"
-															   width="20"
-															   />								
 										</mx:columns>
 									</mx:DataGrid>
 									<mx:HBox width="100%">
@@ -564,7 +556,7 @@
 											<mx:Label text="备注：" />
 											<mx:TextArea id="phonebook_manage_remark" text="{select_phonebook_remark}" height="100" width="400" /> 
 											<mx:HBox width="100%">
-												<mx:Button label="修改" click="{alert_not_impl()}" />
+												<mx:Button label="修改" click="{request_managephonebook(phonebook_manage_name.text,phonebook_manage_remark.text)}" />
 												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewpage_phonebook_welcome}" />
 											</mx:HBox>
 										</mx:VBox>

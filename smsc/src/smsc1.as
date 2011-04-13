@@ -174,6 +174,8 @@ public var phone_list_data:ArrayCollection = new ArrayCollection();
 public var contacterlist_data:ArrayCollection = new ArrayCollection();
 
 [Bindable]
+private var select_phonebook_id:int;
+[Bindable]
 private var select_phonebook_name:String;
 [Bindable]
 private var select_phonebook_remark:String;
@@ -531,6 +533,7 @@ private function open_manage_phonebook_view():void{
 	}else{
 		ViewStack_phone.selectedChild = viewpage_manage_phonebook;
 		var phonebook:Object = phonebook_data_grid.selectedItem;
+		select_phonebook_id = phonebook.uid;
 		select_phonebook_name = phonebook.name;
 		select_phonebook_remark = phonebook.remark;
 	}
@@ -1588,6 +1591,25 @@ private function processor_addphonebook(param:Object):void{
 		Alert.show("不能添加重复的通讯录");
 	}
 }
+
+private function request_managephonebook(name:String, remark:String): void{	
+	if ( name == null || name == "" ) {
+		Alert.show("通讯录名称不能为空，请重新输入");
+	} else {
+		this.request({q:'managephonebook',sid:this.session, id:select_phonebook_id, name:name, remark:remark});
+	}
+}
+
+private function processor_managephonebook(param:Object):void{	
+	if(param.errno == 0){
+		Alert.show("修改通讯录成功");
+		get_phone_book_info();
+		ViewStack_phone.selectedChild = viewpage_phonebook_welcome;
+	} else {
+		Alert.show('您没有修改这些信息的权限');
+	}
+}
+
 
 private function import_phone_number_from_notesbook():void{
 	this.request({q:'getaddresslistinfo', sid:this.session});
