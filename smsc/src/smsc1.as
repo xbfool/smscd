@@ -1683,10 +1683,55 @@ private function completePhoneManageHandler(event:Event):void
 	adds_array = adds.match(/1[3458]\d{9}/g);
 }
 
-private function show_addresslist_data():void
+private function show_phone_data_list():void
 {
 	ViewStack_phone.selectedChild = viewpage_phone_list;
-//	Alert.show("click ok.");
+	if(phonebook_data_grid.selectedItem == null || 
+		phonebook_data_grid.selectedItem.name == '' || 
+		phonebook_data_grid.selectedItem.name == null){
+		Alert.show('请选择一个通讯录');
+	} else {
+		var id:String = phonebook_data_grid.selectedItem.uid;
+		this.request({q:'getphonelistdata', sid:this.session, id:id});
+	}
+}
+
+private function getMobileType(mobile:String): String{	
+	var pattern:RegExp = /1[3458]\d{9}/;
+	var result:Boolean = pattern.test(mobile);
+	if ( !result ) {
+		return null;
+	}
+		
+	var prefix:String = mobile.substr(0, 3);
+	for ( var i:int =0; i < cm_list.length; i++ ) {
+		if ( prefix == cm_list[i].label) 
+			return "移动";
+	}
+	for ( var j:int =0; j < cu_list.length; j++ ) {
+		if ( prefix == cu_list[j].label) 
+			return "电信";
+	}
+	for ( var k:int =0; k < ct_list.length; k++ ) {
+		if ( prefix == ct_list[k].label) 
+			return "联通";
+	}
+	return null;
+}
+
+private function processor_getphonelistdata(param:Object): void {	
+	var dp:Array = new Array;
+	for (var j:int = 0;j < param.list.length; j++){
+		var co:Object = param.list[j];
+		co.selected = 0;
+		co.mobiletype = getMobileType(co.mobile);
+		if ( co.mobiletype == null ) {
+			continue;
+		}
+		
+		dp.push(co);
+	}
+	phone_list_data.source = dp;
 }
 
 private function add_new_phone_info():void

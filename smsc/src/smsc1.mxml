@@ -488,7 +488,7 @@
 									<mx:Label text="通讯录列表" fontWeight="bold"/>
 									<mx:DataGrid width="100%" height="80%" id="phonebook_data_grid" dataProvider="{phonebook_data}"
 												 draggableColumns="false" resizableColumns="false" editable="true"
-												 rowHeight="30" variableRowHeight="false" buttonMode="true" click="show_addresslist_data()"
+												 rowHeight="30" variableRowHeight="false" buttonMode="true" click="show_phone_data_list()"
 												 >
 										<mx:columns >				
 											<!-- You can define an inline component as the ItemRenderer for a DataGrid column -->

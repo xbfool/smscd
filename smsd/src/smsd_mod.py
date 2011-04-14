@@ -16,6 +16,7 @@ from user import user
 from message import message
 import phonenumber
 from phonebook import phonebook
+from phone import phone
 from addresslist import addresslist
 
 import sys
@@ -1147,6 +1148,19 @@ class smsd(object):
             new_addresslist.deleteOne(uid, name)
     
         return 0,  {'rtype':'deleteaddresslist', 'errno':0}
+    
+    def processor_getphonelistdata(self, user, query):
+        if 'id' not in query:
+            return False
+        
+        uid = user.uid
+        phone.set_db(self.db, 'phone')
+        phonebook_uid = query['id']
+        phones = phone.load('phonebook_uid = %s', phonebook_uid)   
+        l = []
+        for list in phones:
+            l.append(list.to_json())
+        return 0,  {'rtype':'getphonelistdata', 'list':l}
     
 def wsgiref_daemon():
     port = 8082
