@@ -179,6 +179,16 @@ private var select_phonebook_id:int;
 private var select_phonebook_name:String;
 [Bindable]
 private var select_phonebook_remark:String;
+[Bindable]
+private var select_phone_id:int;
+[Bindable]
+private var select_phone_name:String;
+[Bindable]
+private var select_phone_companyname:String;
+[Bindable]
+private var select_phone_mobile:String;
+[Bindable]
+private var select_phone_title:String;
 
 private function init():void {
 	login_user.setFocus();
@@ -541,6 +551,12 @@ private function open_manage_phonebook_view():void{
 }
 
 private function open_add_new_phone_view():void{
+	select_phonebook_id = phonebook_data_grid.selectedItem.uid;
+	select_phone_id = 0;
+	select_phone_name = "";
+	select_phone_companyname = "";
+	select_phone_mobile = "";
+	select_phone_title = "";
 	ViewStack_phone.selectedChild = viewpage_add_phone;
 }
 
@@ -1573,6 +1589,29 @@ private function processor_getphonebookinfo(param:Object): void {
 		dp.push(co);
 	}
 	phonebook_data.source = dp;
+}
+
+private function request_addphone(name:String, companyname:String, mobile:String, title:String): void {
+	if ( mobile == null || mobile == "" ) {
+		Alert.show("联系人电话不能为空，请重新输入");
+	} else {
+		//var id:String = phonebook_data_grid.selectedItem.uid;
+		var mobiletype:String = getMobileType(mobile);
+		if ( mobiletype == null ) {
+			Alert.show("联系人电话不正确，请重新输入");
+			return;
+		}
+		this.request({q:'addphone',sid:this.session, phonebook_id:select_phonebook_id, name:name, companyname:companyname, mobile:mobile, title:title});
+	}
+}
+
+private function processor_addphone(param:Object):void{
+	if(param.errno == 0){
+		Alert.show("添加联系人成功");
+		show_phone_data_list();
+	}else if(param.errno == 1){
+		Alert.show("不能添加重复的联系人");
+	}
 }
 
 private function request_addphonebook(name:String, remark:String): void {

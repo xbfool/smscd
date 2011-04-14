@@ -1162,6 +1162,25 @@ class smsd(object):
             l.append(list.to_json())
         return 0,  {'rtype':'getphonelistdata', 'list':l}
     
+    def processor_addphone(self, user, query):
+        #{'q':'addphonebook', 'sid': sid, 'name':name, 'remark':remark}  
+        if ('phonebook_id' not in query or'name' not in query 
+            or 'companyname' not in query or 'mobile' not in query 
+            or 'title' not in query):
+            return False      
+        
+        phone.set_db(self.db, 'phone')
+        phonebook_uid = query['phonebook_id']
+        name = query['name']
+        companyname = query['companyname']
+        mobile = query['mobile']
+        title = query['title']
+        
+                        
+        new_phone = phone()
+        new_phone.new(phonebook_uid, name, companyname, title, mobile)        
+        return 0, {'rtype':'addphone', 'errno' : 0} #成功
+    
 def wsgiref_daemon():
     port = 8082
     from wsgiref.simple_server import make_server

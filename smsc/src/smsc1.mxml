@@ -563,16 +563,15 @@
 										<mx:VBox id = "viewpage_add_phone">											
 											<mx:Label text="新增联系人" width="120"  textAlign="center" fontWeight="bold"/>
 											<mx:Label text="姓名：" />
-											<mx:TextInput id="phone_new_name" />
+											<mx:TextInput id="phone_new_name" text="{select_phone_name}"/>
 											<mx:Label text="单位名称：" />
-											<mx:TextInput id="phone_new_companyname" />
+											<mx:TextInput id="phone_new_companyname" text="{select_phone_companyname}"/>
 											<mx:Label text="联系电话：" />
-											<mx:TextInput id="phone_new_phone" />
+											<mx:TextInput id="phone_new_mobile" text="{select_phone_mobile}"/>
 											<mx:Label text="职称：" />
-											<mx:TextInput id="phone_new_title" />
+											<mx:TextInput id="phone_new_title" text="{select_phone_title}"/>
 											<mx:HBox width="100%">
-												<mx:Button label="添加" click="{alert_not_impl()}" />
-												<mx:Button label="重写" click="{alert_not_impl()}" />
+												<mx:Button label="添加" click="{request_addphone(phone_new_name.text, phone_new_companyname.text, phone_new_mobile.text, phone_new_title.text)}" />
 												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewpage_phone_list}" />
 											</mx:HBox>
 										</mx:VBox>
@@ -588,7 +587,6 @@
 											<mx:TextInput id="phone_manage_title" />
 											<mx:HBox width="100%">
 												<mx:Button label="添加" click="{alert_not_impl()}" />
-												<mx:Button label="重写" click="{alert_not_impl()}" />
 												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewpage_phone_list}" />
 											</mx:HBox>
 										</mx:VBox>
