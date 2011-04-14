@@ -560,8 +560,21 @@ private function open_add_new_phone_view():void{
 	ViewStack_phone.selectedChild = viewpage_add_phone;
 }
 
-private function open_manage_phone_view():void{
-	ViewStack_phone.selectedChild = viewpage_manage_phone;
+private function open_manage_phone_view():void{	
+	if(contacterlist_data_grid.selectedItem == null || 
+		contacterlist_data_grid.selectedItem.name == '' || 
+		contacterlist_data_grid.selectedItem.name == null){
+		Alert.show('请选择一个联系人');
+	}else{
+		ViewStack_phone.selectedChild = viewpage_manage_phone;
+		select_phonebook_id = phonebook_data_grid.selectedItem.uid;
+		var phone:Object = contacterlist_data_grid.selectedItem;
+		select_phone_id = phone.uid;
+		select_phone_name = phone.name;
+		select_phone_companyname = phone.companyname;
+		select_phone_mobile = phone.mobile;
+		select_phone_title = phone.title;
+	}
 }
 
 private function open_add_user_view():void{
@@ -1595,7 +1608,6 @@ private function request_addphone(name:String, companyname:String, mobile:String
 	if ( mobile == null || mobile == "" ) {
 		Alert.show("联系人电话不能为空，请重新输入");
 	} else {
-		//var id:String = phonebook_data_grid.selectedItem.uid;
 		var mobiletype:String = getMobileType(mobile);
 		if ( mobiletype == null ) {
 			Alert.show("联系人电话不正确，请重新输入");
@@ -1611,6 +1623,28 @@ private function processor_addphone(param:Object):void{
 		show_phone_data_list();
 	}else if(param.errno == 1){
 		Alert.show("不能添加重复的联系人");
+	}
+}
+
+private function request_managephone(name:String, companyname:String, mobile:String, title:String): void{	
+	if ( name == null || name == "" ) {
+		Alert.show("联系人电话不能为空，请重新输入");
+	} else {
+		var mobiletype:String = getMobileType(mobile);
+		if ( mobiletype == null ) {
+			Alert.show("联系人电话不正确，请重新输入");
+			return;
+		}
+		this.request({q:'managephone',sid:this.session, id:select_phone_id, phonebook_id:select_phonebook_id, name:name, companyname:companyname, mobile:mobile, title:title});
+	}
+}
+
+private function processor_managephone(param:Object):void{	
+	if(param.errno == 0){
+		Alert.show("修改联系人成功");
+		show_phone_data_list();
+	} else {
+		Alert.show('您没有修改这些信息的权限');
 	}
 }
 

@@ -49,4 +49,17 @@ class phone(dbobj):
         d['title'] = self.title
         d['mobile'] = self.mobile
         return d
+    
+    def loadByID(self, phonebook_uid, uid):
+        rows = self.db.raw_sql_query("select %s from %s where phonebook_uid = %s and uid = %s" % (self.fields, self.table_name, phonebook_uid, uid))
+        if rows != None and len(rows) ==1:
+            result = rows[0]
+            i = phone()
+            i.from_row(*result)
+            self.uid = i.uid      
+            self.phonebook_uid = i.phonebook_uid     
+            self.name = i.name
+            self.companyname = i.companyname  
+            self.title = i.title
+            self.mobile = i.mobile
         

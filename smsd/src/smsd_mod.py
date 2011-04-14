@@ -1163,7 +1163,8 @@ class smsd(object):
         return 0,  {'rtype':'getphonelistdata', 'list':l}
     
     def processor_addphone(self, user, query):
-        #{'q':'addphonebook', 'sid': sid, 'name':name, 'remark':remark}  
+        #{'q':'addphone', 'sid': sid, 'phonebook_id':phonebook_id, 
+        # 'name':name, 'companyname':companyname, 'title':title, 'mobile':mobile}  
         if ('phonebook_id' not in query or'name' not in query 
             or 'companyname' not in query or 'mobile' not in query 
             or 'title' not in query):
@@ -1180,6 +1181,26 @@ class smsd(object):
         new_phone = phone()
         new_phone.new(phonebook_uid, name, companyname, title, mobile)        
         return 0, {'rtype':'addphone', 'errno' : 0} #成功
+    
+    def processor_managephone(self, user, query):
+        #{'q':'addphone', 'sid': sid, 'id':phone_id, 'phonebook_id':phonebook_id, 
+        # 'name':name, 'companyname':companyname, 'title':title, 'mobile':mobile} 
+        if ('id' not in query or 'phonebook_id' not in query or'name' not in query 
+            or 'companyname' not in query or 'mobile' not in query 
+            or 'title' not in query):
+            return False      
+        
+        phone_id = query['id']
+        phonebook_id = query['phonebook_id']
+        phone.set_db(self.db, "phone")
+        phone_old = phone()
+        phone_old.loadByID(phonebook_id, phone_id)
+        phone_old.name = query['name']
+        phone_old.companyname = query['companyname']
+        phone_old.mobile = query['mobile']
+        phone_old.title = query['title']
+        phone_old.save('name,companyname,mobile,title')
+        return 0, {'rtype':'managephone', 'errno' : 0} #成功        
     
 def wsgiref_daemon():
     port = 8082
