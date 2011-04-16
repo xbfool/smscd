@@ -484,8 +484,16 @@
 									   visible="true" borderColor="0x000000" borderStyle="solid">
 								<mx:Panel id="panel" width="30%" height="100%" 
 										  paddingTop="0" paddingRight="0" paddingBottom="0" paddingLeft="0"
-										  horizontalAlign="center" verticalAlign="top" cornerRadius="0">
-									<mx:Label text="通讯录列表" fontWeight="bold"/>
+										  horizontalAlign="center" verticalAlign="top" cornerRadius="0">	
+									<mx:VBox paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10"
+											 borderStyle="solid" width="100%">
+										<mx:Label text="通讯录列表" fontWeight="bold"/>
+										<mx:HBox width="100%">
+											<mx:Button label="添加" click="open_add_new_phonebook_view()" />
+											<mx:Button label="修改" click="open_manage_phonebook_view()" />
+											<mx:Button label="删除" click="request_delete_phonebook()" />
+										</mx:HBox>
+									</mx:VBox>
 									<mx:DataGrid width="100%" height="80%" id="phonebook_data_grid" dataProvider="{phonebook_data}"
 												 draggableColumns="false" resizableColumns="false" editable="true"
 												 rowHeight="30" variableRowHeight="false" buttonMode="true" click="show_phone_data_list()"
@@ -496,11 +504,6 @@
 											<mx:DataGridColumn width="80" dataField="remark" itemRenderer="mx.controls.Text" headerText="通讯录备注" editable="false"/>
 										</mx:columns>
 									</mx:DataGrid>
-									<mx:HBox width="100%">
-										<mx:Button label="添加" click="open_add_new_phonebook_view()" />
-										<mx:Button label="修改" click="open_manage_phonebook_view()" />
-										<mx:Button label="删除" click="request_delete_phonebook()" />
-									</mx:HBox>
 								</mx:Panel>
 								<mx:Panel right="0" height = "100%" width="70%"
 										  paddingTop = "0" paddingLeft="0" paddingRight="0" paddingBottom="0">
@@ -509,6 +512,20 @@
 										</mx:VBox>
 										<mx:VBox id = "viewpage_phone_list">
 											<mx:Label text="联系人列表" fontWeight="bold"/>
+											<mx:HBox width="100%">
+												<mx:Button label="添加" click="{open_add_new_phone_view()}" />
+												<mx:Button label="修改" click="{open_manage_phone_view()}" />
+												<mx:Button label="删除" click="{request_delete_phonelist()}" />
+												<mx:Button label="发送" click="{phonelist_send_msg()}" />
+												<mx:Button label="全选" click="{select_all_phone_list()}" />
+												<mx:Button label="全部取消" click="{select_none_phone_list()}" />
+												<mx:Label text="查询"/>
+												<mx:TextInput id="phone_list_query" />
+												<mx:Button label="查询" click="{report_phone_list_query(phone_list_query.text)}" />
+												<mx:Button label="返回" id="phone_list_back_btn" click="{phone_list_back()}" visible="false"/>
+											</mx:HBox>
+											<mx:HBox width="100%">
+											</mx:HBox>
 											<mx:DataGrid width="100%" height="80%" id="contacterlist_data_grid" dataProvider="{phone_list_data}"
 														 draggableColumns="false" resizableColumns="false" editable="true"
 														 rowHeight="30" variableRowHeight="false"
@@ -530,17 +547,6 @@
 																	   />								
 												</mx:columns>
 											</mx:DataGrid>	
-											<mx:HBox width="100%">
-												<mx:Button label="添加" click="open_add_new_phone_view()" />
-												<mx:Button label="修改" click="open_manage_phone_view()" />
-												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewpage_phonebook_welcome}" />
-											</mx:HBox>
-											<mx:HBox width="100%">
-												<mx:Button label="全选" click="select_all_phone_list()" />
-												<mx:Button label="全部取消" click="select_none_phone_list()" />
-												<mx:Button label="删除" click="{request_delete_phonelist()}" />
-												<mx:Button label="发送" click="{alert_not_impl()}" />
-											</mx:HBox>
 										</mx:VBox>
 										<mx:VBox id = "viewpage_add_phonebook">											
 											<mx:Label text="新增通讯录" width="120"  textAlign="center" fontWeight="bold"/>

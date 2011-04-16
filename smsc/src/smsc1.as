@@ -1659,6 +1659,45 @@ private function select_none_phone_list():void{
 	phone_list_data.source = dp;
 }
 
+private function checkPhoneIsQuery(phoneObj:Object, query:String): Boolean{
+	if ( phoneObj.name.indexOf(query) != -1 ) {
+		return true;
+	}
+	if ( phoneObj.companyname.indexOf(query) != -1 ) {
+		return true;
+	}
+	if ( phoneObj.title.indexOf(query) != -1 ) {
+		return true;
+	}
+	if ( phoneObj.mobiletype.indexOf(query) != -1 ) {
+		return true;
+	}
+	if ( phoneObj.mobile.indexOf(query) != -1 ) {
+		return true;
+	}
+	return false;
+}
+
+private function report_phone_list_query(query:String):void{
+	var source:Array = phone_list_data.source;
+	var dp:Array = new Array();
+	for ( var i:int = 0; i < source.length; i++) {
+		var co:Object = source[i];
+		if ( checkPhoneIsQuery(co, query) ){
+			dp.push(co);
+			continue
+		}
+	}
+	phone_list_data.source = dp;
+	phone_list_back_btn.visible=true;
+	
+}
+
+private function phone_list_back():void{
+	show_phone_data_list();
+	phone_list_back_btn.visible=false;	
+}
+
 private function get_phone_book_info():void{
 	this.request({q:'getphonebookinfo', sid:this.session});
 }
@@ -1696,6 +1735,25 @@ private function processor_deletephonelist(param:Object): void {
 	}
 }
 
+private function phonelist_send_msg(): void {	
+	var source:Array = phone_list_data.source;
+	var dp:Array = new Array;
+	for (var i:int = 0; i < source.length; i++) {
+		var co:Object = source[i];
+		if ( co.check == true ) {
+			co.number = co.mobile;
+			co.count = 1;
+			dp.push(co);
+		}
+	}
+	
+	if ( dp.length == 0 ) {
+		return;
+	}
+	change_view_stack("message_send");
+	message_phone_number.source = dp;
+	check_char_count(message_content_input, message_content_count, get_address_str());
+}
 
 private function request_add_phone(name:String, companyname:String, mobile:String, title:String): void {
 	if ( mobile == null || mobile == "" ) {
