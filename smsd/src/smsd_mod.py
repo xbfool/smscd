@@ -1202,6 +1202,19 @@ class smsd(object):
         phone_old.save('name,companyname,mobile,title')
         return 0, {'rtype':'managephone', 'errno' : 0} #成功        
     
+    def processor_deletephonelist(self, user, query):
+        #{'q':'deletephonelist', 'sid':sid, 'phonelist':phonelist}
+        if ( 'phonelist' not in query ):
+            return False
+        
+        list = query['phonelist']
+        for uid in list:
+            phone.set_db(self.db, 'phone')
+            phone_old = phone()
+            phone_old.uid = uid
+            phone_old.delete()
+        return 0,{'rtype':'deletephonelist', 'errno':0} #成功
+    
 def wsgiref_daemon():
     port = 8082
     from wsgiref.simple_server import make_server

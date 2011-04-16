@@ -499,7 +499,7 @@
 									<mx:HBox width="100%">
 										<mx:Button label="添加" click="open_add_new_phonebook_view()" />
 										<mx:Button label="修改" click="open_manage_phonebook_view()" />
-										<mx:Button label="删除" click="request_deletphonebook()" />
+										<mx:Button label="删除" click="request_delete_phonebook()" />
 									</mx:HBox>
 								</mx:Panel>
 								<mx:Panel right="0" height = "100%" width="70%"
@@ -533,9 +533,13 @@
 											<mx:HBox width="100%">
 												<mx:Button label="添加" click="open_add_new_phone_view()" />
 												<mx:Button label="修改" click="open_manage_phone_view()" />
-												<mx:Button label="删除" click="{alert_not_impl()}" />
-												<mx:Button label="发送" click="{alert_not_impl()}" />
 												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewpage_phonebook_welcome}" />
+											</mx:HBox>
+											<mx:HBox width="100%">
+												<mx:Button label="全选" click="select_all_phone_list()" />
+												<mx:Button label="全部取消" click="select_none_phone_list()" />
+												<mx:Button label="删除" click="{request_delete_phonelist()}" />
+												<mx:Button label="发送" click="{alert_not_impl()}" />
 											</mx:HBox>
 										</mx:VBox>
 										<mx:VBox id = "viewpage_add_phonebook">											
@@ -545,7 +549,7 @@
 											<mx:Label text="备注：" />
 											<mx:TextArea id="phonebook_add_remark" text="{select_phonebook_remark}" height="100" width="400" /> 
 											<mx:HBox width="100%">
-												<mx:Button label="添加" click="{request_addphonebook(phoenbook_add_name.text, phonebook_add_remark.text)}" />
+												<mx:Button label="添加" click="{request_add_phonebook(phoenbook_add_name.text, phonebook_add_remark.text)}" />
 												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewpage_phonebook_welcome}" />
 											</mx:HBox>
 										</mx:VBox>
@@ -556,7 +560,7 @@
 											<mx:Label text="备注：" />
 											<mx:TextArea id="phonebook_manage_remark" text="{select_phonebook_remark}" height="100" width="400" /> 
 											<mx:HBox width="100%">
-												<mx:Button label="修改" click="{request_managephonebook(phonebook_manage_name.text,phonebook_manage_remark.text)}" />
+												<mx:Button label="修改" click="{request_manage_phonebook(phonebook_manage_name.text,phonebook_manage_remark.text)}" />
 												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewpage_phonebook_welcome}" />
 											</mx:HBox>
 										</mx:VBox>
@@ -571,7 +575,7 @@
 											<mx:Label text="职称：" />
 											<mx:TextInput id="phone_new_title" text="{select_phone_title}"/>
 											<mx:HBox width="100%">
-												<mx:Button label="添加" click="{request_addphone(phone_new_name.text, phone_new_companyname.text, phone_new_mobile.text, phone_new_title.text)}" />
+												<mx:Button label="添加" click="{request_add_phone(phone_new_name.text, phone_new_companyname.text, phone_new_mobile.text, phone_new_title.text)}" />
 												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewpage_phone_list}" />
 											</mx:HBox>
 										</mx:VBox>
@@ -586,7 +590,7 @@
 											<mx:Label text="职称：" />
 											<mx:TextInput id="phone_manage_title" text="{select_phone_title}"/>
 											<mx:HBox width="100%">
-												<mx:Button label="修改" click="{request_managephone(phone_manage_name.text,phone_manage_companyname.text, phone_manage_mobile.text, phone_manage_title.text)}" />
+												<mx:Button label="修改" click="{request_manage_phone(phone_manage_name.text,phone_manage_companyname.text, phone_manage_mobile.text, phone_manage_title.text)}" />
 												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewpage_phone_list}" />
 											</mx:HBox>
 										</mx:VBox>
