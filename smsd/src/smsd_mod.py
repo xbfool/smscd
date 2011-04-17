@@ -1162,6 +1162,19 @@ class smsd(object):
             l.append(list.to_json())
         return 0,  {'rtype':'getphonelistdata', 'list':l}
     
+    def processor_getallphoneinfo(self, user, query):
+        uid = user.uid
+        phonebook.set_db(self.db, 'phonebook')
+        phonebooks = phonebook.load('user_uid = %s', uid)        
+        l = []
+        phone.set_db(self.db, 'phone')
+        for list in phonebooks:
+            phonebook_uid = list.uid
+            phones = phone.load('phonebook_uid = %s', phonebook_uid)   
+            for obj in phones:
+                l.append(obj.to_json())
+        return 0,  {'rtype':'getallphoneinfo', 'list':l}        
+    
     def processor_addphone(self, user, query):
         #{'q':'addphone', 'sid': sid, 'phonebook_id':phonebook_id, 
         # 'name':name, 'companyname':companyname, 'title':title, 'mobile':mobile}  

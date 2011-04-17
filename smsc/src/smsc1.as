@@ -174,6 +174,8 @@ public var phone_list_data:ArrayCollection = new ArrayCollection();
 public var contacterlist_data:ArrayCollection = new ArrayCollection();
 
 [Bindable]
+public var phonebook_list:ArrayCollection = new ArrayCollection();
+[Bindable]
 private var select_phonebook_id:int;
 [Bindable]
 private var select_phonebook_name:String;
@@ -1689,8 +1691,7 @@ private function report_phone_list_query(query:String):void{
 		}
 	}
 	phone_list_data.source = dp;
-	phone_list_back_btn.visible=true;
-	
+	phone_list_back_btn.visible=true;	
 }
 
 private function phone_list_back():void{
@@ -1703,10 +1704,13 @@ private function get_phone_book_info():void{
 }
 
 private function processor_getphonebookinfo(param:Object): void {	
+	phonebook_list.removeAll();
+	phonebook_list.addItem({label:"全部", data:0});
 	var dp:Array = new Array;
 	for (var j:int = 0;j < param.list.length; j++){
 		var co:Object = param.list[j];
 		dp.push(co);
+		phonebook_list.addItem({label:co.name, data:co.uid});
 	}
 	phonebook_data.source = dp;
 }
@@ -1854,6 +1858,61 @@ private function processor_deletephonebook(param:Object):void{
 	} else {
 		Alert.show('您没有删除这些信息的权限');
 	}
+}
+
+private var allphoneinfos:Array = new Array();
+
+private function select_phone_number_from_phonebook():void{
+	ViewStack_select_phone.selectedChild = viewpage_select_phone;
+	get_phone_book_info();
+	get_all_phone_info();
+}
+
+private function get_all_phone_info():void{
+	this.request({q:'getallphoneinfo', sid:this.session});
+}
+
+private function processor_getallphoneinfo(param:Object):void{
+	var dp:Array = new Array;
+	for ( var i:int = 0; i < param.list.length; i++){
+		var co:Object = param.list[i];
+		co.check = false;
+		co.mobiletype = getMobileType(co.mobile);
+		if ( co.mobiletype == null ) {
+			continue;
+		}
+		dp.push(co);
+	}
+	phone_list_data.source = dp;
+	allphoneinfos = dp;
+}
+
+private function select_phonebook_list(value:String): void {
+	var dp:Array = new Array;
+	var select:int = int(value);
+	for ( var i:int = 0; i < allphoneinfos.length; i++ ) {
+		var co:Object = allphoneinfos[i];
+		if ( select != 0 && co.phonebook_uid != select) {
+			continue;
+		}
+		dp.push(co);		
+	}
+	phone_list_data.source = dp;
+}
+
+private function select_send_msg():void{	
+	var source:Array = phone_list_data.source;
+	for (var i:int = 0; i < source.length; i++) {
+		var co:Object = source[i];
+		if ( co.check == true ) {
+			co.number = co.mobile;
+			co.count = 1;
+			message_phone_number.addItem(co);
+		}
+	}
+	
+	ViewStack_select_phone.selectedChild = viewpage_select_phone_welcome;
+	check_char_count(message_content_input, message_content_count, get_address_str());
 }
 
 private function import_phone_number_from_notesbook():void{
