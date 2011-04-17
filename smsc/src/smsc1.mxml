@@ -162,7 +162,7 @@
 										<mx:Button label="过滤重号" click="{filter_same_phone_number()}"/>	
 										<mx:Button label="清空号码" click="{erase_allphonenumber()}"/>
 										<mx:Button label="删除号码" click="{delete_phonenumber()}"/>
-										<mx:Button label="保存号码" click="{save_temp_phonenumber(message_phone_number)}"/>
+										<mx:Button label="保存号码" click="{open_save_temp_view()}"/>
 									</mx:HBox>
 									
 									<mx:DataGrid height="100%" id="message_phone_number_grid" dataProvider="{message_phone_number}"
@@ -195,7 +195,32 @@
 										  paddingTop = "0" paddingLeft="0" paddingRight="0" paddingBottom="0">									
 									<mx:ViewStack id="ViewStack_select_phone"  width="100%" height="100%" color="0x323232">										
 										<mx:VBox id="viewpage_select_phone_welcome">
-										</mx:VBox>							
+										</mx:VBox>
+										<mx:VBox id="viewpage_save_temp_phonelist">											
+											<mx:HBox width ="100%" textAlign="center" horizontalAlign="left">	
+												<mx:Label text="通讯录名称"/>
+												<mx:TextInput id="save_temp_phonebook_name" />
+												<mx:Button label="全选" click="{select_all_phone_list()}"/>
+												<mx:Button label="全部取消" click="{select_none_phone_list()}"/>
+												<mx:Button label="保存" click="{save_temp_phonebook(save_temp_phonebook_name.text)}" />
+											</mx:HBox>
+											<mx:DataGrid height="100%" id="save_temp_phone_grid" dataProvider="{phone_list_data}"
+														 draggableColumns="false" resizableColumns="false"														 
+														 editable="false"
+														 >
+												<mx:columns>
+													<mx:DataGridColumn width="200" dataField="number" itemRenderer="mx.controls.Text" headerText="手机号"/>
+													<mx:DataGridColumn dataField="check" 
+																	   itemRenderer="mx.controls.CheckBox" 
+																	   rendererIsEditor="true" 
+																	   editable="true" 
+																	   editorDataField="selected"
+																	   headerText="选择"
+																	   width="50"
+																	   />
+												</mx:columns>
+											</mx:DataGrid>
+										</mx:VBox>
 										<mx:VBox id="viewpage_select_phone">		
 											<mx:VBox width="100%"  height="100%" paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10"
 													 borderStyle="solid">

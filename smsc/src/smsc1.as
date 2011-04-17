@@ -1515,15 +1515,32 @@ private function save_phonenumber(phonelist_name:String, address:Array):void{
 	this.request_addaddresslist(phonelist_name, add_str);
 }
 
-private function save_temp_phonenumber(phone_number:ArrayCollection):void{	
-		var source:Array = phone_number.source;
-	if ( source.length == 0 ) {
-		return;
+private function open_save_temp_view():void {
+	ViewStack_select_phone.selectedChild = viewpage_save_temp_phonelist;
+	var dp:Array = new Array();
+	for ( var i:int = 0; i < message_phone_number.length; ++i ) {
+		var co:Object = message_phone_number[i];
+		co.mobile = co.number;
+		co.check = false;
+		dp.push(co);
 	}
+	phone_list_data.source = dp;
+}
 
-	var address:Array = source.map(toAddress);
-	var add_str:String = address.join(";");
-	this.request_addaddresslist("temp", add_str);
+private function save_temp_phonebook(phonebook_name:String):void{		
+	var dp:Array = phone_list_data.source.filter(is_selected);
+	var address:Array = dp.map(toAddress);
+	var numbers:String = address.join(";");
+	this.request({q:'addphonelist', sid:this.session, phonebook_name:phonebook_name, phonelist:numbers});
+}
+
+private function processor_addphonelist(param:Object):void{
+	if ( param.errno != 0 ) {
+		Alert.show("遇到未知错误。");		
+	} else {
+		Alert.show("保存号码成功。");
+	}
+	ViewStack_select_phone.selectedChild = viewpage_select_phone_welcome;
 }
 
 private function request_addaddresslist(phonelist_name:String, number:String):void{
@@ -1876,7 +1893,7 @@ private function processor_getallphoneinfo(param:Object):void{
 	var dp:Array = new Array;
 	for ( var i:int = 0; i < param.list.length; i++){
 		var co:Object = param.list[i];
-		co.check = false;
+		co.check = true;
 		co.mobiletype = getMobileType(co.mobile);
 		if ( co.mobiletype == null ) {
 			continue;
@@ -1907,6 +1924,7 @@ private function select_send_msg():void{
 		if ( co.check == true ) {
 			co.number = co.mobile;
 			co.count = 1;
+			co.type = PHONE_NUMBER;
 			message_phone_number.addItem(co);
 		}
 	}

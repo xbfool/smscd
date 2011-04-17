@@ -1228,6 +1228,31 @@ class smsd(object):
             phone_old.delete()
         return 0,{'rtype':'deletephonelist', 'errno':0} #成功
     
+    def processor_addphonelist(self, user, query):
+        #{'q':'addphonelist', 'sid':sid, 'phonebook_name':phonebook_name, 'phonelist':addrs}
+        if ( 'phonebook_name' not in query or 'phonelist' not in query):
+            return False
+        
+        uid = user.uid
+        phonebook.set_db(self.db, 'phonebook')
+        phonebook_name = query['phonebook_name']
+        remark = ''
+                        
+        new_phonebook = phonebook()
+        new_phonebook.new(uid, phonebook_name, remark)
+        phonebook_uid = new_phonebook.uid
+        
+        phone.set_db(self.db, 'phone')
+        phonelist = query['phonelist']
+        list = phonelist.split(';')
+        for mobile in list:
+            name = ''
+            companyname = ''
+            title = ''                            
+            new_phone = phone()
+            new_phone.new(phonebook_uid, name, companyname, title, mobile)
+        return 0,{'rtype':'addphonelist', 'errno':0} #成功 
+    
 def wsgiref_daemon():
     port = 8082
     from wsgiref.simple_server import make_server
