@@ -1093,6 +1093,9 @@ class smsd(object):
         id = query['id']
         phonebook.set_db(self.db, 'phonebook')
         phonebook_old = phonebook()
+        phone.set_db(self.db, 'phone')
+        phone_old = phone()
+        phone_old.deleteByPhonebookUid(id)
         phonebook_old.loadByID(uid, id)
         phonebook_old.delete()
     

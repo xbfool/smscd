@@ -62,4 +62,7 @@ class phone(dbobj):
             self.companyname = i.companyname  
             self.title = i.title
             self.mobile = i.mobile
+    
+    def deleteByPhonebookUid(self, phonebook_uid):
+        self.db.raw_sql_query("delete from %s where phonebook_uid = %s" % (self.table_name, phonebook_uid))
         
