@@ -465,7 +465,7 @@ class smsd(object):
         p = 0
         if len(msgcontent) == 0:
             p = 0
-        elif len(msgcontent) <= 70 and channel != 'shanxintong_01':
+        elif len(msgcontent) <= 70:
             p = 1
         elif len(msgcontent) <= 500:
             p = (len(msgcontent) - 1) / 65 + 1
