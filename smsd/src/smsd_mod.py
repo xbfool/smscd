@@ -15,7 +15,10 @@ from dbobj import dbobj
 from user import user
 from message import message
 import phonenumber
+from phonebook import phonebook
+from phone import phone
 from addresslist import addresslist
+
 import sys
 if __name__ != '__main__':
     smsd_path = '/home/jimmyz/smsd/src'
@@ -1063,6 +1066,61 @@ class smsd(object):
         
         return 0,  {'rtype':'listlog', 'l':l}
     
+    def processor_getphonebookinfo(self, user, query):
+        uid = user.uid
+        phonebook.set_db(self.db, 'phonebook')
+        phonebooks = phonebook.load('user_uid = %s', uid)        
+        l = []
+        for list in phonebooks:
+            l.append(list.to_json())
+        return 0,  {'rtype':'getphonebookinfo', 'list':l}
+        
+    def processor_addphonebook(self, user, query):
+        #{'q':'addphonebook', 'sid': sid, 'name':name, 'remark':remark}  
+        if ('name' not in query or 'remark' not in query):
+            return False      
+        
+        uid = user.uid
+        phonebook.set_db(self.db, 'phonebook')
+        name = query['name']
+        remark = query['remark']
+                        
+        new_phonebook = phonebook()
+        new_phonebook.new(uid, name, remark)        
+        return 0, {'rtype':'addphonebook', 'errno' : 0} #成功
+
+    def processor_managephonebook(self, user, query):
+        #{'q':'managephonebook', 'sid': sid, 'id':uid, 'name':name, 'remark':remark}  
+        
+        if ('id' not in query or 'name' not in query or 'remark' not in query):
+            return False      
+        
+        uid = user.uid
+        id = query['id']
+        phonebook.set_db(self.db, "phonebook")
+        phonebook_old = phonebook()
+        phonebook_old.loadByID(uid, id)
+        phonebook_old.name = query['name']
+        phonebook_old.remark = query['remark']
+        phonebook_old.save('name,remark')
+        return 0, {'rtype':'managephonebook', 'errno' : 0} #成功        
+    
+    def processor_deletephonebook(self, user, query):
+        if 'id' not in query:
+            return False
+        
+        uid = user.uid
+        id = query['id']
+        phonebook.set_db(self.db, 'phonebook')
+        phonebook_old = phonebook()
+        phone.set_db(self.db, 'phone')
+        phone_old = phone()
+        phone_old.deleteByPhonebookUid(id)
+        phonebook_old.loadByID(uid, id)
+        phonebook_old.delete()
+    
+        return 0,  {'rtype':'deletephonebook', 'errno':0}
+    
     def processor_getaddresslistinfo(self, user, query):
         uid = user.uid
         addresslist.set_db(self.db, 'address')
@@ -1113,6 +1171,110 @@ class smsd(object):
             new_addresslist.deleteOne(uid, name)
     
         return 0,  {'rtype':'deleteaddresslist', 'errno':0}
+    
+    def processor_getphonelistdata(self, user, query):
+        if 'id' not in query:
+            return False
+        
+        uid = user.uid
+        phone.set_db(self.db, 'phone')
+        phonebook_uid = query['id']
+        phones = phone.load('phonebook_uid = %s', phonebook_uid)   
+        l = []
+        for list in phones:
+            l.append(list.to_json())
+        return 0,  {'rtype':'getphonelistdata', 'list':l}
+    
+    def processor_getallphoneinfo(self, user, query):
+        uid = user.uid
+        phonebook.set_db(self.db, 'phonebook')
+        phonebooks = phonebook.load('user_uid = %s', uid)        
+        l = []
+        phone.set_db(self.db, 'phone')
+        for list in phonebooks:
+            phonebook_uid = list.uid
+            phones = phone.load('phonebook_uid = %s', phonebook_uid)   
+            for obj in phones:
+                l.append(obj.to_json())
+        return 0,  {'rtype':'getallphoneinfo', 'list':l}        
+    
+    def processor_addphone(self, user, query):
+        #{'q':'addphone', 'sid': sid, 'phonebook_id':phonebook_id, 
+        # 'name':name, 'companyname':companyname, 'title':title, 'mobile':mobile}  
+        if ('phonebook_id' not in query or'name' not in query 
+            or 'companyname' not in query or 'mobile' not in query 
+            or 'title' not in query):
+            return False      
+        
+        phone.set_db(self.db, 'phone')
+        phonebook_uid = query['phonebook_id']
+        name = query['name']
+        companyname = query['companyname']
+        mobile = query['mobile']
+        title = query['title']
+        
+                        
+        new_phone = phone()
+        new_phone.new(phonebook_uid, name, companyname, title, mobile)        
+        return 0, {'rtype':'addphone', 'errno' : 0} #成功
+    
+    def processor_managephone(self, user, query):
+        #{'q':'addphone', 'sid': sid, 'id':phone_id, 'phonebook_id':phonebook_id, 
+        # 'name':name, 'companyname':companyname, 'title':title, 'mobile':mobile} 
+        if ('id' not in query or 'phonebook_id' not in query or'name' not in query 
+            or 'companyname' not in query or 'mobile' not in query 
+            or 'title' not in query):
+            return False      
+        
+        phone_id = query['id']
+        phonebook_id = query['phonebook_id']
+        phone.set_db(self.db, "phone")
+        phone_old = phone()
+        phone_old.loadByID(phonebook_id, phone_id)
+        phone_old.name = query['name']
+        phone_old.companyname = query['companyname']
+        phone_old.mobile = query['mobile']
+        phone_old.title = query['title']
+        phone_old.save('name,companyname,mobile,title')
+        return 0, {'rtype':'managephone', 'errno' : 0} #成功        
+    
+    def processor_deletephonelist(self, user, query):
+        #{'q':'deletephonelist', 'sid':sid, 'phonelist':phonelist}
+        if ( 'phonelist' not in query ):
+            return False
+        
+        list = query['phonelist']
+        for uid in list:
+            phone.set_db(self.db, 'phone')
+            phone_old = phone()
+            phone_old.uid = uid
+            phone_old.delete()
+        return 0,{'rtype':'deletephonelist', 'errno':0} #成功
+    
+    def processor_addphonelist(self, user, query):
+        #{'q':'addphonelist', 'sid':sid, 'phonebook_name':phonebook_name, 'phonelist':addrs}
+        if ( 'phonebook_name' not in query or 'phonelist' not in query):
+            return False
+        
+        uid = user.uid
+        phonebook.set_db(self.db, 'phonebook')
+        phonebook_name = query['phonebook_name']
+        remark = ''
+                        
+        new_phonebook = phonebook()
+        new_phonebook.new(uid, phonebook_name, remark)
+        phonebook_uid = new_phonebook.uid
+        
+        phone.set_db(self.db, 'phone')
+        phonelist = query['phonelist']
+        list = phonelist.split(';')
+        for mobile in list:
+            name = ''
+            companyname = ''
+            title = ''                            
+            new_phone = phone()
+            new_phone.new(phonebook_uid, name, companyname, title, mobile)
+        return 0,{'rtype':'addphonelist', 'errno':0} #成功 
     
 def wsgiref_daemon():
     port = 8082

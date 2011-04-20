@@ -131,8 +131,9 @@
 									<mx:HBox>
 										<mx:TextInput id="message_new_number" />
 										<mx:Button label="添加"  click="{add_phonenumber(message_new_number.text)}"/>
-										<mx:Button label="从地址薄导入"  click="{import_phone_number_from_notesbook()}"/>
-										<mx:Button label="导入文件" click="{import_phone_number_from_file()}"/>
+										<mx:Button label="从通讯录选择"  click="{select_phone_number_from_phonebook()}"/>
+<!--										<mx:Button label="从地址薄导入"  click="{import_phone_number_from_notesbook()}"/>
+-->										<mx:Button label="导入文件" click="{import_phone_number_from_file()}"/>
 										<mx:Label text="号码文件为txt格式的文件"   />
 									</mx:HBox>
 								</mx:HBox >
@@ -143,46 +144,123 @@
 								</mx:HBox>
 							</mx:VBox>
 							</mx:VBox>
-							<mx:VBox width="100%"  height="100%" paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10"
-									 borderStyle="solid">
+							<mx:Canvas id = "view_send_phonelist" width="100%" height="100%" horizontalCenter="0" verticalCenter="0"
+									   visible="true" borderColor="0x000000" borderStyle="solid">
 								
-							
-							<mx:HBox width ="100%" textAlign="center" horizontalAlign="left">
-								<!--<mx:Button label="全部选择" click="{add_all_phonenumber()}"/>-->
+								<mx:Panel id="panel_send_phonelist" width="40%" height="100%" 
+										  paddingTop="0" paddingRight="0" paddingBottom="0" paddingLeft="0"
+										  horizontalAlign="center" verticalAlign="top" cornerRadius="0">	
+								<mx:VBox width="100%"  height="100%" paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10"
+										 borderStyle="solid">
+									
 								
-								
-								<!--<mx:Button label="过滤非手机号码" click="{filter_not_valid_phone_number()}"/>-->
-								<mx:Button label="过滤重号" click="{filter_same_phone_number()}"/>	
-								<mx:Button label="清空号码" click="{erase_allphonenumber()}"/>
-								<mx:Button label="删除号码" click="{delete_phonenumber()}"/>
-								<mx:Button label="保存号码" click="{save_temp_phonenumber(message_phone_number)}"/>
-							</mx:HBox>
-							
-							<mx:DataGrid height="100%" id="message_phone_number_grid" dataProvider="{message_phone_number}"
-										 draggableColumns="false" resizableColumns="false"
+									<mx:HBox width ="100%" textAlign="center" horizontalAlign="left">
+										<!--<mx:Button label="全部选择" click="{add_all_phonenumber()}"/>-->
 										
-										 editable="true"
-										 >
-								<mx:columns>				
-									<!-- You can define an inline component as the ItemRenderer for a DataGrid column -->
+										
+										<!--<mx:Button label="过滤非手机号码" click="{filter_not_valid_phone_number()}"/>-->
+										<mx:Button label="过滤重号" click="{filter_same_phone_number()}"/>	
+										<mx:Button label="清空号码" click="{erase_allphonenumber()}"/>
+										<mx:Button label="删除号码" click="{delete_phonenumber()}"/>
+										<mx:Button label="保存号码" click="{open_save_temp_view()}"/>
+									</mx:HBox>
 									
-									
-									<!--
-									<mx:DataGridColumn width="100" dataField="name" itemRenderer="mx.controls.Text" headerText="姓名"/>-->
-									<mx:DataGridColumn width="200" dataField="number" itemRenderer="mx.controls.Text" headerText="手机号码"/>
-									<mx:DataGridColumn width="200" dataField="count" itemRenderer="mx.controls.Text" headerText="号码个数"/>
-									<!--<mx:DataGridColumn dataField="message" itemRenderer="mx.controls.Text" headerText="短信内容"/>-->
-									<mx:DataGridColumn dataField="check" 
-													   itemRenderer="mx.controls.CheckBox" 
-													   rendererIsEditor="true" 
-													   editable="true" 
-													   editorDataField="selected"
-													   headerText="选择"
-													   width="50"
-													   />
-								</mx:columns>
-							</mx:DataGrid>
-							</mx:VBox>
+									<mx:DataGrid height="100%" id="message_phone_number_grid" dataProvider="{message_phone_number}"
+												 draggableColumns="false" resizableColumns="false"
+												
+												 editable="false"
+												 >
+										<mx:columns>				
+											<!-- You can define an inline component as the ItemRenderer for a DataGrid column -->
+											
+											
+											<!--
+											<mx:DataGridColumn width="100" dataField="name" itemRenderer="mx.controls.Text" headerText="姓名"/>-->
+											<mx:DataGridColumn width="200" dataField="number" itemRenderer="mx.controls.Text" headerText="手机号码"/>
+											<mx:DataGridColumn width="200" dataField="count" itemRenderer="mx.controls.Text" headerText="号码个数"/>
+											<!--<mx:DataGridColumn dataField="message" itemRenderer="mx.controls.Text" headerText="短信内容"/>-->
+											<mx:DataGridColumn dataField="check" 
+															   itemRenderer="mx.controls.CheckBox" 
+															   rendererIsEditor="true" 
+															   editable="true" 
+															   editorDataField="selected"
+															   headerText="选择"
+															   width="50"
+															   />
+										</mx:columns>
+									</mx:DataGrid>
+								</mx:VBox>
+								</mx:Panel>								
+								<mx:Panel right="0" height = "100%" width="60%"
+										  paddingTop = "0" paddingLeft="0" paddingRight="0" paddingBottom="0">									
+									<mx:ViewStack id="ViewStack_select_phone"  width="100%" height="100%" color="0x323232">										
+										<mx:VBox id="viewpage_select_phone_welcome">
+										</mx:VBox>
+										<mx:VBox id="viewpage_save_temp_phonelist">											
+											<mx:HBox width ="100%" textAlign="center" horizontalAlign="left">	
+												<mx:Label text="通讯录名称"/>
+												<mx:TextInput id="save_temp_phonebook_name" />
+												<mx:Button label="全选" click="{select_all_phone_list()}"/>
+												<mx:Button label="全部取消" click="{select_none_phone_list()}"/>
+												<mx:Button label="保存" click="{save_temp_phonebook(save_temp_phonebook_name.text)}" />
+											</mx:HBox>
+											<mx:DataGrid height="100%" id="save_temp_phone_grid" dataProvider="{phone_list_data}"
+														 draggableColumns="false" resizableColumns="false"														 
+														 editable="false"
+														 >
+												<mx:columns>
+													<mx:DataGridColumn width="200" dataField="number" itemRenderer="mx.controls.Text" headerText="手机号"/>
+													<mx:DataGridColumn dataField="check" 
+																	   itemRenderer="mx.controls.CheckBox" 
+																	   rendererIsEditor="true" 
+																	   editable="true" 
+																	   editorDataField="selected"
+																	   headerText="选择"
+																	   width="50"
+																	   />
+												</mx:columns>
+											</mx:DataGrid>
+										</mx:VBox>
+										<mx:VBox id="viewpage_select_phone">		
+											<mx:VBox width="100%"  height="100%" paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10"
+													 borderStyle="solid">
+																			
+												<mx:HBox width ="100%" textAlign="center" horizontalAlign="left">													
+													<mx:Label text="号码本"  id = "select_phonebook_field"/>
+													<mx:ComboBox height="20" id="select_phonebook_field_select" dataProvider="{phonebook_list}" change="{select_phonebook_list(select_phonebook_field_select.value.toString())}"/>
+													<mx:Label text="查询"/>
+													<mx:TextInput id="select_phone_list_query" />
+													<mx:Button label="查询" click="{report_phone_list_query(select_phone_list_query.text)}" />
+												</mx:HBox>											
+												<mx:HBox width ="100%" textAlign="center" horizontalAlign="left">		
+													<mx:Button label="全选" click="{select_all_phone_list()}"/>
+													<mx:Button label="全部取消" click="{select_none_phone_list()}"/>
+													<mx:Button label="确定" click="{select_send_msg()}"/>
+													<mx:Button label="返回" click="{ViewStack_select_phone.selectedChild = viewpage_select_phone_welcome;}"/>
+												</mx:HBox>											
+												<mx:DataGrid height="100%" id="message_select_phone_grid" dataProvider="{phone_list_data}"
+															 draggableColumns="false" resizableColumns="false"														 
+															 editable="false"
+															 >
+													<mx:columns>
+														<mx:DataGridColumn width="100" dataField="name" itemRenderer="mx.controls.Text" headerText="姓名"/>
+														<mx:DataGridColumn width="200" dataField="companyname" itemRenderer="mx.controls.Text" headerText="单位"/>
+														<mx:DataGridColumn width="200" dataField="mobile" itemRenderer="mx.controls.Text" headerText="手机号"/>
+														<mx:DataGridColumn dataField="check" 
+																		   itemRenderer="mx.controls.CheckBox" 
+																		   rendererIsEditor="true" 
+																		   editable="true" 
+																		   editorDataField="selected"
+																		   headerText="选择"
+																		   width="50"
+																		   />
+													</mx:columns>
+												</mx:DataGrid>
+											</mx:VBox>
+										</mx:VBox>
+									</mx:ViewStack>
+								</mx:Panel>
+							</mx:Canvas>
 						</mx:VBox>
 						<mx:VBox id="viewpage_message_manage" width="100%" height="100%">
 							<mx:VBox backgroundColor="#EDF9FE"  paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10"
@@ -478,41 +556,163 @@
 						<mx:VBox id="viewpage_manage_phonenumber" width="100%" height="100%">
 							<mx:VBox backgroundColor="#EDF9FE"  paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10"
 									 borderStyle="solid" width="100%">
-								<mx:Label text="您当前的位置: 短信中心->号码管理" />
+								<mx:Label text="您当前的位置: 短信中心->通讯录管理" />
 							</mx:VBox>
-							<mx:VBox paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10"
-									 borderStyle="solid" width="100%" height="100%">
-								<mx:HBox width="100%">
-									<mx:HBox width="100%">										
-										<mx:Label text="输入手机集合名称" width="120"  textAlign="center"/>
-										<mx:TextInput id="phonelist_name" />
-									<!--	<mx:Button label="添加" click="{add_phonenumber_tolist(phonelist_name.text)}" />
-									-->	
-										<mx:Button label="从txt文件导入" click="{import_phone_number_from_file_to_notebook()}" />
-										<mx:Button label="删除" click="{delete_phonenumber_fromlist()}" />
-										<mx:Button label="全部删除" click="{deleteall_phonenumber()}" />
+							<mx:Canvas id = "view_addresslist" width="100%" height="100%" horizontalCenter="0" verticalCenter="0"
+									   visible="true" borderColor="0x000000" borderStyle="solid">
+								<mx:Panel id="panel" width="30%" height="100%" 
+										  paddingTop="0" paddingRight="0" paddingBottom="0" paddingLeft="0"
+										  horizontalAlign="center" verticalAlign="top" cornerRadius="0">	
+									<mx:VBox paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10"
+											 borderStyle="solid" width="100%">
+										<mx:Label text="通讯录列表" fontWeight="bold"/>
+										<mx:HBox width="100%">
+											<mx:Button label="添加" click="open_add_new_phonebook_view()" />
+											<mx:Button label="修改" click="open_manage_phonebook_view()" />
+											<mx:Button label="删除" click="request_delete_phonebook()" />
+										</mx:HBox>
+									</mx:VBox>
+									<mx:DataGrid width="100%" height="80%" id="phonebook_data_grid" dataProvider="{phonebook_data}"
+												 draggableColumns="false" resizableColumns="false" editable="true"
+												 rowHeight="30" variableRowHeight="false" buttonMode="true" click="show_phone_data_list()"
+												 >
+										<mx:columns >				
+											<!-- You can define an inline component as the ItemRenderer for a DataGrid column -->
+											<mx:DataGridColumn width="80" dataField="name" itemRenderer="mx.controls.Text" headerText="通讯录名称" editable="false"/>
+											<mx:DataGridColumn width="80" dataField="remark" itemRenderer="mx.controls.Text" headerText="通讯录备注" editable="false"/>
+										</mx:columns>
+									</mx:DataGrid>
+								</mx:Panel>
+								<mx:Panel right="0" height = "100%" width="70%"
+										  paddingTop = "0" paddingLeft="0" paddingRight="0" paddingBottom="0">
+									<mx:ViewStack id="ViewStack_phone"  width="100%" height="100%" color="0x323232">
+										<mx:VBox id = "viewpage_phonebook_welcome">
+										</mx:VBox>
+										<mx:VBox id = "viewpage_phone_list">
+											<mx:Label text="联系人列表" fontWeight="bold"/>
+											<mx:HBox width="100%">
+												<mx:Button label="添加" click="{open_add_new_phone_view()}" />
+												<mx:Button label="修改" click="{open_manage_phone_view()}" />
+												<mx:Button label="删除" click="{request_delete_phonelist()}" />
+												<mx:Button label="发送" click="{phonelist_send_msg()}" />
+												<mx:Button label="全选" click="{select_all_phone_list()}" />
+												<mx:Button label="全部取消" click="{select_none_phone_list()}" />
+												<mx:Label text="查询"/>
+												<mx:TextInput id="phone_list_query" />
+												<mx:Button label="查询" click="{report_phone_list_query(phone_list_query.text)}" />
+												<mx:Button label="返回" id="phone_list_back_btn" click="{phone_list_back()}" visible="false"/>
+											</mx:HBox>
+											<mx:HBox width="100%">
+											</mx:HBox>
+											<mx:DataGrid width="100%" height="80%" id="contacterlist_data_grid" dataProvider="{phone_list_data}"
+														 draggableColumns="false" resizableColumns="false" editable="true"
+														 rowHeight="30" variableRowHeight="false"
+														 >
+												<mx:columns >				
+													<!-- You can define an inline component as the ItemRenderer for a DataGrid column -->
+													<mx:DataGridColumn width="80" dataField="name" itemRenderer="mx.controls.Text" headerText="姓名" editable="false"/>
+													<mx:DataGridColumn width="80" dataField="companyname" itemRenderer="mx.controls.Text" headerText="单位名称" editable="false"/>
+													<mx:DataGridColumn width="80" dataField="title" itemRenderer="mx.controls.Text" headerText="职称" editable="false"/>
+													<mx:DataGridColumn width="80" dataField="mobiletype" itemRenderer="mx.controls.Text" headerText="号码类型" editable="false"/>
+													<mx:DataGridColumn width="80" dataField="mobile" itemRenderer="mx.controls.Text" headerText="电话" editable="false"/>
+													<mx:DataGridColumn dataField="check" 
+																	   itemRenderer="mx.controls.CheckBox" 
+																	   rendererIsEditor="true" 
+																	   editable="true" 
+																	   editorDataField="selected"
+																	   headerText="选择"
+																	   width="20"
+																	   />								
+												</mx:columns>
+											</mx:DataGrid>	
+										</mx:VBox>
+										<mx:VBox id = "viewpage_add_phonebook">											
+											<mx:Label text="新增通讯录" width="120"  textAlign="center" fontWeight="bold"/>
+											<mx:Label text="名称：" />
+											<mx:TextInput id="phoenbook_add_name"  text="{select_phonebook_name}"/>
+											<mx:Label text="备注：" />
+											<mx:TextArea id="phonebook_add_remark" text="{select_phonebook_remark}" height="100" width="400" /> 
+											<mx:HBox width="100%">
+												<mx:Button label="添加" click="{request_add_phonebook(phoenbook_add_name.text, phonebook_add_remark.text)}" />
+												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewpage_phonebook_welcome}" />
+											</mx:HBox>
+										</mx:VBox>
+										<mx:VBox id = "viewpage_manage_phonebook">											
+											<mx:Label text="修改通讯录" width="120"  textAlign="center" fontWeight="bold"/>
+											<mx:Label text="名称：" />
+											<mx:TextInput id="phonebook_manage_name" text="{select_phonebook_name}"/>
+											<mx:Label text="备注：" />
+											<mx:TextArea id="phonebook_manage_remark" text="{select_phonebook_remark}" height="100" width="400" /> 
+											<mx:HBox width="100%">
+												<mx:Button label="修改" click="{request_manage_phonebook(phonebook_manage_name.text,phonebook_manage_remark.text)}" />
+												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewpage_phonebook_welcome}" />
+											</mx:HBox>
+										</mx:VBox>
+										<mx:VBox id = "viewpage_add_phone">											
+											<mx:Label text="新增联系人" width="120"  textAlign="center" fontWeight="bold"/>
+											<mx:Label text="姓名：" />
+											<mx:TextInput id="phone_new_name" text="{select_phone_name}"/>
+											<mx:Label text="单位名称：" />
+											<mx:TextInput id="phone_new_companyname" text="{select_phone_companyname}"/>
+											<mx:Label text="联系电话：" />
+											<mx:TextInput id="phone_new_mobile" text="{select_phone_mobile}"/>
+											<mx:Label text="职称：" />
+											<mx:TextInput id="phone_new_title" text="{select_phone_title}"/>
+											<mx:HBox width="100%">
+												<mx:Button label="添加" click="{request_add_phone(phone_new_name.text, phone_new_companyname.text, phone_new_mobile.text, phone_new_title.text)}" />
+												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewpage_phone_list}" />
+											</mx:HBox>
+										</mx:VBox>
+										<mx:VBox id = "viewpage_manage_phone">											
+											<mx:Label text="修改联系人" width="120"  textAlign="center" fontWeight="bold"/>
+											<mx:Label text="姓名：" />
+											<mx:TextInput id="phone_manage_name" text="{select_phone_name}"/>
+											<mx:Label text="单位名称：" />
+											<mx:TextInput id="phone_manage_companyname" text="{select_phone_companyname}"/>
+											<mx:Label text="联系电话：" />
+											<mx:TextInput id="phone_manage_mobile" text="{select_phone_mobile}"/>
+											<mx:Label text="职称：" />
+											<mx:TextInput id="phone_manage_title" text="{select_phone_title}"/>
+											<mx:HBox width="100%">
+												<mx:Button label="修改" click="{request_manage_phone(phone_manage_name.text,phone_manage_companyname.text, phone_manage_mobile.text, phone_manage_title.text)}" />
+												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewpage_phone_list}" />
+											</mx:HBox>
+										</mx:VBox>
+									</mx:ViewStack>									
+								</mx:Panel>
+								<mx:VBox paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10"
+										 borderStyle="solid" width="100%" height="100%">
+									<mx:HBox width="100%">
+										<mx:HBox width="100%">										
+											<mx:Label text="输入手机集合名称" width="120"  textAlign="center" visible="false"/>
+											<mx:TextInput id="phonelist_name"  visible="false"/> 
+											<!--	<mx:Button label="添加" click="{add_phonenumber_tolist(phonelist_name.text)}" />
+											-->	
+											<mx:Button label="从txt文件导入" click="{import_phone_number_from_file_to_notebook()}"  visible="false"/>
+											<mx:Button label="删除" click="{delete_phonenumber_fromlist()}" visible="false" />
+											<mx:Button label="全部删除" click="{deleteall_phonenumber()}" visible="false" />
+										</mx:HBox>										
 									</mx:HBox>
-
-								</mx:HBox>
-								<mx:DataGrid width="40%" height="80%" id="addressslist_data_grid" dataProvider="{addresslist_data}"
-											 draggableColumns="false" resizableColumns="false" editable="true"
-											 rowHeight="50" variableRowHeight="false"
-											 >
+									<!--								<mx:DataGrid width="40%" height="80%" id="addressslist_data_grid" dataProvider="{addresslist_data}"
+									draggableColumns="false" resizableColumns="false" editable="true"
+									rowHeight="50" variableRowHeight="false"
+									>
 									<mx:columns >				
-										<!-- You can define an inline component as the ItemRenderer for a DataGrid column -->
-										<mx:DataGridColumn width="80" dataField="name" itemRenderer="mx.controls.Text" headerText="手机集合" editable="false"/>
-										<mx:DataGridColumn width="80" dataField="count" itemRenderer="mx.controls.Text" headerText="手机号码个数" editable="false"/>
-										<mx:DataGridColumn dataField="check" 
-														   itemRenderer="mx.controls.CheckBox" 
-														   rendererIsEditor="true" 
-														   editable="true" 
-														   editorDataField="selected"
-														   headerText="选择"
-														   width="20"
-														   />								
+									<mx:DataGridColumn width="80" dataField="name" itemRenderer="mx.controls.Text" headerText="手机集合" editable="false"/>
+									<mx:DataGridColumn width="80" dataField="count" itemRenderer="mx.controls.Text" headerText="手机号码个数" editable="false"/>
+									<mx:DataGridColumn dataField="check" 
+									itemRenderer="mx.controls.CheckBox" 
+									rendererIsEditor="true" 
+									editable="true" 
+									editorDataField="selected"
+									headerText="选择"
+									width="20"
+									/>								
 									</mx:columns>
-								</mx:DataGrid>
-							</mx:VBox>
+									</mx:DataGrid>
+								-->							
+								</mx:VBox>
+							</mx:Canvas>
 						</mx:VBox>
 						<mx:VBox id="viewpage_user_manage" width="100%" height="100%">
 							<mx:VBox backgroundColor="#EDF9FE"  paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10"

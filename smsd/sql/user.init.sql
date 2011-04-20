@@ -65,6 +65,26 @@ number BLOB NOT NULL,
 PRIMARY KEY(uid)
 )DEFAULT CHARSET=utf8 ;
 
+create table `smsd`.`phonebook`
+(
+uid int not null auto_increment,
+user_uid int not null,
+name char(50) not null,
+remark BLOB,
+primary key(uid)
+)default charset=utf8;
+
+create table `smsd`.`phone`
+(
+uid int not null auto_increment,
+phonebook_uid int not null,
+name char(50),
+companyname char(50),
+title char(50),
+mobile char(50) not null,
+primary key(uid)
+)DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `smsd`.`receive_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `log` varchar(50000) DEFAULT NULL,
