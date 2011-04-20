@@ -67,7 +67,7 @@
 							
 							<mx:LinkButton label="充值记录" color="0x3380DD"  click='{change_view_stack("addmsglog")}'
 										   />
-							<mx:LinkButton label="号码管理" color="0x3380DD"  click='{change_view_stack("manage_phonenumber")}'
+							<mx:LinkButton label="通讯录管理" color="0x3380DD"  click='{change_view_stack("manage_phonenumber")}'
 										   />
 							<mx:LinkButton label="上行查询" color="0x3380DD"  click='{change_view_stack("upload_report")}'
 										   />
@@ -589,21 +589,22 @@
 										<mx:VBox id = "viewpage_phonebook_welcome">
 										</mx:VBox>
 										<mx:VBox id = "viewpage_phone_list">
-											<mx:Label text="联系人列表" fontWeight="bold"/>
-											<mx:HBox width="100%">
-												<mx:Button label="添加" click="{open_add_new_phone_view()}" />
-												<mx:Button label="修改" click="{open_manage_phone_view()}" />
-												<mx:Button label="删除" click="{request_delete_phonelist()}" />
-												<mx:Button label="发送" click="{phonelist_send_msg()}" />
-												<mx:Button label="全选" click="{select_all_phone_list()}" />
-												<mx:Button label="全部取消" click="{select_none_phone_list()}" />
-												<mx:Label text="查询"/>
-												<mx:TextInput id="phone_list_query" />
-												<mx:Button label="查询" click="{report_phone_list_query(phone_list_query.text)}" />
-												<mx:Button label="返回" id="phone_list_back_btn" click="{phone_list_back()}" visible="false"/>
-											</mx:HBox>
-											<mx:HBox width="100%">
-											</mx:HBox>
+											<mx:VBox paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10"
+													 borderStyle="solid" width="100%">
+												<mx:Label text="联系人列表" fontWeight="bold"/>
+												<mx:HBox width="100%">
+													<mx:Button label="添加" click="{open_add_new_phone_view()}" />
+													<mx:Button label="修改" click="{open_manage_phone_view()}" />
+													<mx:Button label="删除" click="{request_delete_phonelist()}" />
+													<mx:Button label="发送" click="{phonelist_send_msg()}" />
+													<mx:Button label="全选" click="{select_all_phone_list()}" />
+													<mx:Button label="全部取消" click="{select_none_phone_list()}" />
+													<mx:Label text="查询"/>
+													<mx:TextInput id="phone_list_query" />
+													<mx:Button label="查询" click="{report_phone_list_query(phone_list_query.text)}" />
+													<mx:Button label="返回" id="phone_list_back_btn" click="{phone_list_back()}" visible="false"/>
+												</mx:HBox>
+											</mx:VBox>
 											<mx:DataGrid width="100%" height="80%" id="contacterlist_data_grid" dataProvider="{phone_list_data}"
 														 draggableColumns="false" resizableColumns="false" editable="true"
 														 rowHeight="30" variableRowHeight="false"

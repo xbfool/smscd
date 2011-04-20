@@ -1538,6 +1538,7 @@ private function save_temp_phonebook(phonebook_name:String):void{
 	var address:Array = dp.map(toAddress);
 	var numbers:String = address.join(";");
 	this.request({q:'addphonelist', sid:this.session, phonebook_name:phonebook_name, phonelist:numbers});
+	ViewStack_select_phone.selectedChild = viewpage_select_phone_welcome;
 }
 
 private function processor_addphonelist(param:Object):void{
@@ -1546,7 +1547,6 @@ private function processor_addphonelist(param:Object):void{
 	} else {
 		Alert.show("保存号码成功。");
 	}
-	ViewStack_select_phone.selectedChild = viewpage_select_phone_welcome;
 }
 
 private function request_addaddresslist(phonelist_name:String, number:String):void{
