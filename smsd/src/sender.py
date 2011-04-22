@@ -152,9 +152,9 @@ class sms_sender(object):
             'path': '/interface/limitnew.asp',
             'mode': 'POST',
             'sub_mode': 'honglian',
-            'username':'chen',
-            'password':'123456',
-            'epid':'539',
+            'username':'jnfd',
+            'password':'647185',
+            'epid':'372',
             'process_ret': sms_sender.__process_ret_honglian
         }
         
@@ -468,8 +468,8 @@ class sms_sender(object):
                 elif setting.get('sub_mode') == 'honglian':
                     print "in honglian.."
                     self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num},
-                                          phone = address, message = msg.decode('utf8').encode('gbk'), username = 'chen',
-                                          password = '123456', epid = '539',
+                                          phone = address, message = msg.decode('utf8').encode('gbk'), username = 'jnfd',
+                                          password = '647185', epid = '372',
                                           subcode = ext,
                                         )
                     count += 1
