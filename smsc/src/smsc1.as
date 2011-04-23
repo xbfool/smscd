@@ -1638,11 +1638,11 @@ private function getMobileType(mobile:String): String{
 	}
 	for ( var j:int =0; j < cu_list.length; j++ ) {
 		if ( prefix == cu_list[j].label) 
-			return "电信";
+			return "联通";
 	}
 	for ( var k:int =0; k < ct_list.length; k++ ) {
 		if ( prefix == ct_list[k].label) 
-			return "联通";
+			return "电信";
 	}
 	return null;
 }
