@@ -158,6 +158,41 @@ class sms_sender(object):
             'process_ret': sms_sender.__process_ret_honglian
         }
         
+        settings['honglian_bjyh'] = {
+            'name': 'honglian_bjyh',
+            'host': '219.238.160.81',
+            'path': '/interface/limitnew.asp',
+            'mode': 'POST',
+            'sub_mode': 'honglian',
+            'username':'jnfdbjyh',
+            'password':'123456',
+            'epid':'606',
+            'process_ret': sms_sender.__process_ret_honglian
+        }
+        
+        settings['honglian_jtyh'] = {
+            'name': 'honglian_jtyh',
+            'host': '219.238.160.81',
+            'path': '/interface/limitnew.asp',
+            'mode': 'POST',
+            'sub_mode': 'honglian',
+            'username':'fdjtyh',
+            'password':'123456',
+            'epid':'607',
+            'process_ret': sms_sender.__process_ret_honglian
+        }
+                
+        settings['honglian_ty'] = {
+            'name': 'honglian_ty',
+            'host': '219.238.160.81',
+            'path': '/interface/limitnew.asp',
+            'mode': 'POST',
+            'sub_mode': 'honglian',
+            'username':'fdzxyy',
+            'password':'123456',
+            'epid':'6101',
+            'process_ret': sms_sender.__process_ret_honglian
+        }
         settings['shangxintong_01'] = {
             'name': 'shangxintong_01',
             'host': '218.15.25.98',
@@ -468,8 +503,9 @@ class sms_sender(object):
                 elif setting.get('sub_mode') == 'honglian':
                     print "in honglian.."
                     self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num},
-                                          phone = address, message = msg.decode('utf8').encode('gbk'), username = 'jnfd',
-                                          password = '647185', epid = '372',
+                                          phone = address, message = msg.decode('utf8').encode('gbk'), 
+                                          username = setting['username'],
+                                          password = setting['password'], epid = setting['epid'],
                                           subcode = ext,
                                         )
                     count += 1

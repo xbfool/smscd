@@ -61,7 +61,10 @@ public var channel_select_data:ArrayCollection = new ArrayCollection(
 		{label:"联通106ah", data:'changshang_a_04'},
 		{label:"电信0728a", data:'hb_ct_04'},
 		{label:"移动106c", data:'honglian_01'},
-		{label:"长短信0668a", data:'shangxintong_01'}
+		{label:"长短信0668a", data:'shangxintong_01'},
+		{label:"移动106cbjyh", data:'honglian_bjyh'},
+		{label:"移动106cjtyh", data:'honglian_jtyh'},
+		{label:"移动106cty", data:'honglian_ty'},
 	]);
 
 [Bindable]
@@ -532,6 +535,12 @@ private function get_channel_index(channel:String):int{
 			return 11;
 		case "shangxintong_01":
 			return 12;
+		case "honglian_bjyh":
+			return 13;
+		case "honglian_jtyh":
+			return 14;
+		case "honglian_ty":
+			return 15;
 		default:
 			return 0;
 	}
