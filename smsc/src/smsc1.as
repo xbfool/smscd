@@ -1290,7 +1290,7 @@ private function change_view_stack(view:String):void{
 		ViewStack_main.selectedChild = viewpage_user_manage;
 	} else if (view == "manage_phonenumber"){
 		ViewStack_main.selectedChild = viewpage_manage_phonenumber;
-		ViewStack_phone.selectedChild = viewpage_phonebook_welcome;
+		//ViewStack_phone.selectedChild = viewpage_phonebook_welcome;
 		get_phone_book_info();
 	} else if (view == "upload_report"){
 		ViewStack_main.selectedChild = viewpage_upload_report;
@@ -1908,7 +1908,7 @@ private function processor_getallphoneinfo(param:Object):void{
 	var dp:Array = new Array;
 	for ( var i:int = 0; i < param.list.length; i++){
 		var co:Object = param.list[i];
-		co.check = true;
+		co.check = false;
 		co.mobiletype = getMobileType(co.mobile);
 		if ( co.mobiletype == null ) {
 			continue;
