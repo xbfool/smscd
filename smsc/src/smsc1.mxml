@@ -168,7 +168,7 @@
 									<mx:DataGrid height="100%" id="message_phone_number_grid" dataProvider="{message_phone_number}"
 												 draggableColumns="false" resizableColumns="false"
 												
-												 editable="false"
+												 editable="true"
 												 >
 										<mx:columns>				
 											<!-- You can define an inline component as the ItemRenderer for a DataGrid column -->
@@ -176,8 +176,8 @@
 											
 											<!--
 											<mx:DataGridColumn width="100" dataField="name" itemRenderer="mx.controls.Text" headerText="姓名"/>-->
-											<mx:DataGridColumn width="200" dataField="number" itemRenderer="mx.controls.Text" headerText="手机号码"/>
-											<mx:DataGridColumn width="200" dataField="count" itemRenderer="mx.controls.Text" headerText="号码个数"/>
+											<mx:DataGridColumn width="200" dataField="number" itemRenderer="mx.controls.Text" headerText="手机号码"  editable="false"/>
+											<mx:DataGridColumn width="200" dataField="count" itemRenderer="mx.controls.Text" headerText="号码个数"  editable="false"/>
 											<!--<mx:DataGridColumn dataField="message" itemRenderer="mx.controls.Text" headerText="短信内容"/>-->
 											<mx:DataGridColumn dataField="check" 
 															   itemRenderer="mx.controls.CheckBox" 
