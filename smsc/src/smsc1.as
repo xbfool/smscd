@@ -1779,6 +1779,7 @@ private function phonelist_send_msg(): void {
 		if ( co.check == true ) {
 			co.number = co.mobile;
 			co.count = 1;
+			co.type = PHONE_NUMBER;
 			dp.push(co);
 		}
 	}
@@ -1788,7 +1789,9 @@ private function phonelist_send_msg(): void {
 	}
 	change_view_stack("message_send");
 	message_phone_number.source = dp;
-	check_char_count(message_content_input, message_content_count, get_address_str());
+	if ( message_content_input != null ) {
+		check_char_count(message_content_input, message_content_count, get_address_str());
+	}
 }
 
 private function request_add_phone(name:String, companyname:String, mobile:String, title:String): void {
