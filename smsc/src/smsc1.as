@@ -550,6 +550,12 @@ private function open_add_new_phonebook_view():void{
 	select_phonebook_id = 0;
 	select_phonebook_name = "";
 	select_phonebook_remark = "";
+	if ( phonebook_add_name != null ) {
+		phonebook_add_name.text = "";
+	}
+	if ( phonebook_add_remark != null ) {
+		phonebook_add_remark.text = "";
+	}
 	ViewStack_phone.selectedChild = viewpage_add_phonebook;
 }
 
@@ -574,6 +580,18 @@ private function open_add_new_phone_view():void{
 	select_phone_companyname = "";
 	select_phone_mobile = "";
 	select_phone_title = "";
+	if ( phone_new_name != null ) {
+		phone_new_name.text = "";
+	}
+	if ( phone_new_companyname != null ) {
+		phone_new_companyname.text = "";
+	}
+	if ( phone_new_mobile != null ) {
+		phone_new_mobile.text = "";
+	}
+	if ( phone_new_title != null ) {
+		phone_new_title.text = "";
+	}
 	ViewStack_phone.selectedChild = viewpage_add_phone;
 }
 
@@ -2001,6 +2019,3 @@ private function completePhoneManageHandler(event:Event):void
 	var adds:String = address_file.data.toString();
 	adds_array = adds.match(/1[3458]\d{9}/g);
 }
-
-
-
