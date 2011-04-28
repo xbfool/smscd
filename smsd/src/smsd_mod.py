@@ -379,7 +379,10 @@ class smsd(object):
        
     
     def __split_message(self, uid, addr_list, msg, status, channel):
-        if channel in ('changshang_a_01', 'changshang_a_02', 'changshang_a_03'):
+        if channel in ('changshang_a_01', 'changshang_a_02', 'changshang_a_03',
+                       'honglian_01',
+                         'honglian_bjyh', 'honglian_jtyh',
+                         'honglian_ty'):
             addr = []
             for i in xrange(0, len(addr_list), 50):
                 addr.append(addr_list[i: min(i + 50, len(addr_list))])
@@ -395,9 +398,7 @@ class smsd(object):
                 new_message = message()        
                 new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel)
                 self.messages[new_message.uid] = new_message  
-        elif channel in ('shangxintong_01', 'honglian_01',
-                         'honglian_bjyh', 'honglian_jtyh',
-                         'honglian_ty'):
+        elif channel in ('shangxintong_01'):
             addr = []
             for i in xrange(0, len(addr_list), 1):
                 addr.append(addr_list[i: min(i + 1, len(addr_list))])
