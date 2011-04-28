@@ -471,7 +471,7 @@ class smsd(object):
         elif len(msgcontent) <= 70:
             p = 1
         elif len(msgcontent) <= 500:
-            p = (len(msgcontent) - 1) / 65 + 1
+            p = (len(msgcontent) - 1) / 64 + 1
         else:
             return 0, {'rtype':'sendmessage', 'errno': -4} #zero message
          
@@ -498,7 +498,7 @@ class smsd(object):
                 for i in range(p):
                     if len(split_addr[addr]) > 0:
                         self.__split_message(u.uid, split_addr[addr], "("+str(i+1)+"/"+str(p)+")"+
-                                    msgcontent[i*65:(i+1)*65].encode('utf8'), message.F_ADMIT, channel)
+                                    msgcontent[i*64:(i+1)*64].encode('utf8'), message.F_ADMIT, channel)
                         
 #        if p == 1:
 #            #not need to check message

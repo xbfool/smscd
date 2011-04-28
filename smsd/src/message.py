@@ -82,10 +82,12 @@ class message(dbobj):
         p = 0
         if len(msgcontent) == 0:
             p = 0
-        elif len(msgcontent) <= 70:
+        elif len(msgcontent) <= 70 and self.channel not in ('honglian_01',
+                         'honglian_bjyh', 'honglian_jtyh',
+                         'honglian_ty'):
             p = 1
         else:
-            p = (len(msgcontent) - 1) / 65 + 1
+            p = (len(msgcontent) - 1) / 64 + 1
         
         return len(self.address.split(';')) * p
         
