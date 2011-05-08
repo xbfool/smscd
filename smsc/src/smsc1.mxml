@@ -570,6 +570,7 @@
 											<mx:Button label="添加" click="open_add_new_phonebook_view()" />
 											<mx:Button label="修改" click="open_manage_phonebook_view()" />
 											<mx:Button label="删除" click="request_delete_phonebook()" />
+											<mx:Button label="导入" click="ViewStack_phone.selectedChild=viewpage_import_phonebook" />
 										</mx:HBox>
 									</mx:VBox>
 									<mx:DataGrid width="100%" height="80%" id="phonebook_data_grid" dataProvider="{phonebook_data}"
@@ -677,6 +678,15 @@
 											<mx:HBox width="100%">
 												<mx:Button label="修改" click="{request_manage_phone(phone_manage_name.text,phone_manage_companyname.text, phone_manage_mobile.text, phone_manage_title.text)}" />
 												<mx:Button label="返回" click="{ViewStack_phone.selectedChild=viewpage_phone_list}" />
+											</mx:HBox>
+										</mx:VBox>
+										<mx:VBox id = "viewpage_import_phonebook">											
+											<mx:Label text="导入联系人" width="120"  textAlign="center" fontWeight="bold"/>
+											<mx:Label text="新导入的通讯录名称：" />
+											<mx:TextInput id="import_phonebook_name" />
+											<mx:HBox width="100%">
+												<mx:Button label="导入" click="{import_phonebook_from_xls()}" />
+												<mx:Button label="下载模版" click="{download_import_templete()}" />
 											</mx:HBox>
 										</mx:VBox>
 									</mx:ViewStack>									

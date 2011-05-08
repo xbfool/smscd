@@ -184,7 +184,7 @@ package com.as3xls.xls {
 		 * @return A ByteArray containing the saved sheet in BIFF2 form
 		 * 
 		 */
-		public function saveToByteArray():ByteArray {
+		public function saveToByteArray(charset:String="UTF8"):ByteArray {
 			var s:Sheet = _sheets[0] as Sheet;
 			
 			var br:BIFFWriter = new BIFFWriter();
@@ -251,10 +251,14 @@ package com.as3xls.xls {
 						cell.type = Type.LABEL;
 						cell.data.writeByte(0);
 						cell.data.writeByte(0);
-						cell.data.writeByte(0);
-						var len:uint = String(value).length;
-						cell.data.writeByte(len);
-						cell.data.writeUTFBytes(value);
+						cell.data.writeByte(0); 
+//						var len:uint = String(value).length;
+//						cell.data.writeByte(len);
+//						cell.data.writeMultiByte(value, charset);
+						var ba:ByteArray = new ByteArray()
+						ba.writeMultiByte(String(value),charset);
+						cell.data.writeByte(ba.length);
+						cell.data.writeMultiByte(String(value),charset);
 					} else {
 						cell.type = Type.BLANK;
 						cell.data.writeByte(0);
@@ -288,7 +292,7 @@ package com.as3xls.xls {
 			// Newer workbooks are actually cdf files which must be extracted
 			if(CDFReader.isCDFFile(xls)) {
 				var cdf:CDFReader = new CDFReader(xls);
-				xls = cdf.loadDirectoryEntry(0);
+				xls = cdf.loadDirectoryEntry(1);
 			}
 			
 			br = new BIFFReader(xls);
@@ -306,13 +310,21 @@ package com.as3xls.xls {
 				}
 				
 				if(handlers[r.type] is Function) {
+					if (version==BIFFVersion.BIFF2) {		
+						if (!currentSheet){
+							currentSheet = new Sheet();
+							currentSheet.name = 'test';
+						} 
+					}
 					(handlers[r.type] as Function).call(this, r, currentSheet);
 				} else {
 					unknown.push(r.type);
 				}
 				
 			}
-			
+			if (version==BIFFVersion.BIFF2) {
+				_sheets.addItem(currentSheet);
+			}
 			if(unknown.length > 0) {
 				//throw new Error("Unsupported BIFF records: " + unknown.join(", "));
 			}
@@ -392,12 +404,16 @@ package com.as3xls.xls {
 			}
 			
 			var value:String = r.data.readUTFBytes(len);
-			var fmt:String = s.formats[s.xformats[indexToXF].format];
-			if(fmt == null || fmt.length == 0) {
-				fmt = Formatter.builtInFormats[s.xformats[indexToXF].format];
-			}
+			
 			s.setCell(row, col, value);
-			s.getCell(row, col).format = fmt;
+			
+			if(version != BIFFVersion.BIFF2) {
+				var fmt:String = s.formats[s.xformats[indexToXF].format];
+				if(fmt == null || fmt.length == 0) {
+					fmt = Formatter.builtInFormats[s.xformats[indexToXF].format];
+				}
+				s.getCell(row, col).format = fmt;
+			}
 		}
 		
 		private function labelsst(r:Record, s:Sheet):void {
@@ -590,16 +606,99 @@ package com.as3xls.xls {
 		
 		
 		
-		// Setup		
+		// Setup
 		
 		private function sst(r:Record, s:Sheet):void {
 			var numWorkbookStrings:uint = r.data.readUnsignedInt();
 			var sstSize:uint = r.data.readUnsignedInt();
+			var dataArr:Array = [r.data];
+			while(true){
+				var d:ByteArray = get_continuation_data();
+				if (!d) {
+					break;
+				} else {
+					dataArr.push(d);
+				}
+			}
+			_sst = unpack_sst(dataArr, sstSize);
+		}
+		
+		private function unpack_sst(dataArr:Array, sstSize:uint):Array {
+			var _currIndex:uint = 0;
+			var _currData:ByteArray = dataArr[_currIndex];
 			
-			_sst = new Array();
+			// Now unpack
+			var _strings:Array = new Array();
 			for(var n:uint = 0; n < sstSize; n++) {
-				var str:String = r.readUnicodeStr16();
-				_sst.push(str);
+				// this is very much like readUnicodeStr16(), except it deals with continuations
+				var len:uint = _currData.readUnsignedShort();
+				var opts:uint = _currData.readByte();
+				var compressed:Boolean = (opts & 0x01) == 0;
+				var asianPhonetic:Boolean = (opts & 0x04) == 0x04;
+				var richtext:Boolean = (opts & 0x08) == 0x08;
+				var toSkip:uint = 0;
+				// We need to skip past these if they're present
+				if (richtext) {
+					toSkip += 4 * _currData.readShort();
+				}
+				if (asianPhonetic) {
+					toSkip += _currData.readUnsignedInt();
+				}
+				
+				var fullString:String = "";
+				var charsGot:uint = 0;
+				while (true) {
+					var charsNeed:uint = len - charsGot;
+					var charsAvail:uint;
+					var _strArray:Array = [];
+					var i:uint;
+					if (compressed) {
+						// This is compressed UTF-16, not UTF-8, so we don't use readUTFBytes()
+						charsAvail = charsNeed > _currData.bytesAvailable ? _currData.bytesAvailable : charsNeed;
+						for (i = 0; i < charsAvail; i++){
+							_strArray.push(_currData.readUnsignedByte());
+						}
+					} else {
+						// Treating string as UCS-2, rather than UTF-16 (i.e. ignoring surrogate pairs)
+						// readMultiByte() claims to do this, but doesn't seem to work...
+						charsAvail = charsNeed > (_currData.bytesAvailable/2) ? (_currData.bytesAvailable/2) : charsNeed;
+						for (i = 0; i < charsAvail; i++){
+							_strArray.push(_currData.readUnsignedShort());
+						}
+					}
+					var partialString:String = String.fromCharCode.apply(null, _strArray);
+					fullString += partialString;
+					charsGot += charsAvail;
+					if (charsGot == len) {
+						break;
+					}
+					_currIndex += 1;
+					_currData = dataArr[_currIndex];
+					var new_opts:uint = _currData.readByte();
+					compressed = (new_opts & 0x01) == 0;
+				}
+				_currData.position += toSkip;
+				if (_currData.position >= _currData.length) {
+					_currIndex += 1;
+					if (_currIndex < dataArr.length){
+						_currData = dataArr[_currIndex];
+					}
+				}
+				_strings.push(fullString);
+			}
+			return _strings;
+		}
+		
+		private function get_continuation_data():ByteArray {
+//			trace("Getting continuation data");
+			var ba:ByteArray;
+			var pos:uint = br.stream.position;
+			var r:Record = br.readTag();
+			if (r.type != Type.CONTINUE){
+				br.stream.position = pos;
+				return null;
+			} else {
+				return r.data;
 			}
 		}
 		
@@ -615,8 +714,9 @@ package com.as3xls.xls {
 			var lastRow:uint = r.length == 14 ? r.data.readUnsignedInt() : r.data.readUnsignedShort();
 			var firstCol:uint = r.data.readUnsignedShort();
 			var lastCol:uint = r.data.readUnsignedShort();
-			
-			s.resize(lastRow, lastCol);
+			if (s) {
+				s.resize(lastRow, lastCol);
+			}
 		}
 		
 		private function boundsheet(r:Record, s:Sheet):void {
@@ -624,22 +724,22 @@ package com.as3xls.xls {
 			var visibility:uint = r.data.readUnsignedByte();
 			var sheetType:uint = r.data.readUnsignedByte();
 			
-			var len:uint;
-			if(version == BIFFVersion.BIFF5) {
-				len = r.data.readUnsignedByte();
+			var name:String;
+			if(version == BIFFVersion.BIFF8){
+				// Stored as 16-bit unicode string
+				name = r.readUnicodeStr16(true);
 			} else {
-				len = r.data.readUnsignedShort();
+				// Stored as 8-bit ascii string
+				var len:uint = r.data.readUnsignedByte();
+				name = r.data.readUTFBytes(len);
 			}
-			var name:String = r.data.readUTFBytes(len);
-			
-			
-			var currentSheet:Sheet;
-			currentSheet = new Sheet();
-			currentSheet.dateMode = dateMode;
-			currentSheet.name = name;
-			currentSheet.formats = currentSheet.formats.concat(globalFormats);
-			currentSheet.xformats = currentSheet.xformats.concat(globalXFormats);
-			_sheets.addItem(currentSheet);
+			var l_currentSheet:Sheet;
+			l_currentSheet = new Sheet();
+			l_currentSheet.dateMode = dateMode;
+			l_currentSheet.name = name;
+			l_currentSheet.formats = currentSheet.formats.concat(globalFormats);
+			l_currentSheet.xformats = currentSheet.xformats.concat(globalXFormats);
+			_sheets.addItem(l_currentSheet);
 		}
 		
 		// Formatting
@@ -704,16 +804,27 @@ package com.as3xls.xls {
 		private function font2(r:Record, s:Sheet):void { }
 		
 		private function format(r:Record, s:Sheet):void {
-			if(version == BIFFVersion.BIFF4 || version == BIFFVersion.BIFF5) {
+			var index:uint = NaN;
+			if(version == BIFFVersion.BIFF4) {
 				r.data.position += 2;
+			} else if (version == BIFFVersion.BIFF8 || version == BIFFVersion.BIFF5){
+				index = r.data.readUnsignedShort();
 			}
 			
-			var len:uint = r.data.readUnsignedByte();
-			var string:String = r.data.readUTFBytes(len);
-			if(s is Sheet) {
-				s.formats.push(string);
+			var string:String;
+			if(version == BIFFVersion.BIFF8){
+				// Stored as 16-bit unicode string
+				string = r.readUnicodeStr16();
 			} else {
-				globalFormats.push(string);
+				// Stored as 8-bit ascii string
+				var len:uint = r.data.readUnsignedByte();
+				string = r.data.readUTFBytes(len);
+			}
+			
+			if(s is Sheet) {
+				isNaN(index) ? s.formats.push(string) : s.formats[index] = string;
+			} else {
+				isNaN(index) ? globalFormats.push(string) : globalFormats[index] = string;
 			}
 		}
 		
@@ -793,7 +904,7 @@ package com.as3xls.xls {
 				currentSheetIdx++;
 			}
 			if(r.type == 0x9) {
-				this.version = BIFFVersion.BIFF2
+				this.version = BIFFVersion.BIFF2;
 			} else if(r.type == 0x209) {
 				this.version = BIFFVersion.BIFF3;
 			} else if(r.type == 0x409) {

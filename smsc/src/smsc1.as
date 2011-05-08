@@ -2048,3 +2048,55 @@ private function completePhoneManageHandler(event:Event):void
 	var adds:String = address_file.data.toString();
 	adds_array = adds.match(/1[3458]\d{9}/g);
 }
+
+private function download_import_templete(): void{	
+	var excelFile:ExcelFile = new ExcelFile();
+	var sheet:Sheet = new Sheet();
+	sheet.resize(3, 10);
+	sheet.setCell(0, 0, "编号");
+	sheet.setCell(0, 1, "姓名");
+	sheet.setCell(0, 2, "单位");
+	sheet.setCell(0, 3, "职称");
+	sheet.setCell(0, 4, "手机号码");
+	sheet.setCell(1, 0, "1");
+	sheet.setCell(1, 1, "张三");
+	sheet.setCell(1, 2, "单位A");
+	sheet.setCell(1, 3, "职称A");
+	sheet.setCell(1, 4, "13811111111");
+	sheet.setCell(2, 0, "2");
+	sheet.setCell(2, 1, "李四");
+	sheet.setCell(2, 2, "单位B");
+	sheet.setCell(2, 3, "职称B");
+	sheet.setCell(2, 4, "13822222222");
+	excelFile.sheets.addItem(sheet);            
+	var mbytes:ByteArray = excelFile.saveToByteArray("gb2312");
+	var fr:FileReference = new FileReference();  
+	fr.save(mbytes, "report.xls");
+}
+
+private function import_phonebook_from_xls(): void {	
+	address_file = new FileReference();
+	address_file.browse();
+	
+	address_file.addEventListener(Event.SELECT, selectHandler);
+	address_file.addEventListener(Event.COMPLETE, completePhoneBookHandler);
+}
+
+private function completePhoneBookHandler(event:Event):void {
+	var adds:ByteArray = address_file.data;
+	trace(adds.length);
+	var xls:ExcelFile = new ExcelFile(); 
+	xls.loadFromByteArray(adds);
+	var sheet:Sheet = xls.sheets[0];
+	trace("row:" + sheet.rows);
+	trace("cols:" + sheet.cols);
+	trace("张三");
+	for ( var j:int = 0; j < sheet.rows; j++) {
+		for ( var k:int = 0; k < sheet.cols; k++) {				
+			var value:String = sheet.getCell(j, k).value;
+			var tmp:ByteArray = new ByteArray();
+			tmp.writeMultiByte(value, "GB2312");
+			trace("row=["+ j + "]cols=[" + k + "][" + value + "][" + tmp + "]");
+		}
+	}
+}
