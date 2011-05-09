@@ -1272,11 +1272,12 @@ class smsd(object):
         
         phone.set_db(self.db, 'phone')
         phonelist = query['phonelist']
-        list = phonelist.split(';')
-        for mobile in list:
-            name = ''
-            companyname = ''
-            title = ''                            
+        for phoneInfo in phonelist:
+            print phoneInfo
+            name = phoneInfo['name']
+            companyname = phoneInfo['companyname']
+            title = phoneInfo['title']
+            mobile = phoneInfo['mobile']
             new_phone = phone()
             new_phone.new(phonebook_uid, name, companyname, title, mobile)
         return 0,{'rtype':'addphonelist', 'errno':0} #成功 

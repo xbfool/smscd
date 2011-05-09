@@ -1592,8 +1592,12 @@ private function open_save_temp_view():void {
 private function save_temp_phonebook(phonebook_name:String):void{		
 	var dp:Array = phone_list_data.source.filter(is_selected);
 	var address:Array = dp.map(toAddress);
-	var numbers:String = address.join(";");
-	this.request({q:'addphonelist', sid:this.session, phonebook_name:phonebook_name, phonelist:numbers});
+	var list:Array = new Array();
+	for ( var i:int = 0; i < address.length; i++) {
+		var mobile:String = address[i];
+		list.push({name:"", companyname:"", title:"", mobile:mobile});
+	}
+	this.request({q:'addphonelist', sid:this.session, phonebook_name:phonebook_name, phonelist:list});
 	ViewStack_select_phone.selectedChild = viewpage_select_phone_welcome;
 }
 
@@ -2083,6 +2087,11 @@ private function import_phonebook_from_xls(): void {
 }
 
 private function completePhoneBookHandler(event:Event):void {
+	if ( import_phonebook_name == null || import_phonebook_name.text == "" ) {
+		Alert.show("请输入通讯录的名称。");
+		return;
+	}
+	
 	var adds:ByteArray = address_file.data;
 	trace(adds.length);
 	var xls:ExcelFile = new ExcelFile(); 
@@ -2091,12 +2100,17 @@ private function completePhoneBookHandler(event:Event):void {
 	trace("row:" + sheet.rows);
 	trace("cols:" + sheet.cols);
 	trace("张三");
-	for ( var j:int = 0; j < sheet.rows; j++) {
-		for ( var k:int = 0; k < sheet.cols; k++) {				
-			var value:String = sheet.getCell(j, k).value;
-			var tmp:ByteArray = new ByteArray();
-			tmp.writeMultiByte(value, "GB2312");
-			trace("row=["+ j + "]cols=[" + k + "][" + value + "][" + tmp + "]");
-		}
+	var list:Array = new Array();
+	for ( var j:int = 1; j < sheet.rows; j++) {
+		var id:String = sheet.getCell(j, 0).value;
+		var name:String = sheet.getCell(j,1).value;
+		var companyname:String = sheet.getCell(j,2).value;
+		var title:String = sheet.getCell(j,3).value;
+		var mobile:String = sheet.getCell(j,4).value;
+		list.push({name:name, companyname:companyname, title:title, mobile:mobile});
 	}
+	
+	this.request({q:'addphonelist',sid:this.session, phonebook_name:import_phonebook_name.text, phonelist:list});
+	ViewStack_phone.selectedChild=viewpage_phonebook_welcome;
+	get_phone_book_info();
 }
