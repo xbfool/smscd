@@ -359,6 +359,15 @@ private function processor_changepwd(param:Object):void
 		Alert.show("修改密码成功");
 	else if(param.errno == 1)
 		Alert.show("输入密码错误");
+	if ( user_pwd_now != null ) {
+		user_pwd_now.text = "";
+	}
+	if ( user_pwd_after_1 != null ) {
+		user_pwd_after_1.text = "";
+	}
+	if ( user_pwd_after_2 != null ) {
+		user_pwd_after_2.text = "";
+	}
 }
 
 private function request_adduser(user:String, name:String, pwd:String, can_weblogin:Boolean,
@@ -617,6 +626,26 @@ private function open_add_user_view():void{
 	select_username = "";
 	select_userdesc = "";
 	select_userpasswd = "";
+	if ( add_user_id != null ) {
+		add_user_id.text = "";
+	}
+	if ( add_user_name != null ) {
+		add_user_name.text = "";
+	}
+	if ( add_user_password != null ) {
+		add_user_password.text = "";
+	}
+	if ( add_user_can_weblogin != null ) {
+		add_user_can_weblogin.selected = false;		
+	}
+	if ( add_user_can_post != null ) {
+		add_user_can_post.selected = false;		
+	}
+	if ( add_user_normal != null ) {
+		add_user_normal.selected = true;
+		add_user_agent.selected = false;
+		add_user_admin.selected = false;
+	}
 	ViewStack_main.selectedChild = viewpage_add_user;
 }
 
