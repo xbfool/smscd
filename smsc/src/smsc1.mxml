@@ -570,7 +570,7 @@
 											<mx:Button label="添加" click="open_add_new_phonebook_view()" />
 											<mx:Button label="修改" click="open_manage_phonebook_view()" />
 											<mx:Button label="删除" click="request_delete_phonebook()" />
-											<mx:Button label="导入" click="ViewStack_phone.selectedChild=viewpage_import_phonebook" />
+											<mx:Button label="导入" click="import_phonebook_info_from_csv()" />
 										</mx:HBox>
 									</mx:VBox>
 									<mx:DataGrid width="100%" height="80%" id="phonebook_data_grid" dataProvider="{phonebook_data}"

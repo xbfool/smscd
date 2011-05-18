@@ -2054,28 +2054,13 @@ private function completePhoneManageHandler(event:Event):void
 }
 
 private function download_import_templete(): void{	
-	var excelFile:ExcelFile = new ExcelFile();
-	var sheet:Sheet = new Sheet();
-	sheet.resize(3, 10);
-	sheet.setCell(0, 0, "编号");
-	sheet.setCell(0, 1, "姓名");
-	sheet.setCell(0, 2, "单位");
-	sheet.setCell(0, 3, "职称");
-	sheet.setCell(0, 4, "手机号码");
-	sheet.setCell(1, 0, "1");
-	sheet.setCell(1, 1, "张三");
-	sheet.setCell(1, 2, "单位A");
-	sheet.setCell(1, 3, "职称A");
-	sheet.setCell(1, 4, "13811111111");
-	sheet.setCell(2, 0, "2");
-	sheet.setCell(2, 1, "李四");
-	sheet.setCell(2, 2, "单位B");
-	sheet.setCell(2, 3, "职称B");
-	sheet.setCell(2, 4, "13822222222");
-	excelFile.sheets.addItem(sheet);            
-	var mbytes:ByteArray = excelFile.saveToByteArray("gb2312");
+	
+	var file:ByteArray = new ByteArray;
+	file.writeMultiByte("编号,姓名,单位,职称,手机号码\r\n", "gb2312");
+	file.writeMultiByte("1,张三,单位A,职称A,13811111111\r\n", "gb2312");
+	file.writeMultiByte("2,李四,单位B,职称B,13822222222\r\n", "gb2312");	
 	var fr:FileReference = new FileReference();  
-	fr.save(mbytes, "report.xls");
+	fr.save(file,"模版.csv"); 
 }
 
 private function import_phonebook_from_xls(): void {	
@@ -2093,24 +2078,30 @@ private function completePhoneBookHandler(event:Event):void {
 	}
 	
 	var adds:ByteArray = address_file.data;
-	trace(adds.length);
-	var xls:ExcelFile = new ExcelFile(); 
-	xls.loadFromByteArray(adds);
-	var sheet:Sheet = xls.sheets[0];
-	trace("row:" + sheet.rows);
-	trace("cols:" + sheet.cols);
-	trace("张三");
-	var list:Array = new Array();
-	for ( var j:int = 1; j < sheet.rows; j++) {
-		var id:String = sheet.getCell(j, 0).value;
-		var name:String = sheet.getCell(j,1).value;
-		var companyname:String = sheet.getCell(j,2).value;
-		var title:String = sheet.getCell(j,3).value;
-		var mobile:String = sheet.getCell(j,4).value;
+	var contents:String = adds.readMultiByte(adds.length, "gb2312");
+	var rows:Array = contents.split("\r\n");
+	trace(rows.length);
+	var list:Array = new Array;
+	for ( var j:int = 1; j < rows.length; j++) {
+		var row:String = rows[j];
+		var cols:Array = row.split(",");
+		if ( cols.length != 5 ) continue;
+		var id:String = cols[0];
+		var name:String = cols[1];
+		var companyname:String = cols[2];
+		var title:String = cols[3];
+		var mobile:String = cols[4];
 		list.push({name:name, companyname:companyname, title:title, mobile:mobile});
 	}
 	
 	this.request({q:'addphonelist',sid:this.session, phonebook_name:import_phonebook_name.text, phonelist:list});
 	ViewStack_phone.selectedChild=viewpage_phonebook_welcome;
 	get_phone_book_info();
+}
+
+private function import_phonebook_info_from_csv():void{
+	ViewStack_phone.selectedChild=viewpage_import_phonebook;
+	if ( import_phonebook_name != null ) {
+		import_phonebook_name.text = "";
+	}
 }
