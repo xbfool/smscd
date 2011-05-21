@@ -379,7 +379,10 @@ class smsd(object):
        
     
     def __split_message(self, uid, addr_list, msg, status, channel):
-        if channel in ('changshang_a_01', 'changshang_a_02', 'changshang_a_03'):
+        if channel in ('changshang_a_01', 'changshang_a_02', 'changshang_a_03',
+                       'honglian_01',
+                         'honglian_bjyh', 'honglian_jtyh',
+                         'honglian_ty'):
             addr = []
             for i in xrange(0, len(addr_list), 50):
                 addr.append(addr_list[i: min(i + 50, len(addr_list))])
@@ -395,9 +398,7 @@ class smsd(object):
                 new_message = message()        
                 new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel)
                 self.messages[new_message.uid] = new_message  
-        elif channel in ('shangxintong_01', 'honglian_01',
-                         'honglian_bjyh', 'honglian_jtyh',
-                         'honglian_ty'):
+        elif channel in ('shangxintong_01'):
             addr = []
             for i in xrange(0, len(addr_list), 1):
                 addr.append(addr_list[i: min(i + 1, len(addr_list))])
@@ -470,7 +471,7 @@ class smsd(object):
         elif len(msgcontent) <= 70:
             p = 1
         elif len(msgcontent) <= 500:
-            p = (len(msgcontent) - 1) / 65 + 1
+            p = (len(msgcontent) - 1) / 64 + 1
         else:
             return 0, {'rtype':'sendmessage', 'errno': -4} #zero message
          
@@ -497,7 +498,7 @@ class smsd(object):
                 for i in range(p):
                     if len(split_addr[addr]) > 0:
                         self.__split_message(u.uid, split_addr[addr], "("+str(i+1)+"/"+str(p)+")"+
-                                    msgcontent[i*65:(i+1)*65].encode('utf8'), message.F_ADMIT, channel)
+                                    msgcontent[i*64:(i+1)*64].encode('utf8'), message.F_ADMIT, channel)
                         
 #        if p == 1:
 #            #not need to check message

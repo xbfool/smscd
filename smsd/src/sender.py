@@ -437,7 +437,8 @@ class sms_sender(object):
 
         
     def __process_queue(self):
-        q = self.__db.raw_sql_query('SELECT user_uid, uid,address,msg,channel, msg_num FROM message WHERE status = %s', message.F_ADMIT)
+        q = self.__db.raw_sql_query('SELECT user_uid, uid,address,msg,channel, msg_num FROM message WHERE status = %s ORDER BY uid DESC LIMIT 500',
+                                     message.F_ADMIT)
         count = 0
         for user_uid, uid, address, msg, channel, msg_num in q:
             if uid in self.__pending:
