@@ -504,7 +504,7 @@ class sms_sender(object):
                 elif setting.get('sub_mode') == 'honglian':
                     print "in honglian.."
                     self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num},
-                                          phone = address, message = msg.decode('utf8').encode('gbk'), 
+                                          phone = addr, message = msg.decode('utf8').encode('gbk'), 
                                           username = setting['username'],
                                           password = setting['password'], epid = setting['epid'],
                                           subcode = ext,
