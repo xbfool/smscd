@@ -204,6 +204,17 @@ class sms_sender(object):
             'password': '123789',
             'process_ret' : sms_sender.__process_ret_shangxintong
         }
+        settings['maoming_ct_0668'] = {
+            'name': 'maoming_ct_0668',
+            'host': '113.107.163.203',
+            'path': '/WebService1.6/sendSMS',
+            'port': '8080',
+            'sub_mode': 'maoming_ct',
+            'srcmobile': 'fuda',
+            'password': 'fudaduanxin123',
+            'mode': 'POST',
+            'process_ret': sms_sender.__process_ret_maoming_ct
+        }
 #        settings['dongguan_0769_01'] = {
 #            'name': 'dongguan_0769_01',
 #            'host': '61.145.168.234',
@@ -407,6 +418,26 @@ class sms_sender(object):
         except:
             pass
         return 1  
+    
+    def __process_ret_maoming_ct(self, param):
+        status = message.F_FAIL
+        try:
+            result = param['ret'][2]
+            if result == '0\r\n':
+                status = message.F_SEND
+                self.__db.raw_sql_wo_commit('UPDATE user SET msg_num = msg_num - %s where uid = %s', \
+                                            (param['msg_num'], param['user_uid']))      
+        except:
+            status = message.F_FAIL
+            pass
+        
+        try:
+            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\" where uid = %s', \
+                                        (status, param['time'], result, param['uid']))
+        except:
+            pass
+        return 1  
+            
     def __process_ret(self, now):
         count = 0
         while True:
@@ -623,6 +654,11 @@ class sms_sender(object):
                                       soapaction = 'http://61.145.168.234:90/Interface.asmx',
                                       soap = soap)   
                     count += 1
+                elif setting.get('sub_mode') == 'maoming_ct':
+                    print "in maoming_ct"
+                    self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num},
+                      srcmobile = setting['srcmobile'], password = setting['password'], 
+                      objmobiles = addr, smstext = msg, rstype = 'text')
                     
         return count
                     

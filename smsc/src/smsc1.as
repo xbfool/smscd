@@ -65,6 +65,7 @@ public var channel_select_data:ArrayCollection = new ArrayCollection(
 		{label:"移动106cbjyh", data:'honglian_bjyh'},
 		{label:"移动106cjtyh", data:'honglian_jtyh'},
 		{label:"移动106cty", data:'honglian_ty'},
+		{label:"电信0668a", data:'maoming_ct_0668'}
 	]);
 
 [Bindable]
@@ -550,6 +551,8 @@ private function get_channel_index(channel:String):int{
 			return 14;
 		case "honglian_ty":
 			return 15;
+		case "maoming_ct_0668":
+			return 16
 		default:
 			return 0;
 	}

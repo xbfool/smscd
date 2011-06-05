@@ -390,7 +390,7 @@ class smsd(object):
                 new_message = message()        
                 new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel)
                 self.messages[new_message.uid] = new_message
-        elif channel in ('hb_ct_01', 'hb_ct_02', 'hb_ct_03', 'hb_ct_04'):
+        elif channel in ('hb_ct_01', 'hb_ct_02', 'hb_ct_03', 'hb_ct_04', 'maoming_ct_01'):
             addr = []
             for i in xrange(0, len(addr_list), 20):
                 addr.append(addr_list[i: min(i + 20, len(addr_list))])
