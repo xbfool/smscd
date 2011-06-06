@@ -924,6 +924,13 @@ class smsd(object):
             d = self.db.raw_sql_query('SELECT ext, number, content, time FROM upload_msg WHERE ext = "%s" and time >= "%s" and time <= "%s"' % (u.ext, pbegin, pend))
             if d != None and u.ext != None and u.ext != '':
                 for ext, number, content, time in d:
+                    try:
+                        content.decode('utf8')
+                    except:
+                        try:
+                            content = content.decode('gbk').encode('utf8')
+                        except:
+                            pass
                     i = {'ext':ext, 'number':number, 'content':content, 'username':u.description, 'time':time.isoformat(' '), 'userid':username}
                     l.append(i)    
         elif (username != None and username != "" and self.users.has_key(username)):
@@ -934,6 +941,13 @@ class smsd(object):
                 d = self.db.raw_sql_query('SELECT ext, number, content, time FROM upload_msg WHERE ext = "%s" and time >= "%s" and time <= "%s"' % (u.ext, pbegin, pend))
                 if d != None and u.ext != None and u.ext != '':
                     for ext, number, content, time in d:
+                        try:
+                            content.decode('utf8')
+                        except:
+                            try:
+                                content = content.decode('gbk').encode('utf8')
+                            except:
+                                pass
                         i = {'ext':ext, 'number':number, 'content':content, 'username':u.description, 'time':time.isoformat(' '), 'userid':username}
                         l.append(i)
         else:
@@ -946,6 +960,13 @@ class smsd(object):
                     if d == None or len(d) == 0:
                         continue
                     for ext, number, content,time in d:
+                        try:
+                            content.decode('utf8')
+                        except:
+                            try:
+                                content = content.decode('gbk').encode('utf8')
+                            except:
+                                pass
                         i = {'ext':ext, 'number':number, 'content':content, 'username':u.description, 'time':time.isoformat(' '),'userid':u.username}
                         l.append(i)
             

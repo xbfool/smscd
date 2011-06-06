@@ -40,13 +40,13 @@ class sendsms(object):
             return self.__ret(env, start_response, -99, 'invalid query, not GET')
 	print env        
 	try:
-            query = urldecode(env['QUERY_STRING'])
-            phone = query.get('phone')
-            msgContent = query.get('msgContent').decode('gbk').encode('utf8')
-            spNumber = query.get('spNumber')
+        query = urldecode(env['QUERY_STRING'])
+        phone = query.get('phone')
+        msgContent = query.get('msgContent').decode('gbk').encode('utf8')
+        spNumber = query.get('spNumber')
 	    time = datetime.now()
-            self.db.raw_sql('INSERT INTO upload_msg(ext, number, content, time) VALUES(%s, %s, %s, %s)',
-                        (spNumber, phone, msgContent, time))
+        self.db.raw_sql('INSERT INTO upload_msg(ext, number, content, time) VALUES(%s, %s, %s, %s)',
+                (spNumber, phone, msgContent, time))
         except:
             print_exc()
         ret = 0
