@@ -36,30 +36,15 @@ class sendsms(object):
     def __call__(self, env, start_response):
         # request handler
         self.num_req += 1
-        if env['REQUEST_METHOD'] != 'POST' or 'CONTENT_LENGTH' not in env:
-            return self.__ret(env, start_response, -99, 'invalid query, not POST or invalid POST length')
-        length = int(env['CONTENT_LENGTH'])
-        if length <= 0:
-            return self.__ret(env, start_response, -99, 'error, empty POST body')
-        try:
-            post_data = env['wsgi.input'].read(length)
-        except:
-            print 'error reading POST data'
-            print_exc()
-            return self.__ret(env, start_response, -99, 'unknown error')
-        try:
-            query = urldecode(post_data)
-        except:
-            print 'error parsing query: %s' % post_data
-            print_exc()
-            return self.__ret(env, start_response, -99, 'invalid query, error parsing')
-        
-        print post_data
-        try:
+        if env['REQUEST_METHOD'] != 'GET':
+            return self.__ret(env, start_response, -99, 'invalid query, not GET')
+	print env        
+	try:
+            query = urldecode(env['QUERY_STRING'])
             phone = query.get('phone')
-            msgContent = query.get('msgContent')
+            msgContent = query.get('msgContent').decode('gbk').encode('utf8')
             spNumber = query.get('spNumber')
-            print mobile, ext, content, time
+	    time = datetime.now()
             self.db.raw_sql('INSERT INTO upload_msg(ext, number, content, time) VALUES(%s, %s, %s, %s)',
                         (spNumber, phone, msgContent, time))
         except:
