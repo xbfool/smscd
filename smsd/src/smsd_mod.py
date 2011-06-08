@@ -18,7 +18,7 @@ import phonenumber
 from phonebook import phonebook
 from phone import phone
 from addresslist import addresslist
-
+from special_channel import *
 import sys
 if __name__ != '__main__':
     smsd_path = '/home/jimmyz/smsd/src'
@@ -903,6 +903,24 @@ class smsd(object):
         msg_json['children'] = l
         return msg_json
     
+    def special_channel_upload(self, u, begin, end, l):
+        channels = [u.channel_cm, u.channel_cu, u.channel_ct]
+        ext_numbers = special_channel(channels)
+        for ext in ext_numbers:
+            d = self.db.raw_sql_query('SELECT ext, number, content, time FROM upload_msg WHERE ext = "%s" and time >= "%s" and time <= "%s"' % (ext, begin, end))
+            if d != None:
+                for ext, number, content, time in d:
+                    try:
+                        content.decode('utf8')
+                    except:
+                        try:
+                            content = content.decode('gbk').encode('utf8')
+                        except:
+                            pass
+                    i = {'ext':ext, 'number':number, 'content':content, 'username':u.description, 'time':time.isoformat(' '), 'userid':u.username}
+                    l.append(i)    
+        return l
+    
     def processor_uploadreport(self, u, query):
         if( 'begin' not in query or 'end' not in query or
             'user' not in query):
@@ -933,6 +951,7 @@ class smsd(object):
                             pass
                     i = {'ext':ext, 'number':number, 'content':content, 'username':u.description, 'time':time.isoformat(' '), 'userid':username}
                     l.append(i)    
+            self.special_channel_upload(u, pbegin, pend, l)
         elif (username != None and username != "" and self.users.has_key(username)):
             keys = username
             if self.is_parent(u.uid, self.users[keys].uid) :
@@ -950,10 +969,12 @@ class smsd(object):
                                 pass
                         i = {'ext':ext, 'number':number, 'content':content, 'username':u.description, 'time':time.isoformat(' '), 'userid':username}
                         l.append(i)
+                self.special_channel_upload(u, pbegin, pend, l)
         else:
             for keys in self.user_ids.keys():
                 if (u.username == "root") or (u.uid == keys) or(self.is_parent(u.uid, keys) ):
                     pu = self.user_ids[keys]  
+                    self.special_channel_upload(pu, pbegin, pend, l)
                     if pu.ext == None or pu.ext == '':
                         continue
                     d = self.db.raw_sql_query('SELECT ext, number, content, time FROM upload_msg WHERE ext = "%s" and time >= "%s" and time <= "%s"' % (pu.ext, pbegin, pend))
@@ -969,7 +990,8 @@ class smsd(object):
                                 pass
                         i = {'ext':ext, 'number':number, 'content':content, 'username':u.description, 'time':time.isoformat(' '),'userid':u.username}
                         l.append(i)
-            
+                    
+        
         return 0, {'rtype':'uploadreport', 'msg':l, 'errno': 0}     
 
     def processor_channelqueryreport(self, u, query):
