@@ -36,15 +36,15 @@ class sms_sender(object):
             'process_ret': sms_sender.__process_ret_sd_tc
         }
         settings['hb_ct_01'] = {
-            'name': 'hb_ct_01',
+            'name': 'hb_ct_01', #0712a
             'host': '58.53.194.80',
             'path': '/swdx/services/APService',
             'mode': 'soap',
             'sub_mode':'hb_ct',
-            'entid': 'hbhczx001',
-            'uid': 'hbhczx104',
-            'apid': 'hbhczx104',
-            'appwd': 'of8Rmh',
+            'entid': 'hbalswdx3',
+            'uid': 'hbalswdx301',
+            'apid': 'hbalswdx301',
+            'appwd': 'fngopsdjf0[a',
             'process_ret' : sms_sender.__process_ret_hb_tc
         }
         settings['hb_ct_02'] = {
@@ -656,9 +656,10 @@ class sms_sender(object):
                     count += 1
                 elif setting.get('sub_mode') == 'maoming_ct':
                     print "in maoming_ct"
+                    tmpmsg = unicode(msg,'utf-8')
                     self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num},
                       srcmobile = setting['srcmobile'], password = setting['password'], 
-                      objmobiles = addr, smstext = msg, rstype = 'text')
+                      objmobiles = addr, smstext = tmpmsg.encode('gbk'), rstype = 'text')
                     
         return count
                     
