@@ -663,8 +663,8 @@ class smsd(object):
             try:
                 m = int(ext)
                 newext = ext
-                if len(ext) > 20:
-                    newext = ext[0:20]
+                if len(ext) > 50:
+                    newext = ext[0:50]
                 pu.set_ext(newext)
             except:
                 if ext == None or ext == '':
