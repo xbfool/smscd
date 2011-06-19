@@ -706,6 +706,8 @@ private function processor_manageuser(param:Object):void{
 		request_listchildren();
 	} else if(param.errno == -2) {
 		Alert.show('请在扩展号码中填入不多于5位的阿拉伯数字');
+	} else if(param.errno == -3) {
+		Alert.show('扩展号与其他用户的扩展号冲突');
 	}
 	else
 		Alert.show('您没有修改这些信息的权限');

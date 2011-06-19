@@ -500,7 +500,7 @@ class smsd(object):
                         self.__split_message(u.uid, split_addr[addr], "("+str(i+1)+"/"+str(p)+")"+
                                     msgcontent[i*64:(i+1)*64].encode('utf8'), message.F_ADMIT, channel)
                         
-       return 0, {'rtype':'sendmessage', 'num':num, 'errno': 0}
+        return 0, {'rtype':'sendmessage', 'num':num, 'errno': 0}
     
     def processor_userinfo(self, user, query):
         #{'q':'userinfo', 'sid': sid}
@@ -642,9 +642,16 @@ class smsd(object):
           and pu.parent_id == u.uid)):
             return 0, {'rtype':'manageuser', 'errno': 1}
         
+        d = self.db.raw_sql_query('SELECT uid FROM user WHERE ext = "%s"' % (u.ext))
+
         if u.is_admin():
             try:
-                m = int(ext)
+                if d != None:
+                    if pu.uid != d[0] and pu.uid != u.uid:
+                        return 0, {'rtype':'manageuser', 'errno': -3}
+                if not ext.isdigit():
+                    return 0, {'rtype':'manageuser', 'errno': -2} #ext is not number
+        
                 newext = ext
                 if len(ext) > 50:
                     newext = ext[0:50]
