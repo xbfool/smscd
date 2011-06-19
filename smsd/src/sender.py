@@ -215,6 +215,17 @@ class sms_sender(object):
             'mode': 'POST',
             'process_ret': sms_sender.__process_ret_maoming_ct
         }
+        settings['scp_0591_a'] = {
+            'name': 'scp_0591a',
+            'host': 'www.smsbird.cn',
+            'path': '/UserInterface/SendSmsBatch.asp',
+            'port': '8000',
+            'sub_mode': 'scp_0591',
+            'UserName': '90088',
+            'Password': '123456',
+            'mode': 'GET',
+            'process_ret': sms_sender.__process_ret_scp_0591
+        }
 #        settings['dongguan_0769_01'] = {
 #            'name': 'dongguan_0769_01',
 #            'host': '61.145.168.234',
@@ -437,7 +448,33 @@ class sms_sender(object):
         except:
             pass
         return 1  
-            
+    
+    def __process_ret_scp_0591(self, param):
+        status = message.F_FAIL
+        rl = []
+        try:
+            result = param['ret'][2]
+            print result
+            rl = result.split(';')
+            if rl[0].split('=')[1] == '0':
+                status = message.F_SEND
+                self.__db.raw_sql_wo_commit('UPDATE user SET msg_num = msg_num - %s where uid = %s', \
+                                            (param['msg_num'], param['user_uid']))      
+        except:
+            status = message.F_FAIL
+            pass
+        
+        if len(rl) == 2:
+            try:
+                result = rl[1].split('=')[1].decode('gbk').encode('utf8')
+            except:
+                pass
+        try:
+            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\" where uid = %s', \
+                                        (status, param['time'], result, param['uid']))
+        except:
+            pass
+        return 1  
     def __process_ret(self, now):
         count = 0
         while True:
@@ -660,7 +697,12 @@ class sms_sender(object):
                     self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num},
                       srcmobile = setting['srcmobile'], password = setting['password'], 
                       objmobiles = addr, smstext = tmpmsg.encode('gbk'), rstype = 'text')
-                    
+                elif setting.get('sub_mode') == 'scp_0591':
+                    print "in scp_0591"
+                    address_list = '|'.join(address.split(';'))
+                    tmpmsg = unicode(msg,'utf-8')
+                    self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num}, 
+                      Mobile = addr, MsgContent = tmpmsg.encode('gbk'))
         return count
                     
 
