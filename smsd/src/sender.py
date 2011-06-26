@@ -292,7 +292,7 @@ class sms_sender(object):
                 pass
             
         try:
-            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %d where uid = %s', \
+            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %s where uid = %s', \
                                         (status, param['time'], result, param['msg_num'] * param['percent'] / 100, param['uid']))
         except:
             pass
@@ -319,7 +319,7 @@ class sms_sender(object):
                 pass
             
         try:
-            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %d where uid = %s', \
+            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %s where uid = %s', \
                                         (status, param['time'], result, param['msg_num'] * param['percent'] / 100, param['uid']))
         except:
             pass
@@ -344,7 +344,7 @@ class sms_sender(object):
             pass
         
         try:
-            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %d where uid = %s', \
+            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %s where uid = %s', \
                                         (status, param['time'], result, param['msg_num'] * param['percent'] / 100, param['uid']))
         except:
             pass
@@ -365,7 +365,7 @@ class sms_sender(object):
             status = message.F_FAIL
             pass
         try:
-            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %d where uid = %s', \
+            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %s where uid = %s', \
                                         (status, param['time'], result, param['msg_num'] * param['percent'] / 100, param['uid']))
         except:
             pass
@@ -385,7 +385,7 @@ class sms_sender(object):
             status = message.F_FAIL
             pass
         try:
-            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %d where uid = %s', \
+            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %s where uid = %s', \
                                         (status, param['time'], result, param['msg_num'] * param['percent'] / 100, param['uid']))
         except:
             pass
@@ -404,7 +404,7 @@ class sms_sender(object):
             status = message.F_FAIL
             pass
         try:
-            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %d where uid = %s', \
+            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %s where uid = %s', \
                                         (status, param['time'], result, param['msg_num'] * param['percent'] / 100, param['uid']))
         except:
             pass
@@ -425,7 +425,7 @@ class sms_sender(object):
             status = message.F_FAIL
             pass
         try:
-             self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %d where uid = %s', \
+             self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %s where uid = %s', \
                                         (status, param['time'], result, param['msg_num'] * param['percent'] / 100, param['uid']))
         except:
             pass
@@ -444,7 +444,7 @@ class sms_sender(object):
             pass
         
         try:
-            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %d where uid = %s', \
+            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %s where uid = %s', \
                                         (status, param['time'], result, param['msg_num'] * param['percent'] / 100, param['uid']))
         except:
             pass
