@@ -69,7 +69,20 @@ public var channel_select_data:ArrayCollection = new ArrayCollection(
 		{label:"0591a", data:'scp_0591_a'},
 		
 	]);
-
+[Bindable]
+public var user_percent_list:ArrayCollection = new ArrayCollection([
+	{label:"100%", data:'100'}, 
+	{label:"95%", data:'95'}, 
+	{label:"90%", data:'90'}, 
+	{label:"85%", data:'85'}, 
+	{label:"80%", data:'80'}, 
+	{label:"75%", data:'75'}, 
+	{label:"70%", data:'70'}, 
+	{label:"65%", data:'65'}, 
+	{label:"60%", data:'65'}, 
+	{label:"55%", data:'55'}, 
+	{label:"50%", data:'50'}, 
+	]);
 [Bindable]
 public var message_var_type:ArrayCollection = new ArrayCollection(
 	[ {label:"请选择变量", data:0}, 
@@ -156,6 +169,8 @@ private var select_user_cm:int;
 private var select_user_cu:int;
 [Bindable]
 private var select_user_ct:int;
+[Bindable]
+private var select_user_percent:int;
 [Bindable]
 private var self_user_cm:int;
 [Bindable]
@@ -519,6 +534,15 @@ private function processor_deleteuser(param:Object):void{
 	
 }
 
+private function get_user_percent_index(percent:String):int{
+	var p:int = int(percent);
+	var index:int = 20 - p / 5;
+	if(index < 0)
+		index = 0;
+	else if(index > 10)
+		index = 0;
+	return index;
+}
 private function get_channel_index(channel:String):int{
 	switch(channel){
 		case "default":
@@ -681,6 +705,7 @@ private function open_managerview():void{
 		select_user_cm = get_channel_index(user.cm);
 		select_user_cu = get_channel_index(user.cu);
 		select_user_ct = get_channel_index(user.ct);
+		select_user_percent = get_user_percent_index(user.percent);
 		select_ext = user.ext;
 		select_userpasswd = "";
 		
