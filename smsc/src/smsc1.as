@@ -489,7 +489,7 @@ private function processor_setuserstatus(param:Object):void{
 }
 
 private function request_manageuser(username:String, desc:String, pwd:String, role:String,
-									can_weblogin:Boolean, can_post:Boolean, need_check:Boolean,cm:String,cu:String,ct:String, ext:String):void{
+									can_weblogin:Boolean, can_post:Boolean, need_check:Boolean,cm:String,cu:String,ct:String, ext:String, percent:String):void{
 	var flags:int = 0;
 	if(role == 'agent')
 		flags = 3;
@@ -506,10 +506,10 @@ private function request_manageuser(username:String, desc:String, pwd:String, ro
 	
 	if(pwd != null && pwd != ''){
 		this.request({q:'manageuser', sid:this.session, user:username, desc:desc, pass:SHA1.hash(pwd), flags:flags,
-			can_weblogin:can_weblogin, can_post:can_post, need_check:need_check, cm:cm, cu:cu, ct:ct, ext:ext});
+			can_weblogin:can_weblogin, can_post:can_post, need_check:need_check, cm:cm, cu:cu, ct:ct, ext:ext, percent:percent});
 	}else{
 		this.request({q:'manageuser', sid:this.session, user:username, desc:desc, flags:flags,
-			can_weblogin:can_weblogin, can_post:can_post, need_check:need_check, cm:cm, cu:cu, ct:ct, ext:ext});
+			can_weblogin:can_weblogin, can_post:can_post, need_check:need_check, cm:cm, cu:cu, ct:ct, ext:ext, percent:percent});
 	}
 }
 

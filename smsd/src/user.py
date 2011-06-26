@@ -18,7 +18,9 @@ from dbobj import dbobj
 class user(dbobj):
     # dbobj need these
     table_name = 'user'
-    fields = 'uid,description,username,password,parent_id,msg_num,flags,is_active,create_time,last_login,can_weblogin,can_post,need_check,channel_cm,channel_cu,channel_ct,ext'
+    fields = 'uid,description,username,password,parent_id,msg_num,flags,is_active,'\
+    'create_time,last_login,can_weblogin,can_post,need_check,channel_cm,channel_cu,channel_ct,ext,'\
+    'percent'
     
     key = 'uid'
     # user right flags
@@ -45,7 +47,8 @@ class user(dbobj):
         self.channel_ct = ''
         self.commit_num = 0
         self.children = {}
-        self.ext = '' #sub numbers
+        self.ext = '' 
+        self.percent = 100#sub numbers
     #   self.logs = []
     #   self.commits = []
         
@@ -53,7 +56,7 @@ class user(dbobj):
             can_post, need_check, 
             channel_cm,
             channel_cu,
-            channel_ct,flags = 0):
+            channel_ct,flags = 0, percent = 100):
         """ new user """
         self.username = username
         self.description = description
@@ -70,11 +73,12 @@ class user(dbobj):
         self.channel_cm = channel_cm
         self.channel_cu = channel_cu
         self.channel_ct = channel_ct
+        self.percent = percent
         self.create()
     
     def from_row(self, uid, description, username, password, parent_id, msg_num,
            flags, is_active, create_time, last_login, can_weblogin, can_post, need_check,
-           channel_cm, channel_cu, channel_ct, ext):
+           channel_cm, channel_cu, channel_ct, ext, percent):
         """ load from database """
         self.uid = uid
         self.username = username
@@ -93,6 +97,7 @@ class user(dbobj):
         self.channel_cu = channel_cu
         self.channel_ct = channel_ct
         self.ext = ext
+        self.percent = percent
         
     def __auth(self, password):
         return self.password == password and self.is_active == 1
@@ -226,6 +231,7 @@ class user(dbobj):
         d['ct'] = self.channel_ct
         d['commit_num'] = self.commit_num
         d['ext'] = self.ext
+        d['percent'] = self.percent
         if self.last_login == None:
             d['last_login'] = None
         else:

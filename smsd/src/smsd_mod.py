@@ -637,16 +637,17 @@ class smsd(object):
         cu = query['cu']
         ct = query['ct']
         ext = query['ext']
-        
+        percent = int(query['percent'])
         if( not u.is_admin() and not (u.is_agent()
           and pu.parent_id == u.uid)):
             return 0, {'rtype':'manageuser', 'errno': 1}
         
 	d = None
-	if ext != None and ext != '':
+	if (ext != None and ext != ''):
             d = self.db.raw_sql_query('SELECT uid FROM user WHERE ext = %s' % (ext))
 
         if u.is_admin():
+            pu.percent = percent
             try:
                 if d != None and len(d) >= 1:
                     if pu.uid != d[0] and pu.uid != u.uid:
@@ -676,6 +677,8 @@ class smsd(object):
             pu.change_cm(cm)
             pu.change_cu(cu)
             pu.change_ct(ct)
+
+        pu.save()
         return 0, {'rtype':'manageuser', 'errno': 0} 
     
     def processor_deleteuserlist(self, u, query):

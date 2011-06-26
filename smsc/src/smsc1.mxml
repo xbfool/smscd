@@ -956,7 +956,8 @@
 										   manage_user_cm.selectedItem.data.toString(),
 										   manage_user_cu.selectedItem.data.toString(),
 										   manage_user_ct.selectedItem.data.toString(),
-										   manage_user_ext.text
+										   manage_user_ext.text,
+										   manager_user_percent.value.toString()
 										   )}"/>
 								<mx:Button label="取消" click = "ViewStack_main.selectedChild=viewpage_user_manage"/>	
 							</mx:FormItem>
