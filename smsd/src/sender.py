@@ -581,7 +581,7 @@ class sms_sender(object):
                 elif setting.get('sub_mode') == 'sd_ct':
                     print "in sd_ct.."
                     self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
-                                          address = ';'.address_list, content = msg, uid = '12345678901',
+                                          address = ';'.join(address_list), content = msg, uid = '12345678901',
                                         pwd = 'fd1234')
                     count += 1
                     
