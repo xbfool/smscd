@@ -82,16 +82,16 @@ public var message_send_status:ArrayCollection = new ArrayCollection(
 	[ {label:"全部", data:0}, 
 		{label:"成功", data:2}, 
 		{label:"失败", data:7},
-	//	{label:"待审核", data:1},
+		//	{label:"待审核", data:1},
 		{label:"发送中", data:4},
-	//	{label:"被拒绝", data:3}
+		//	{label:"被拒绝", data:3}
 	]);
 [Bindable]
 public var message_mobile_type:ArrayCollection = new ArrayCollection(
 	[ {label:"全部", data:0},
-	  {label:"移动", data:1},
-	  {label:"联通", data:2},
-	  {label:"电信", data:3},
+		{label:"移动", data:1},
+		{label:"联通", data:2},
+		{label:"电信", data:3},
 	]);
 
 private var cm_list:ArrayCollection = new ArrayCollection(
@@ -248,7 +248,7 @@ private function logout(): void {
 	this.message_phone_number = new ArrayCollection();
 	this.addresslist_data = new ArrayCollection();
 	this.login_pass.text = '';
-//	user_grid.dataProvider = null;
+	//	user_grid.dataProvider = null;
 }
 private function request(param:Object):void {
 	var loader:URLLoader = new URLLoader;
@@ -374,7 +374,7 @@ private function processor_changepwd(param:Object):void
 }
 
 private function request_adduser(user:String, name:String, pwd:String, can_weblogin:Boolean,
-	can_post:Boolean, need_check:Boolean, cm:String, cu:String, ct:String): void {
+								 can_post:Boolean, need_check:Boolean, cm:String, cu:String, ct:String): void {
 	//change_stage(1002);
 	if(id == null && id == ""){
 		Alert.show("用户名不能为空,请重新输入");
@@ -387,7 +387,7 @@ private function request_adduser(user:String, name:String, pwd:String, can_weblo
 		else if(add_user_admin.selected)
 			flags = 7;
 		this.request({q:'adduser',sid:this.session,flags:flags,user:user, name:name, pass:SHA1.hash(pwd),
-		can_weblogin:can_weblogin, can_post:can_post, need_check:need_check, cm:cm, cu:cu, ct:ct});		
+			can_weblogin:can_weblogin, can_post:can_post, need_check:need_check, cm:cm, cu:cu, ct:ct});		
 	}
 }
 
@@ -413,10 +413,10 @@ private function processor_listchildren(param:Object):void{
 		var dp:Array = new Array;
 		for (var j:int = 0;j < param.children.length; j++){
 			var co:Object = param.children[j];
-//			var o:Object = new Object;
+			//			var o:Object = new Object;
 			dp.push(co);
 		}
-	//	user_data = dp;
+		//	user_data = dp;
 		var hr:HierarchicalData = new HierarchicalData;
 		hr.source = dp;
 		children_user_source = dp;
@@ -474,7 +474,7 @@ private function processor_setuserstatus(param:Object):void{
 }
 
 private function request_manageuser(username:String, desc:String, pwd:String, role:String,
-	can_weblogin:Boolean, can_post:Boolean, need_check:Boolean,cm:String,cu:String,ct:String, ext:String):void{
+									can_weblogin:Boolean, can_post:Boolean, need_check:Boolean,cm:String,cu:String,ct:String, ext:String):void{
 	var flags:int = 0;
 	if(role == 'agent')
 		flags = 3;
@@ -491,10 +491,10 @@ private function request_manageuser(username:String, desc:String, pwd:String, ro
 	
 	if(pwd != null && pwd != ''){
 		this.request({q:'manageuser', sid:this.session, user:username, desc:desc, pass:SHA1.hash(pwd), flags:flags,
-		can_weblogin:can_weblogin, can_post:can_post, need_check:need_check, cm:cm, cu:cu, ct:ct, ext:ext});
+			can_weblogin:can_weblogin, can_post:can_post, need_check:need_check, cm:cm, cu:cu, ct:ct, ext:ext});
 	}else{
 		this.request({q:'manageuser', sid:this.session, user:username, desc:desc, flags:flags,
-		can_weblogin:can_weblogin, can_post:can_post, need_check:need_check, cm:cm, cu:cu, ct:ct, ext:ext});
+			can_weblogin:can_weblogin, can_post:can_post, need_check:need_check, cm:cm, cu:cu, ct:ct, ext:ext});
 	}
 }
 
@@ -800,8 +800,8 @@ private function add_phonenumber(number:String):void{
 			number.charAt(1) != '4' &&
 			number.charAt(1) != '5' &&
 			number.charAt(1) != '8'
-			))
-			{
+		))
+	{
 		Alert.show("不是有效的电话号码");	
 	}
 	else{
@@ -876,7 +876,7 @@ private function toAddress(element:*, index:int, arr:Array):String {
 private function processor_sendmessage(param:Object):void{
 	if( (this.phone_address == null || this.phone_address.length == 0) 
 		&& ( this.phonename_list == null || this.phonename_list.length == 0 )){
-//		this.request({q:'userinfo', sid:this.session});
+		//		this.request({q:'userinfo', sid:this.session});
 		Alert.show('处理请求成功');
 		user_msg_num = user_msg_num - ready_commit_msg_num;
 		message_content_input.text = '';
@@ -910,7 +910,7 @@ private function request_managemsg(status:String, isAll:Boolean):void{
 		status_int = 3;
 	else if (status == "cancel")
 		status_int = 6;
-
+	
 	if(mlist.length == 0){
 		Alert.show("请至少选择一条信息");
 	} else {
@@ -948,7 +948,7 @@ private function processor_listcheckmsg(param:Object):void{
 }
 
 private function request_listmsg(user:String, status:int, begin:Date, end:Date):void{
-
+	
 	this.request({q:'listmsg', sid:this.session, user:user, status:status,
 		begin:begin.time, end:end.time});
 }
@@ -976,21 +976,21 @@ private function delete_log_msg():void{
 	var mlist:Array = new Array;
 	
 	var status_int:int = 5; //delete
-
+	
 	for (var i:int = 0; i < dp.length; i++) {
 		if(dp[i].selected)
 			mlist.push(dp[i].uid)
 	}
-
+	
 	status_int = 5;
-
+	
 	
 	if(mlist.length == 0){
 		Alert.show("请至少选择一条信息");
 	} else {
 		this.request({q:'managemsg', sid:this.session, mlist:mlist, status: status_int});
 	}
-
+	
 }
 
 private function deleteall_log_msg():void{
@@ -1015,7 +1015,7 @@ private function deleteall_log_msg():void{
 }
 
 private function export_msg_log():void{
-
+	
 	var file:ByteArray = new ByteArray;
 	var dataProviderCollection:ArrayCollection =  
 		message_log_data as ArrayCollection; 
@@ -1040,9 +1040,9 @@ private function export_msg_log():void{
 		ra.join(",");
 		file.writeUTFBytes(ra.join(","));  
 	}  
-    var fr:FileReference = new FileReference();  
+	var fr:FileReference = new FileReference();  
 	
-    fr.save(file,"msglog.txt");  
+	fr.save(file,"msglog.txt");  
 }
 
 private var export_msg_list:Array;
@@ -1125,7 +1125,7 @@ private function export_report_log(user:String, channel:int, status:int, begin:D
 	var dataProviderCollection:ArrayCollection =  
 		message_log_data as ArrayCollection; 
 	var rowCount:int =  dataProviderCollection.length;
-/*	
+	/*	
 	var excelFile:ExcelFile = new ExcelFile();
 	var sheet:Sheet = new Sheet();
 	sheet.resize(export_msg_list.length+1, 10);
@@ -1140,32 +1140,32 @@ private function export_report_log(user:String, channel:int, status:int, begin:D
 	sheet.setCell(0, 7, "创建时间");
 	sheet.setCell(0, 8, "短信内容");
 	for ( var j:int = 0; j < export_msg_list.length;j++) {
-		var record:Object = export_msg_list[j];
-		if ( status != 0 && status != record.status) {
-			continue;
-		}
-			
-		var statusStr:String = msg_status_display(record.status);
-		sheet.setCell(index, 0, index.toString());
-		sheet.setCell(index, 1, record.username);
-		sheet.setCell(index, 2, record.last_update.toString());
-		var address:String = get_address_by_mobile(record.address, channel);
-		sheet.setCell(index, 3, address);
-		sheet.setCell(index, 4, channel_select_data[get_channel_index(record.channel)].label);
-		sheet.setCell(index, 5, statusStr);
-		sheet.setCell(index, 6, record.msg_num.toString());
-		sheet.setCell(index, 7, record.create_time.toString());
-		sheet.setCell(index, 8, record.msg);
-		index++;
+	var record:Object = export_msg_list[j];
+	if ( status != 0 && status != record.status) {
+	continue;
+	}
+	
+	var statusStr:String = msg_status_display(record.status);
+	sheet.setCell(index, 0, index.toString());
+	sheet.setCell(index, 1, record.username);
+	sheet.setCell(index, 2, record.last_update.toString());
+	var address:String = get_address_by_mobile(record.address, channel);
+	sheet.setCell(index, 3, address);
+	sheet.setCell(index, 4, channel_select_data[get_channel_index(record.channel)].label);
+	sheet.setCell(index, 5, statusStr);
+	sheet.setCell(index, 6, record.msg_num.toString());
+	sheet.setCell(index, 7, record.create_time.toString());
+	sheet.setCell(index, 8, record.msg);
+	index++;
 	}
 	excelFile.sheets.addItem(sheet);            
 	var mbytes:ByteArray = excelFile.saveToByteArray();
 	var results:ByteArray = new ByteArray();
 	results.writeMultiByte(mbytes.toString(), "gb2312");
 	fr.save(results, "report.xls");
-*/
-
-//	file.writeMultiByte("'编号','发送人','发出时间','手机号码','通道','状态','条数','创建时间','短信内容'\r\n", "gb2312");
+	*/
+	
+	//	file.writeMultiByte("'编号','发送人','发出时间','手机号码','通道','状态','条数','创建时间','短信内容'\r\n", "gb2312");
 	file.writeUTFBytes("编号,发送人,发出时间,手机号码,通道,状态,条数,创建时间,短信内容\r\n");
 	for(var j:int=0;j<export_msg_list.length;j++)  
 	{  
@@ -1188,7 +1188,7 @@ private function export_report_log(user:String, channel:int, status:int, begin:D
 		ra.push(record.msg);
 		ra.push("\r\n");
 		ra.join(",");
-//		file.writeMultiByte(ra.join(","), "gb2312");  
+		//		file.writeMultiByte(ra.join(","), "gb2312");  
 		file.writeUTFBytes(ra.join(","));  
 	} 
 	var filename:String = "report" + beginStr + "-" + endStr + ".txt";
@@ -1331,7 +1331,7 @@ private function change_view_stack(view:String):void{
 		if(message_report_log_status_select != null)
 			message_report_log_status_select.selectedIndex = 0;
 		message_phone_number.removeAll();
-			
+		
 	} else if(view == "addmsglog"){
 		ViewStack_main.selectedChild = viewpage_addmessage_log;
 		if(addmessage_log_date_to != null)
@@ -1359,11 +1359,11 @@ private function change_view_stack(view:String):void{
 			channel_report_date_to.selectedDate = new Date()	
 		message_phone_number.removeAll();
 	}
-		
+	
 }
 
 private function check_char_count(text:TextArea, count:Label, address:String):void{
-
+	
 	var i:int = text.text.length;
 	var p:int = 0;
 	if(i == 0)
@@ -1374,12 +1374,12 @@ private function check_char_count(text:TextArea, count:Label, address:String):vo
 		p = (i - 1) / 65 + 1;
 	
 	var dp:Array = message_phone_number.source;
-
+	
 	var n:int = 0;
 	
 	for ( var j:int = 0; j < dp.length; j++) {
 		//if ( dp[j].check == true )
-			n += dp[j].count;
+		n += dp[j].count;
 	}
 	
 	var num:int = p * n;
@@ -1433,9 +1433,9 @@ private function processor_queryreport(param:Object):void{
 		}
 		var hr:HierarchicalData = new HierarchicalData;
 		hr.source = dp;
-//		children_user_source = dp;
+		//		children_user_source = dp;
 		message_report_grid.dataProvider = hr;
-//		message_phone_number.source = dp;
+		//		message_phone_number.source = dp;
 	}
 }
 

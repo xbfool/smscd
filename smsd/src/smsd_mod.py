@@ -642,14 +642,16 @@ class smsd(object):
           and pu.parent_id == u.uid)):
             return 0, {'rtype':'manageuser', 'errno': 1}
         
-        d = self.db.raw_sql_query('SELECT uid FROM user WHERE ext = "%s"' % (u.ext))
+	d = None
+	if ext != None and ext != '':
+            d = self.db.raw_sql_query('SELECT uid FROM user WHERE ext = %s' % (ext))
 
         if u.is_admin():
             try:
-                if d != None:
+                if d != None and len(d) >= 1:
                     if pu.uid != d[0] and pu.uid != u.uid:
                         return 0, {'rtype':'manageuser', 'errno': -3}
-                if not ext.isdigit():
+                if len(ext) > 0 and not ext.isdigit():
                     return 0, {'rtype':'manageuser', 'errno': -2} #ext is not number
         
                 newext = ext

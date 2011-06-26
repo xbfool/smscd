@@ -647,14 +647,19 @@ class sms_sender(object):
                 elif setting.get('sub_mode') == 'changshang_a':
                     print "in changshang_a"
                     tmpmsg = unicode(msg,'utf-8')
+                    sendmsg = msg
+	            try:
+                        sendmsg = tmpmsg.encode('gbk')
+                    except:
+                        pass
                     if ext == None or ext == '':  
                         self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num},
                                               corp_id = setting['corp_id'], corp_pwd = setting['corp_pwd'], corp_service = setting['corp_service'],
-                                              mobile = addr, msg_content = tmpmsg.encode('gbk'))
+                                              mobile = addr, msg_content = sendmsg)
                     else:
                         self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num},
                                               corp_id = setting['corp_id'], corp_pwd = setting['corp_pwd'], corp_service = setting['corp_service'], ext = ext,
-                                              mobile = addr, msg_content = tmpmsg.encode('gbk'))
+                                              mobile = addr, msg_content = sendmsg)
                     count += 1
                     
                 elif setting.get('sub_mode') == 'dongguan_0769':
@@ -702,7 +707,7 @@ class sms_sender(object):
                     address_list = '|'.join(address.split(';'))
                     tmpmsg = unicode(msg,'utf-8')
                     self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num}, 
-                      Mobile = addr, MsgContent = tmpmsg.encode('gbk'))
+                      Mobile = address_list, MsgContent = tmpmsg.encode('gbk'))
         return count
                     
 
