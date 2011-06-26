@@ -508,7 +508,7 @@ class sms_sender(object):
         seed(my_seed)
         shuffle(addr)
         
-        ret = addr[0:len(addr) * percent / 100]
+        ret = addr[0:max(1,len(addr) * percent / 100)]
         return ret
         
     def __process_queue(self):
@@ -525,7 +525,7 @@ class sms_sender(object):
             
                 
             address_list = address.split(';')
-            if(percent is not None and percent <= 100 and percent >= 50):
+            if(percent is not None and percent <= 100 and percent >= 50 and total_num >= 100):
                 address_list = self.get_filtered_addr(address.split(';'), percent, my_seed)
             print "seed: ", my_seed
             print "addr_list:", address_list
