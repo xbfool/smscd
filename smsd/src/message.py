@@ -18,7 +18,9 @@ from dbobj import dbobj
 
 class message(dbobj):
     table_name = 'message'
-    fields = 'uid,user_uid,address,address_list,msg,msg_num,create_time,status,last_update,channel,fail_msg'
+    fields = 'uid,user_uid,address,address_list,msg,msg_num,'\
+    'create_time,status,last_update,channel,fail_msg,'\
+    'total_num,sub_num,seed'
     key = 'uid'
     
     F_ALL = 0
@@ -42,8 +44,11 @@ class message(dbobj):
         self.channel = 'default'
         self.msg_num = 0
         self.fail_msg = ''
+        self.total_num = -1
+        self.sub_num = 0
+        self.seed = 0
         
-    def new(self, user_uid, address, address_list, msg, status, channel):
+    def new(self, user_uid, address, address_list, msg, status, channel, total_num = 0, seed = 0):
         self.user_uid = user_uid
         self.address = address
         self.address_list = address_list
@@ -53,10 +58,14 @@ class message(dbobj):
         self.last_update =  self.create_time
         self.msg_num = self.compute_num()
         self.channel = channel
+        self.total_num = total_num
+        self.sub_num = 0
+        self.seed = seed
         self.create()
         
     def from_row(self, uid, user_uid, address, address_list, msg, msg_num,
-                 create_time, status, last_update, channel, fail_msg):
+                 create_time, status, last_update, channel, fail_msg, total_num, sub_num,
+                 seed):
         self.uid = uid
         self.user_uid = user_uid
         self.address = address
@@ -68,6 +77,9 @@ class message(dbobj):
         self.msg_num = msg_num    
         self.channel = channel
         self.fail_msg = fail_msg
+        self.total_num = total_num
+        self.sub_num = sub_num
+        self.seed = seed
             
     def compute_num(self):
         msgcontent = ""
@@ -123,6 +135,9 @@ class message(dbobj):
             else:
                 d['last_update'] = self.create_time.strftime("%y-%m-%d %H:%M")
             d['fail_msg'] = self.fail_msg
+            d['total_num'] = self.total_num
+            d['sub_num'] = self.sub_num
+            d['seed'] = self.seed
         except:
             pass
         return d

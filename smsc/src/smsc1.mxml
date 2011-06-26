@@ -507,6 +507,7 @@
 										<mx:DataGridColumn width="150" dataField="success_num" itemRenderer="mx.controls.Text" headerText="成功总数"/>
 										<mx:DataGridColumn width="150" dataField="fail_num" itemRenderer="mx.controls.Text" headerText="失败总数"/>
 										<mx:DataGridColumn width="150" dataField="append_num" itemRenderer="mx.controls.Text" headerText="待发送总数"/>
+										<mx:DataGridColumn width="150" dataField="sub_num" itemRenderer="mx.controls.Text" headerText="实际总数"/>
 									</mx:columns>
 								</mx:DataGrid>
 							</mx:VBox>

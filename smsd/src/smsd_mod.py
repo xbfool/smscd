@@ -19,6 +19,7 @@ from phonebook import phonebook
 from phone import phone
 from addresslist import addresslist
 from special_channel import *
+from random import randint, seed
 import sys
 if __name__ != '__main__':
     smsd_path = '/home/jimmyz/smsd/src'
@@ -378,7 +379,7 @@ class smsd(object):
             return 0, {'rtype':'addmessage', 'num':num, 'errno': -1} #cannot be negetive
        
     
-    def __split_message(self, uid, addr_list, msg, status, channel):
+    def __split_message(self, uid, addr_list, msg, status, channel, seed):
         if channel in ('changshang_a_01', 'changshang_a_02', 'changshang_a_03',
                        'honglian_01',
                          'honglian_bjyh', 'honglian_jtyh',
@@ -388,7 +389,7 @@ class smsd(object):
                 addr.append(addr_list[i: min(i + 50, len(addr_list))])
             for item in addr:
                 new_message = message()        
-                new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel)
+                new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel, len(addr_list), seed)
                 self.messages[new_message.uid] = new_message
         elif channel in ('hb_ct_01', 'hb_ct_02', 'hb_ct_03', 'hb_ct_04', 'maoming_ct_01'):
             addr = []
@@ -396,7 +397,7 @@ class smsd(object):
                 addr.append(addr_list[i: min(i + 20, len(addr_list))])
             for item in addr:
                 new_message = message()        
-                new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel)
+                new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel, len(addr_list), seed)
                 self.messages[new_message.uid] = new_message  
         elif channel in ('shangxintong_01'):
             addr = []
@@ -404,7 +405,7 @@ class smsd(object):
                 addr.append(addr_list[i: min(i + 1, len(addr_list))])
             for item in addr:
                 new_message = message()        
-                new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel)
+                new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel, len(addr_list), seed)
                 self.messages[new_message.uid] = new_message     
         else:
             addr = []
@@ -412,7 +413,7 @@ class smsd(object):
                 addr.append(addr_list[i: min(i + 50, len(addr_list))])
             for item in addr:
                 new_message = message()        
-                new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel)
+                new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel, len(addr_list), seed)
                 self.messages[new_message.uid] = new_message
          #   new_message = message()        
          #   new_message.new(uid, ';'.join(addr_list), 0, msg, message.F_ADMIT, channel)
@@ -485,6 +486,8 @@ class smsd(object):
         
         pm = phonenumber.phonenumber()
         split_addr = pm.split_addr(l)
+        seed(time.time())
+        my_seed = randint(0, 10000)
         for channel, addr in [(u.channel_cm, pm.S_CM), 
                                (u.channel_cu, pm.S_CU), 
                                (u.channel_ct, pm.S_CT)]:
@@ -493,12 +496,12 @@ class smsd(object):
                                      'honglian_jtyh',
                                      'honglian_ty']:
                 if len(split_addr[addr]) > 0:
-                    self.__split_message(u.uid, split_addr[addr], msg, message.F_ADMIT, channel)
+                    self.__split_message(u.uid, split_addr[addr], msg, message.F_ADMIT, channel, my_seed)
             else:
                 for i in range(p):
                     if len(split_addr[addr]) > 0:
                         self.__split_message(u.uid, split_addr[addr], "("+str(i+1)+"/"+str(p)+")"+
-                                    msgcontent[i*64:(i+1)*64].encode('utf8'), message.F_ADMIT, channel)
+                                    msgcontent[i*64:(i+1)*64].encode('utf8'), message.F_ADMIT, channel, my_seed)
                         
         return 0, {'rtype':'sendmessage', 'num':num, 'errno': 0}
     
@@ -805,7 +808,7 @@ class smsd(object):
                                 'cm_d_num':0, 'ct_d_num':0, 'cu_d_num':0,
                                 'cm_s_num':0, 'ct_s_num':0, 'cu_s_num':0,
                                 'cm_f_num':0, 'ct_f_num':0, 'cu_f_num':0,
-                                'cm_a_num':0, 'ct_a_num':0, 'cu_a_num':0}
+                                'cm_a_num':0, 'ct_a_num':0, 'cu_a_num':0, 'sum_num':0}
             for k in self.messages.itervalues(): 
                     
                 if k.user_uid == u.uid and pbegin <= k.create_time and k.create_time <= pend:
@@ -1007,13 +1010,14 @@ class smsd(object):
                 if channel == 'default':
                     channel = 'hb_ct_01'
                 if channel not in msg_dict.keys():
-                    msg_json = {'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0}
+                    msg_json = {'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0, 'sub_num':0}
                 else:
                     msg_json = msg_dict[channel]
                     
                 msg_json['send_num'] = msg_json['send_num'] + k.msg_num;
                 if k.status == k.F_SEND:
                     msg_json['success_num'] = msg_json['success_num'] + k.msg_num
+                    msg_json['sub_num'] += k.sub_num
                 elif k.status == k.F_FAIL:  
                     msg_json['fail_num'] = msg_json['fail_num'] + k.msg_num   
                 elif k.status == k.F_ADMIT:
