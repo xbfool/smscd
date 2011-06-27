@@ -522,7 +522,8 @@ class sms_sender(object):
             ext = user_content[0][0]
             user_percent = self.__db.raw_sql_query('SELECT percent FROM user WHERE uid = %s', user_uid)
             percent = user_percent[0][0]
-            
+            if percent == None or percent > 100:
+                percent = 100
                 
             address_list = address.split(';')
             if(percent is not None and percent <= 100 and percent >= 50 and total_num >= 100):
