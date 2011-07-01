@@ -66,7 +66,7 @@ class smsd(object):
     PHONE_NUMBER = 1
     PHONE_NAME = 2
     
-    def __init__(self, conf = 'smsd.ini', using_wsgiref = False):
+    def __init__(self, conf='smsd.ini', using_wsgiref=False):
         # get config/database, etc
         self.num_req = 0
         
@@ -214,7 +214,7 @@ class smsd(object):
     
     def __ret_json(self, ret, start_response):
         start_response('200 OK', [('Content_type', 'application/json')])
-        return [json.dumps(ret, separators=(',',':'))]
+        return [json.dumps(ret, separators=(',', ':'))]
     
     def __add_user(self, u):
         self.users[u.username] = u
@@ -288,10 +288,10 @@ class smsd(object):
         if pu.uid == u.uid:
             oldp = query['oldp']
             if not pu.web_auth(oldp):
-                return 0,  {'rtype':'changepwd', 'errno': 1};#密码错误
+                return 0, {'rtype':'changepwd', 'errno': 1};#密码错误
         
         pu.change_password(newp); 
-        return 0, {'rtype':'changepwd','errno':0}#成功
+        return 0, {'rtype':'changepwd', 'errno':0}#成功
     
     def processor_adduser(self, u, query):
         #{'q':'adduser', 'sid': sid, 'user':username, 'name':desc, 'pass':password, 'flags':flags,
@@ -347,23 +347,23 @@ class smsd(object):
                     pass
                 return 0, {'rtype':'addmessage', 'num':num, 'errno': 0}
             else:
-                return 0, {'rtype':'addmessage', 'num':num, 'errno': -1} #cannot be negetive
+                return 0, {'rtype':'addmessage', 'num':num, 'errno':-1} #cannot be negetive
              
         if not u.flags & user.F_CHARGE:
             return False
         
         if u.msg_num < num:
-            return 0, {'rtype':'addmessage', 'num':num, 'errno': -2} #not enough message
+            return 0, {'rtype':'addmessage', 'num':num, 'errno':-2} #not enough message
         
         if not self.users.get(username):
             return False
         
         pu = self.users.get(username)
         if pu.uid == u.uid:
-            return 0, {'rtype':'addmessage', 'num':num, 'errno': -3} #cannot be negetive
+            return 0, {'rtype':'addmessage', 'num':num, 'errno':-3} #cannot be negetive
         
         if pu.parent_id != u.uid:
-            return 0, {'rtype':'addmessage', 'num':num, 'errno': -4} #cannot be negetive
+            return 0, {'rtype':'addmessage', 'num':num, 'errno':-4} #cannot be negetive
         
         if pu.msg_num + num >= 0:
             before_num = pu.msg_num
@@ -376,7 +376,7 @@ class smsd(object):
             u.add_message(-num)
             return 0, {'rtype':'addmessage', 'num':num, 'errno': 0}
         else:
-            return 0, {'rtype':'addmessage', 'num':num, 'errno': -1} #cannot be negetive
+            return 0, {'rtype':'addmessage', 'num':num, 'errno':-1} #cannot be negetive
        
     
     def __split_message(self, uid, addr_list, msg, status, channel, seed):
@@ -438,12 +438,12 @@ class smsd(object):
                 msg = msg.decode('gbk').encode('utf8')
                 msgcontent = msg.decode('utf8')
             except:
-                return 0, {'rtype':'sendmessage', 'errno': -1} #unknow encoding
+                return 0, {'rtype':'sendmessage', 'errno':-1} #unknow encoding
             
         if len(address) == 0 and address_list == 0:
-            return 0, {'rtype':'sendmessage', 'errno': -3} #zero message
+            return 0, {'rtype':'sendmessage', 'errno':-3} #zero message
         if len(msg) == 0:
-            return 0, {'rtype':'sendmessage', 'errno': -3} #zero message
+            return 0, {'rtype':'sendmessage', 'errno':-3} #zero message
         
         
         if type == self.PHONE_NAME :
@@ -464,7 +464,7 @@ class smsd(object):
         if l[len(l) - 1] == '':
             l.pop()
         if len(l) > 1000:
-            return 0, {'rtype':'sendmessage', 'errno': -5} #zero message
+            return 0, {'rtype':'sendmessage', 'errno':-5} #zero message
         
         p = 0
         if len(msgcontent) == 0:
@@ -474,22 +474,22 @@ class smsd(object):
         elif len(msgcontent) <= 500:
             p = (len(msgcontent) - 1) / 64 + 1
         else:
-            return 0, {'rtype':'sendmessage', 'errno': -4} #zero message
+            return 0, {'rtype':'sendmessage', 'errno':-4} #zero message
          
         num = len(l) * p
         
         if num == 0:
-            return 0, {'rtype':'sendmessage', 'errno': -3} #zero message
+            return 0, {'rtype':'sendmessage', 'errno':-3} #zero message
         
         if u.msg_num < num + u.commit_num:
-            return 0, {'rtype':'sendmessage', 'errno': -2} #not enough money 
+            return 0, {'rtype':'sendmessage', 'errno':-2} #not enough money 
         
         pm = phonenumber.phonenumber()
         split_addr = pm.split_addr(l)
         seed(time.time())
         my_seed = randint(0, 10000)
-        for channel, addr in [(u.channel_cm, pm.S_CM), 
-                               (u.channel_cu, pm.S_CU), 
+        for channel, addr in [(u.channel_cm, pm.S_CM),
+                               (u.channel_cu, pm.S_CU),
                                (u.channel_ct, pm.S_CT)]:
             if p == 1 or channel in ['shangxintong_01', 'honglian_01',
                                      'honglian_bjyh',
@@ -500,8 +500,8 @@ class smsd(object):
             else:
                 for i in range(p):
                     if len(split_addr[addr]) > 0:
-                        self.__split_message(u.uid, split_addr[addr], "("+str(i+1)+"/"+str(p)+")"+
-                                    msgcontent[i*64:(i+1)*64].encode('utf8'), message.F_ADMIT, channel, my_seed)
+                        self.__split_message(u.uid, split_addr[addr], "(" + str(i + 1) + "/" + str(p) + ")" + 
+                                    msgcontent[i * 64:(i + 1) * 64].encode('utf8'), message.F_ADMIT, channel, my_seed)
                         
         return 0, {'rtype':'sendmessage', 'num':num, 'errno': 0}
     
@@ -515,10 +515,15 @@ class smsd(object):
         uid = u.uid
         self.__reload_all()
         u = self.user_ids[uid]
-        
-        all = u.to_json_all()
         l = []
-        l.append(all)
+        if u.is_admin() and u.username == 'root':
+            for  value in self.user_ids.itervalues():
+                if value.parent_id == 0:
+                    all = value.to_json_all()
+                    l.append(all)
+        else:
+            all = u.to_json_all()
+            l.append(all)
         
         return 0, {'rtype':'listchildren', 'children': l, 'errno': 0}
 
@@ -557,7 +562,7 @@ class smsd(object):
                 if (status == 0 and k.status != message.F_DELETE) or k.status == status:
                     if ((k.last_update == None and (k.create_time >= pbegin and k.create_time <= pend))
                         or (k.last_update >= pbegin and k.last_update <= pend)):
-                        if (u.username == "root" ) or self.is_parent(u.uid, k.user_uid) or u.uid == k.user_uid: 
+                        if (u.username == "root") or self.is_parent(u.uid, k.user_uid) or u.uid == k.user_uid: 
                             try:
                                 msg_json = k.to_json()
                                 if(self.user_ids.get(k.user_uid)):
@@ -641,7 +646,7 @@ class smsd(object):
         ct = query['ct']
         ext = query['ext']
         percent = int(query['percent'])
-        if( not u.is_admin() and not (u.is_agent()
+        if(not u.is_admin() and not (u.is_agent()
           and pu.parent_id == u.uid)):
             return 0, {'rtype':'manageuser', 'errno': 1}
         
@@ -654,9 +659,9 @@ class smsd(object):
             try:
                 if d != None and len(d) >= 1:
                     if pu.uid != d[0] and pu.uid != u.uid:
-                        return 0, {'rtype':'manageuser', 'errno': -3}
+                        return 0, {'rtype':'manageuser', 'errno':-3}
                 if len(ext) > 0 and not ext.isdigit():
-                    return 0, {'rtype':'manageuser', 'errno': -2} #ext is not number
+                    return 0, {'rtype':'manageuser', 'errno':-2} #ext is not number
         
                 newext = ext
                 if len(ext) > 50:
@@ -666,7 +671,7 @@ class smsd(object):
                 if ext == None or ext == '':
                     pu.set_ext('')
                 else:
-                    return 0, {'rtype':'manageuser', 'errno': -2} #ext is not number
+                    return 0, {'rtype':'manageuser', 'errno':-2} #ext is not number
         if query.get('pass'):
             pu.change_password(query['pass'])
             
@@ -693,7 +698,7 @@ class smsd(object):
                 return False
             
             if(len(pu.children) > 0):
-                return 0, {'rtype':'deleteuserlist', 'errno': -1} #has children
+                return 0, {'rtype':'deleteuserlist', 'errno':-1} #has children
             
             u.delete_child(pu)
             del self.users[pu.username]
@@ -709,7 +714,7 @@ class smsd(object):
             return False
         
         if(len(pu.children) > 0):
-            return 0, {'rtype':'deleteuser', 'errno': -1} #has children
+            return 0, {'rtype':'deleteuser', 'errno':-1} #has children
         
         if u.uid == pu.parent_id:
             u.delete_child(pu)
@@ -784,7 +789,7 @@ class smsd(object):
             
     def processor_queryreport(self, u, query):
         #{q:'queryreport',sid:this.session, user:username, degin:start.time, end:end.time, type:type} 
-        if( 'begin' not in query or 'end' not in query or
+        if('begin' not in query or 'end' not in query or
             'user' not in query):
             return False
 
@@ -800,7 +805,7 @@ class smsd(object):
         #send_user:send_num:success_num:fail_num:append_num
         l = []
         if username != None and username != "" and self.users.has_key(username):
-            if not ((u.username == "root" ) or self.is_parent(u.uid, self.users[username].user_uid)):
+            if not ((u.username == "root") or self.is_parent(u.uid, self.users[username].user_uid)):
                 pass 
             keys = username
             u = self.users[keys]
@@ -920,7 +925,7 @@ class smsd(object):
         return l
     
     def processor_uploadreport(self, u, query):
-        if( 'begin' not in query or 'end' not in query or
+        if('begin' not in query or 'end' not in query or
             'user' not in query):
             return False
         
@@ -970,7 +975,7 @@ class smsd(object):
                 self.special_channel_upload(u, pbegin, pend, l)
         else:
             for keys in self.user_ids.keys():
-                if (u.username == "root") or (u.uid == keys) or(self.is_parent(u.uid, keys) ):
+                if (u.username == "root") or (u.uid == keys) or(self.is_parent(u.uid, keys)):
                     pu = self.user_ids[keys]  
                     self.special_channel_upload(pu, pbegin, pend, l)
                     if pu.ext == None or pu.ext == '':
@@ -978,7 +983,7 @@ class smsd(object):
                     d = self.db.raw_sql_query('SELECT ext, number, content, time FROM upload_msg WHERE ext = "%s" and time >= "%s" and time <= "%s"' % (pu.ext, pbegin, pend))
                     if d == None or len(d) == 0:
                         continue
-                    for ext, number, content,time in d:
+                    for ext, number, content, time in d:
                         try:
                             content.decode('utf8')
                         except:
@@ -986,7 +991,7 @@ class smsd(object):
                                 content = content.decode('gbk').encode('utf8')
                             except:
                                 pass
-                        i = {'ext':ext, 'number':number, 'content':content, 'username':u.description, 'time':time.isoformat(' '),'userid':u.username}
+                        i = {'ext':ext, 'number':number, 'content':content, 'username':u.description, 'time':time.isoformat(' '), 'userid':u.username}
                         l.append(i)
                     
         
@@ -994,7 +999,7 @@ class smsd(object):
 
     def processor_channelqueryreport(self, u, query):
         #{q:'queryreport',sid:this.session, degin:start.time, end:end.time, type:type} 
-        if( 'begin' not in query or 'end' not in query):
+        if('begin' not in query or 'end' not in query):
             return False
        
         begin = query['begin'] / 1000.0
@@ -1036,7 +1041,7 @@ class smsd(object):
     
     def processor_addmsglog(self, u, query):
         #{q:'queryreport',sid:this.session, user:username, degin:start.time, end:end.time, type:type} 
-        if( 'begin' not in query or 'end' not in query):
+        if('begin' not in query or 'end' not in query):
             return False
         begin = query['begin'] / 1000.0
         end = query['end'] / 1000.0
@@ -1056,7 +1061,7 @@ class smsd(object):
                     if type == 1:
                         type_text = "返还"
                     index = index + 1
-                    l.append({'uid':index, 
+                    l.append({'uid':index,
                               'username':username,
                               'before_msg_num':before_msg_num,
                               'add_msg_num':add_msg_num,
@@ -1071,7 +1076,7 @@ class smsd(object):
 
     def processor_listlog(self, user, query):
         #todo later
-        if( 'begin_year' not in query or 'begin_month' not in query or
+        if('begin_year' not in query or 'begin_month' not in query or
             'begin_day' not in query or 'end_year' not in query or
              'end_month' not in query or 'end_day' not in query or
              'action' not in query):
@@ -1085,7 +1090,7 @@ class smsd(object):
         end_day = query['end_day']
         
         begin = datetime(begin_year, begin_month, begin_day)
-        end = datetime(end_year, end_month, end_day+1)
+        end = datetime(end_year, end_month, end_day + 1)
         
         if query['action'] == 'all':
             if not user.has_right('listlog_all'):
@@ -1112,7 +1117,7 @@ class smsd(object):
         else:
             return False
         
-        return 0,  {'rtype':'listlog', 'l':l}
+        return 0, {'rtype':'listlog', 'l':l}
     
     def processor_getphonebookinfo(self, user, query):
         uid = user.uid
@@ -1121,7 +1126,7 @@ class smsd(object):
         l = []
         for list in phonebooks:
             l.append(list.to_json())
-        return 0,  {'rtype':'getphonebookinfo', 'list':l}
+        return 0, {'rtype':'getphonebookinfo', 'list':l}
         
     def processor_addphonebook(self, user, query):
         #{'q':'addphonebook', 'sid': sid, 'name':name, 'remark':remark}  
@@ -1167,7 +1172,7 @@ class smsd(object):
         phonebook_old.loadByID(uid, id)
         phonebook_old.delete()
     
-        return 0,  {'rtype':'deletephonebook', 'errno':0}
+        return 0, {'rtype':'deletephonebook', 'errno':0}
     
     def processor_getaddresslistinfo(self, user, query):
         uid = user.uid
@@ -1176,7 +1181,7 @@ class smsd(object):
         l = []
         for list in addresslists:
             l.append(list.to_json())
-        return 0,  {'rtype':'getaddresslistinfo', 'list':l}
+        return 0, {'rtype':'getaddresslistinfo', 'list':l}
     
     def processor_addaddresslist(self, user, query):
         if ('addresslist' not in query or 'name' not in query):
@@ -1188,12 +1193,12 @@ class smsd(object):
         address = query['addresslist']
         name = query['name']
         if len(address) == 0 :
-            return 0, {'rtype':'addaddresslist', 'errno': -1} #zero address
+            return 0, {'rtype':'addaddresslist', 'errno':-1} #zero address
         
         print 'begin to check addresslist'
         new_addresslist = addresslist()
         new_addresslist.new(uid, name, address)
-        return 0,  {'rtype':'addaddresslist', 'errno':0}
+        return 0, {'rtype':'addaddresslist', 'errno':0}
     
     def processor_deleteaddresslist(self, user, query):
         if 'addresslist' not in query:
@@ -1207,7 +1212,7 @@ class smsd(object):
         print address
         if len(address) == 0:
             print 'delete adddresslist error.'
-            return 0, {'rtype':'deleteaddresslist', 'errno': -1}  #zero address
+            return 0, {'rtype':'deleteaddresslist', 'errno':-1}  #zero address
         
         l = address.split(";")
         if l[len(l) - 1] == '':
@@ -1218,7 +1223,7 @@ class smsd(object):
             new_addresslist = addresslist()
             new_addresslist.deleteOne(uid, name)
     
-        return 0,  {'rtype':'deleteaddresslist', 'errno':0}
+        return 0, {'rtype':'deleteaddresslist', 'errno':0}
     
     def processor_getphonelistdata(self, user, query):
         if 'id' not in query:
@@ -1231,7 +1236,7 @@ class smsd(object):
         l = []
         for list in phones:
             l.append(list.to_json())
-        return 0,  {'rtype':'getphonelistdata', 'list':l}
+        return 0, {'rtype':'getphonelistdata', 'list':l}
     
     def processor_getallphoneinfo(self, user, query):
         uid = user.uid
@@ -1244,7 +1249,7 @@ class smsd(object):
             phones = phone.load('phonebook_uid = %s', phonebook_uid)   
             for obj in phones:
                 l.append(obj.to_json())
-        return 0,  {'rtype':'getallphoneinfo', 'list':l}        
+        return 0, {'rtype':'getallphoneinfo', 'list':l}        
     
     def processor_addphone(self, user, query):
         #{'q':'addphone', 'sid': sid, 'phonebook_id':phonebook_id, 
@@ -1288,7 +1293,7 @@ class smsd(object):
     
     def processor_deletephonelist(self, user, query):
         #{'q':'deletephonelist', 'sid':sid, 'phonelist':phonelist}
-        if ( 'phonelist' not in query ):
+        if ('phonelist' not in query):
             return False
         
         list = query['phonelist']
@@ -1297,11 +1302,11 @@ class smsd(object):
             phone_old = phone()
             phone_old.uid = uid
             phone_old.delete()
-        return 0,{'rtype':'deletephonelist', 'errno':0} #成功
+        return 0, {'rtype':'deletephonelist', 'errno':0} #成功
     
     def processor_addphonelist(self, user, query):
         #{'q':'addphonelist', 'sid':sid, 'phonebook_name':phonebook_name, 'phonelist':addrs}
-        if ( 'phonebook_name' not in query or 'phonelist' not in query):
+        if ('phonebook_name' not in query or 'phonelist' not in query):
             return False
         
         uid = user.uid
@@ -1323,7 +1328,7 @@ class smsd(object):
             mobile = phoneInfo['mobile']
             new_phone = phone()
             new_phone.new(phonebook_uid, name, companyname, title, mobile)
-        return 0,{'rtype':'addphonelist', 'errno':0} #成功 
+        return 0, {'rtype':'addphonelist', 'errno':0} #成功 
     
 def wsgiref_daemon():
     port = 8082
@@ -1335,5 +1340,5 @@ def wsgiref_daemon():
 if __name__ == '__main__':
     wsgiref_daemon()
 else:
-    application = smsd(conf = smsd_path + '/smsd.ini')
+    application = smsd(conf=smsd_path + '/smsd.ini')
 	
