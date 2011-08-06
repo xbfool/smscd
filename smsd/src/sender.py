@@ -72,6 +72,19 @@ class sms_sender(object):
             'appwd': 'abcjzidc2',
             'process_ret' : sms_sender.__process_ret_hb_tc
         }
+#        settings['hb_ct_04'] = {
+#            'name': 'hb_ct_04',
+#            'host': '58.53.194.80',
+#            'path': '/swdx/services/APService',
+#            'mode': 'soap',
+#            'sub_mode':'hb_ct',
+#            'entid': 'hbtmbckj',
+#            'uid': 'hbtmbckj4',
+#            'apid': 'hbtmbckj4',
+#            'appwd': '75Kfa8QL',
+#            'webpwd': 'sdj5alk6',
+#            'process_ret' : sms_sender.__process_ret_hb_tc
+#        }
         settings['hb_ct_04'] = {
             'name': 'hb_ct_04',
             'host': '58.53.194.80',
@@ -79,9 +92,9 @@ class sms_sender(object):
             'mode': 'soap',
             'sub_mode':'hb_ct',
             'entid': 'hbtmbckj',
-            'uid': 'hbtmbckj4',
-            'apid': 'hbtmbckj4',
-            'appwd': '75Kfa8QL',
+            'uid': 'hbtmbckj',
+            'apid': 'hbtmbckj',
+            'appwd': 'b5EZq4BW',
             'webpwd': 'sdj5alk6',
             'process_ret' : sms_sender.__process_ret_hb_tc
         }
