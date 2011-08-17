@@ -324,6 +324,8 @@ class smsd(object):
         
         new_user = user()
         new_user.new(username, desc, p, u.uid, 0, can_weblogin, can_post, need_check, cm, cu, ct, flags)
+        new_user.percent = u.percent
+        new_user.save()
         self.__add_user(new_user)
         u.add_child(new_user)
         
