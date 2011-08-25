@@ -21,7 +21,7 @@ from base64 import b64encode
 from zlib import compress
 from random import seed, shuffle
 class sms_sender(object):
-    def __init__(self, chk_interval = 3):
+    def __init__(self, chk_interval=3):
         self.__chk_interval = chk_interval
         self.cfg = loadcfg('smsd.ini')
         
@@ -309,20 +309,25 @@ class sms_sender(object):
             result = result.decode('gbk').encode('utf8')
         except:
             result = "something is error"
-            pass
-        if resultstr == success_str:
+            print result
+            
+        if result == success_str:
             status = message.F_SEND
             try:
                 self.__db.raw_sql_wo_commit('UPDATE user SET msg_num = msg_num - %s where uid = %s', \
                                             (param['msg_num'], param['user_uid']))
+                self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %s where uid = %s', \
+                        (status, param['time'], result, param['msg_num'] * param['percent'] / 100, param['uid']))
+  
             except:
                 pass
-            
-        try:
-            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %s where uid = %s', \
-                                        (status, param['time'], result, param['msg_num'] * param['percent'] / 100, param['uid']))
-        except:
-            pass
+        else:  
+            try:
+                self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %s where uid = %s', \
+                        (status, param['time'], result, 0, param['uid']))
+                print "honglian send failed"
+            except:
+                pass
 
         return 1
 
@@ -484,7 +489,7 @@ class sms_sender(object):
             except Empty:
                 # print '%s: no response yet' % self.__class__.__name__
                 break
-            print '%d, %s' %(param['uid'], ret)
+            print '%d, %s' % (param['uid'], ret)
             try:
                 self.__pending.remove(param['uid'])
             except:
@@ -508,7 +513,7 @@ class sms_sender(object):
         seed(my_seed)
         shuffle(addr)
         
-        ret = addr[0:max(1,len(addr) * percent / 100)]
+        ret = addr[0:max(1, len(addr) * percent / 100)]
         return ret
         
     def __process_queue(self):
@@ -575,30 +580,30 @@ class sms_sender(object):
                     print setting['name']
                     
                     self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
-                                      soapaction = 'http://58.53.194.80/swdx/services/APService/',
-                                      soap = soap)
+                                      soapaction='http://58.53.194.80/swdx/services/APService/',
+                                      soap=soap)
                     # self.__zhttp_pool.req('hb', uid, address = address, content = msg)
                     count += 1
                 elif setting.get('sub_mode') == 'sd_ct':
                     print "in sd_ct.."
                     address_f = [address_list[i] for i in range(len(address_list)) if address_list[i][0:3] != '182']
                     if len(address_f) > 0:
-                        self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
-                                              address = ';'.join(address_f), content = msg, uid = '12345678901',
-                                            pwd = 'fd1234')
+                        self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
+                                              address=';'.join(address_f), content=msg, uid='12345678901',
+                                            pwd='fd1234')
                     else:
-                        self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
-                                              address = ';'.join(address_list), content = msg, uid = '12345678901',
-                                            pwd = 'fd1234')
+                        self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
+                                              address=';'.join(address_list), content=msg, uid='12345678901',
+                                            pwd='fd1234')
                     count += 1
                     
                 elif setting.get('sub_mode') == 'honglian':
                     print "in honglian.."
-                    self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
-                                          phone = addr, message = msg.decode('utf8').encode('gbk'), 
-                                          username = setting['username'],
-                                          password = setting['password'], epid = setting['epid'],
-                                          subcode = ext,
+                    self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
+                                          phone=addr, message=msg.decode('utf8').encode('gbk'),
+                                          username=setting['username'],
+                                          password=setting['password'], epid=setting['epid'],
+                                          subcode=ext,
                                         )
                     count += 1
                 elif setting.get('sub_mode') == 'hlyd':
@@ -621,9 +626,9 @@ class sms_sender(object):
 ''' \
                     % (addr, msg, '', '',
                        setting['cpid'], setting['cppwd'])
-                    self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num,'percent':percent},
-                                      soapaction = 'http://hl.my2my.cn/services/esmsservice',
-                                      soap = soap)   
+                    self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
+                                      soapaction='http://hl.my2my.cn/services/esmsservice',
+                                      soap=soap)   
                     count += 1
                     
                 elif setting.get('sub_mode') == 'shangxintong':
@@ -660,29 +665,29 @@ class sms_sender(object):
 '''\
                     % (setting['account'],
                        setting['password'],
-                       msg, 
+                       msg,
                        addr)
                     
-                    self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num,'percent':percent},
-                                      soapaction = 'sendSMS',
-                                      soap = soap, port = 8081)   
+                    self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
+                                      soapaction='sendSMS',
+                                      soap=soap, port=8081)   
                     count += 1
                 elif setting.get('sub_mode') == 'changshang_a':
                     print "in changshang_a"
-                    tmpmsg = unicode(msg,'utf-8')
+                    tmpmsg = unicode(msg, 'utf-8')
                     sendmsg = msg
 	            try:
                         sendmsg = tmpmsg.encode('gbk')
                     except:
                         pass
                     if ext == None or ext == '':  
-                        self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num,'percent':percent},
-                                              corp_id = setting['corp_id'], corp_pwd = setting['corp_pwd'], corp_service = setting['corp_service'],
-                                              mobile = addr, msg_content = sendmsg)
+                        self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
+                                              corp_id=setting['corp_id'], corp_pwd=setting['corp_pwd'], corp_service=setting['corp_service'],
+                                              mobile=addr, msg_content=sendmsg)
                     else:
-                        self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num,'percent':percent},
-                                              corp_id = setting['corp_id'], corp_pwd = setting['corp_pwd'], corp_service = setting['corp_service'], ext = ext,
-                                              mobile = addr, msg_content = sendmsg)
+                        self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
+                                              corp_id=setting['corp_id'], corp_pwd=setting['corp_pwd'], corp_service=setting['corp_service'], ext=ext,
+                                              mobile=addr, msg_content=sendmsg)
                     count += 1
                     
                 elif setting.get('sub_mode') == 'dongguan_0769':
@@ -715,22 +720,22 @@ class sms_sender(object):
 </soap:Envelope>
 ''' \
                     % (setting['UserName'], setting['UserPwd'], b64encode(compress(msgtext)), 0)
-                    self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num,'percent':percent},
-                                      soapaction = 'http://61.145.168.234:90/Interface.asmx',
-                                      soap = soap)   
+                    self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
+                                      soapaction='http://61.145.168.234:90/Interface.asmx',
+                                      soap=soap)   
                     count += 1
                 elif setting.get('sub_mode') == 'maoming_ct':
                     print "in maoming_ct"
-                    tmpmsg = unicode(msg,'utf-8')
-                    self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num,'percent':percent},
-                      srcmobile = setting['srcmobile'], password = setting['password'], 
-                      objmobiles = addr, smstext = tmpmsg.encode('gbk'), rstype = 'text')
+                    tmpmsg = unicode(msg, 'utf-8')
+                    self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
+                      srcmobile=setting['srcmobile'], password=setting['password'],
+                      objmobiles=addr, smstext=tmpmsg.encode('gbk'), rstype='text')
                 elif setting.get('sub_mode') == 'scp_0591':
                     print "in scp_0591"
                     address_shu = '|'.join(address.split(';'))
-                    tmpmsg = unicode(msg,'utf-8')
-                    self.__zhttp_pool.req(channel,  {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num,'percent':percent}, 
-                      Mobile = address_shu, MsgContent = tmpmsg.encode('gbk'))
+                    tmpmsg = unicode(msg, 'utf-8')
+                    self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
+                      Mobile=address_shu, MsgContent=tmpmsg.encode('gbk'))
         return count
                     
 
