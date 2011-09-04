@@ -424,6 +424,9 @@ class smsd(object):
     def processor_sendmessage(self, u, query):
         #{'q':'sendmessage, 'sid':sid, 'address':list of address, 'address_list' 'msg':message}
         
+        if u.msg_num <= 0:
+            return 0, {'rtype':'sendmessage', 'errno':-2} #not enough money 
+  
         uid = u.uid
         address = query['address']
         address_list = query['address_list']
@@ -483,7 +486,7 @@ class smsd(object):
         if num == 0:
             return 0, {'rtype':'sendmessage', 'errno':-3} #zero message
         
-        if u.msg_num < num + u.commit_num:
+        if u.msg_num < num:
             return 0, {'rtype':'sendmessage', 'errno':-2} #not enough money 
         
         pm = phonenumber.phonenumber()
