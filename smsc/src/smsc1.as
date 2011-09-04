@@ -15,7 +15,11 @@ import mx.collections.HierarchicalData;
 import mx.controls.Alert;
 import mx.controls.CheckBox;
 import mx.controls.Text;
+import mx.controls.TextArea;
+import mx.controls.Label;
 import mx.controls.dataGridClasses.DataGridColumn;
+import flash.events.Event;
+import flash.events.IOErrorEvent
 import mx.events.AdvancedDataGridEvent;
 import mx.events.CloseEvent;
 import mx.events.ListEvent;
@@ -391,7 +395,7 @@ private function processor_changepwd(param:Object):void
 private function request_adduser(user:String, name:String, pwd:String, can_weblogin:Boolean,
 								 can_post:Boolean, need_check:Boolean, cm:String, cu:String, ct:String): void {
 	//change_stage(1002);
-	if(id == null && id == ""){
+	if(user == null && user == ""){
 		Alert.show("用户名不能为空,请重新输入");
 	}else{
 		var flags:int = 0;
@@ -781,21 +785,22 @@ private function sendmessage_alertClickHandler(event:CloseEvent):void {
 }
 
 private function conitune_sendmessage():void {
+	var add_str:String = null;
 	if(this.phone_address != null && this.phone_address.length > 1000){
 		var tmp_address:Array = this.phone_address.splice(0, 1000);
-		var add_str:String = tmp_address.join(";");
+		add_str = tmp_address.join(";");
 		this.request({q:'sendmessage', sid:this.session, 
 			address:add_str, address_list:0, msg:message_content_input.text, type:PHONE_NUMBER, remain:1});
 	}
 	else if ( this.phone_address != null && this.phone_address.length != 0 )
 	{
-		var add_str:String = this.phone_address.join(";");
+		add_str = this.phone_address.join(";");
 		this.request({q:'sendmessage', sid:this.session, 
 			address:add_str, address_list:0, msg:message_content_input.text, type:PHONE_NUMBER, remain:0});
 		this.phone_address = null;
 	}
 	else {
-		var add_str:String = this.phonename_list.join(";");
+		add_str = this.phonename_list.join(";");
 		this.request({q:'sendmessage', sid:this.session, 
 			address:add_str, address_list:0, msg:message_content_input.text, type:PHONE_NAME, remain:0});
 		this.phonename_list = null;
