@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
 				minWidth="955" minHeight="600" applicationComplete="init();"
-				backgroundColor="#FFFFFF" layout="absolute">
+				backgroundColor="#FFFFFF" layout="absolute" xmlns:s="library://ns.adobe.com/flex/spark">
 
 	<mx:Script source="smsc1.as"/>
 	
@@ -44,7 +44,7 @@
 								 textAlign="center" verticalAlign="middle">
 							<mx:LinkButton label="短信发送" click="{change_view_stack('message_send');}"
 										   color="0x3380DD"/>
-							<mx:LinkButton label="特殊发送" click="{change_view_stack('message_send');}"
+							<mx:LinkButton label="特殊发送" click="{change_view_stack('message_special_send');}"
 										   color="0x3380DD"/>
 							<mx:LinkButton label="发送纪录"
 										   click="{change_view_stack('message_send_log')}"
@@ -80,12 +80,10 @@
 							<mx:Label text="欢迎使用短信群发平台"/>
 						</mx:VBox>
 						<mx:VBox id="viewpage_message_send">
-							<mx:HBox color="#FF0000" textAlign="left">
+							<s:HGroup color="#FF0000" textAlign="left">
 								<mx:Label text="当前余额"/>
 								<mx:Label text="{user_msg_num}"/>
-								<!--	<mx:Label text="待审核数量" />
-								<mx:Label text="{user_commit_msg_num}" />-->
-							</mx:HBox>
+							</s:HGroup>
 							<mx:VBox backgroundColor="#EDF9FE" borderStyle="solid" paddingBottom="10"
 									 paddingLeft="10" paddingRight="10" paddingTop="10">
 								<mx:VBox width="750">
@@ -271,6 +269,55 @@
 								</mx:Panel>
 							</mx:Canvas>
 						</mx:VBox>
+						<mx:VBox id="viewpage_message_special_send">
+							<s:HGroup>
+								<mx:Label text="当前余额"/>
+								<mx:Label text="{user_msg_num}"/>
+							</s:HGroup>
+							<s:VGroup>
+								<mx:Label text="物流行业格式1"/>
+								<mx:Label text="{special_msg_num}"/>	
+								<s:HGroup>
+									<mx:Button label="导入" click="{import_from_logistics_csv_template_1()}"/>
+									<mx:Button label="下载模板" click="{download_logistics_csv_template_1()}"/>
+									<mx:Button label="全部发送" click="{conitune_sendmessagelist()}"/>
+									
+								</s:HGroup>
+								<mx:ProgressBar id="sendProgressBar"
+												mode="manual"
+												width="150"
+												creationComplete="sendProgressBar.setProgress(0, 100)" 
+												visible="false"/>
+								<mx:AdvancedDataGrid id="Logistics_grid" >
+									<mx:dataProvider>
+										<mx:HierarchicalData source="{logistics_data}"/>
+									</mx:dataProvider>
+									<mx:columns>
+										<mx:AdvancedDataGridColumn dataField="date"
+														   headerText="日期"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:AdvancedDataGridColumn dataField="name"
+														   headerText="姓名"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:AdvancedDataGridColumn dataField="phone"
+														   headerText="手机号"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:AdvancedDataGridColumn dataField="linename" headerText="线路名称"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:AdvancedDataGridColumn dataField="goodsname" headerText="货物品名"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:AdvancedDataGridColumn dataField="num" headerText="件数"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:AdvancedDataGridColumn dataField="receipt_id" headerText="单据号"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:AdvancedDataGridColumn dataField="money" headerText="金额"
+														   itemRenderer="mx.controls.Text"/>
+										
+									</mx:columns>
+								</mx:AdvancedDataGrid>
+							</s:VGroup>
+						</mx:VBox>
+						
 						<mx:VBox id="viewpage_message_manage" width="100%" height="100%">
 							<mx:VBox width="100%" backgroundColor="#EDF9FE" borderStyle="solid"
 									 paddingBottom="10" paddingLeft="10" paddingRight="10"
@@ -848,7 +895,7 @@
 												<mx:Button label="导入"
 														   click="{import_phonebook_from_xls()}"/>
 												<mx:Button label="下载模版"
-														   click="{download_import_templete()}"/>
+														   click="{download_import_template()}"/>
 											</mx:HBox>
 										</mx:VBox>
 									</mx:ViewStack>									
