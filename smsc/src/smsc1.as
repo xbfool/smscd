@@ -912,6 +912,24 @@ private function toAddress(element:*, index:int, arr:Array):String {
 	return element.number;
 }
 
+private function start_sendmessagelist():void {
+	if(logistics_send_data != null && 
+		logistics_send_data.length != 0 && 
+		logistics_send_data[0] != null){
+		var c:int = 0;
+
+		for(var i:int = 0;i < logistics_send_data.length;i++){
+			c += compute_msg_count(logistics_send_data[i][1]);
+		}
+		if(c > user_msg_num){
+			Alert.show("余额不足");
+		}else{
+			conitune_sendmessagelist()
+		}
+	}else{
+		Alert.show("请导入短信列表");
+	}
+}
 private function conitune_sendmessagelist():void {
 	if(logistics_send_data != null && 
 		logistics_send_data.length != 0 && 
@@ -1475,6 +1493,25 @@ private function check_char_count(text:TextArea, count:Label, address:String):vo
 		" 拆分条数: " + (p as int).toString() + 
 		" 联系人数: " + (n as int).toString() + 
 		" 总条数: " + (num as int).toString();
+}
+
+private function compute_msg_count(msg:String):int{
+	var c:int = 0;
+	if(msg.length == 0)
+		c = 0;
+	else if(msg.length <= 70)
+		c = 1;
+	else
+		c = (msg.length - 1) / 65 + 1;
+	return c;
+}
+
+private function compute_msgs_count(msgs:Array):int{
+	var c: int = 0;
+	for(var msg:String in msgs){
+		c += compute_msg_count(msg);
+	}
+	return c;
 }
 // added by hzhou
 private function report_query(username:String, start:Date, end:Date): void {
@@ -2162,8 +2199,8 @@ private function download_import_template(): void{
 private function download_logistics_csv_template_1(): void{	
 	
 	var file:ByteArray = new ByteArray;
-	file.writeMultiByte("日期,姓名,手机号,线路名称,货物品名,件数,单据号,金额\r\n", "utf8");
-	file.writeMultiByte("20110826,张三,18612345678,青岛,书本,2,1234567,999.99\r\n", "utf8");
+	file.writeMultiByte("日期,姓名,手机号,线路名称,货物品名,件数,单据号,金额，物流公司名，联系电话\r\n", "utf8");
+	file.writeMultiByte("20110826,张三,18612345678,青岛,书本,2,1234567,999.99，和泰汇达，15666677797\r\n", "utf8");
 	var fr:FileReference = new FileReference();  
 	fr.save(file,"物流发送模板1.csv"); 
 }
@@ -2189,21 +2226,19 @@ private function completeLogisticsHandler(event:Event):void {
 	for ( var i:int = 1; i < rows.length; i++) {
 		var row:String = rows[i];
 		var col:Array = row.split(",");
-		if ( col.length != 8 ) continue;
-		
-		dp.push({date:col[0],
-				name:col[1],
-				phone:col[2],
-				linename:col[3],
-				goodsname:col[4],
-				num:col[5],
-				receipt_id:col[6],
-				money:col[7]});
-		var send_string:String = "";
-		for(var j:int = 0; j < 8; j++){
-			send_string += col[j];
-			send_string += "|"
-		}
+		if ( col.length != 10 ) continue;
+		var o:Object = {date:col[0],
+			name:col[1],
+			phone:col[2],
+			linename:col[3],
+			goodsname:col[4],
+			num:col[5],
+			receipt_id:col[6],
+			money:col[7],
+			company:col[8],
+			company_phone:col[9]}
+		dp.push(o);
+		var send_string:String = makeLogistics1String(o);
 		logistics_send_data.push([col[2],send_string]);
 	}
 	logistics_send_data_length = logistics_send_data.length
@@ -2212,7 +2247,15 @@ private function completeLogisticsHandler(event:Event):void {
 	Logistics_grid.dataProvider = hr;
 }
 
-
+private function makeLogistics1String(o:Object):String{
+	var t:String = o.name +"您好，您于" + o.company+ 
+					+ o.date + "发送到" +
+					o.linename + o.goodsname + o.num +"件，单据号：" +
+					o.receipt_id + "，货款实发" + o.money 
+					+ "元已存入您账户，请查收！--"+o.company +"物流 咨询" +
+					o.company_phone;
+	return t;
+}
 
 private function import_phonebook_from_xls(): void {	
 	address_file = new FileReference();

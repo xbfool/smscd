@@ -275,12 +275,12 @@
 								<mx:Label text="{user_msg_num}"/>
 							</s:HGroup>
 							<s:VGroup>
-								<mx:Label text="物流行业格式1"/>
+								<mx:Label text="物流发送"/>
 								<mx:Label text="{special_msg_num}"/>	
 								<s:HGroup>
 									<mx:Button label="导入" click="{import_from_logistics_csv_template_1()}"/>
 									<mx:Button label="下载模板" click="{download_logistics_csv_template_1()}"/>
-									<mx:Button label="全部发送" click="{conitune_sendmessagelist()}"/>
+									<mx:Button label="全部发送" click="{start_sendmessagelist()}"/>
 									
 								</s:HGroup>
 								<mx:ProgressBar id="sendProgressBar"
@@ -312,6 +312,10 @@
 														   itemRenderer="mx.controls.Text"/>
 										<mx:AdvancedDataGridColumn dataField="money" headerText="金额"
 														   itemRenderer="mx.controls.Text"/>
+										<mx:AdvancedDataGridColumn dataField="company" headerText="物流公司名"
+																   itemRenderer="mx.controls.Text"/>
+										<mx:AdvancedDataGridColumn dataField="company_phone" headerText="联系电话"
+																   itemRenderer="mx.controls.Text"/>
 										
 									</mx:columns>
 								</mx:AdvancedDataGrid>
