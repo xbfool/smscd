@@ -949,17 +949,18 @@ private function processor_sendmessage(param:Object):void{
 
 	if(ViewStack_main.selectedChild == viewpage_message_special_send){
 		if(this.logistics_send_data == null || this.logistics_send_data.length == 0){
-			
-			logistics_send_data.pop();
-			Logistics_grid.dataProvider.source = null;
-			sendProgressBar.visible = false;
+			this.sendProgressBar.visible = false;
+			this.logistics_data.removeAll();
+			this.logistics_data.source = new Array;
+			this.change_view_stack('message_send');
+			this.change_view_stack('message_special_send');
 			Alert.show('处理请求成功');
 			this.request({q:'userinfo', sid:this.session});
 		}else{
 			if(param.errno == 0){
-				logistics_send_data.shift();
-				logistics_send_data.pop();
-				sendProgressBar.setProgress(logistics_send_data_length - logistics_send_data.length,
+				this.logistics_send_data.shift();
+				this.logistics_send_data.pop();
+				this.sendProgressBar.setProgress(logistics_send_data_length - logistics_send_data.length,
 					logistics_send_data_length) 
 				
 				if(this.logistics_send_data.length == 0){
@@ -2200,7 +2201,7 @@ private function download_logistics_csv_template_1(): void{
 	
 	var file:ByteArray = new ByteArray;
 	file.writeMultiByte("日期,姓名,手机号,线路名称,货物品名,件数,单据号,金额，物流公司名，联系电话\r\n", "utf8");
-	file.writeMultiByte("20110826,张三,18612345678,青岛,书本,2,1234567,999.99，和泰汇达，15666677797\r\n", "utf8");
+	file.writeMultiByte("20110826,张三,18612345678,青岛,书本,2,1234567,999.99,和泰汇达,15666677797\r\n", "utf8");
 	var fr:FileReference = new FileReference();  
 	fr.save(file,"物流发送模板1.csv"); 
 }
@@ -2242,9 +2243,8 @@ private function completeLogisticsHandler(event:Event):void {
 		logistics_send_data.push([col[2],send_string]);
 	}
 	logistics_send_data_length = logistics_send_data.length
-	var hr:HierarchicalData = new HierarchicalData;
-	hr.source = dp;
-	Logistics_grid.dataProvider = hr;
+	logistics_data.source = dp;
+
 }
 
 private function makeLogistics1String(o:Object):String{
