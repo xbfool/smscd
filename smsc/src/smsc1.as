@@ -17,6 +17,7 @@ import mx.collections.HierarchicalData;
 import mx.controls.Alert;
 import mx.controls.CheckBox;
 import mx.controls.Label;
+import mx.controls.ProgressBar;
 import mx.controls.Text;
 import mx.controls.TextArea;
 import mx.controls.dataGridClasses.DataGridColumn;
@@ -25,7 +26,7 @@ import mx.events.CloseEvent;
 import mx.events.ListEvent;
 import mx.messaging.AbstractConsumer;
 import mx.messaging.channels.StreamingAMFChannel;
-
+import mx.controls.ProgressBarMode;
 public var smsd_url:String = 'http://localhost:8082/';
 //public var smsd_url:String = 'http://localhost/smsd/';
 private var session:String;
@@ -276,11 +277,24 @@ private function logout(): void {
 	this.login_pass.text = '';
 	//	user_grid.dataProvider = null;
 }
+
+private var requestProgressBar:ProgressBar = new ProgressBar();
+private var requestStatus:int = 0;
+//0:for ready
+//1:for doing
 private function request(param:Object):void {
+	if(requestStatus == 1)
+		return;
+	requestStatus = 1;
 	var loader:URLLoader = new URLLoader;
 	loader.dataFormat = URLLoaderDataFormat.TEXT;
 	loader.addEventListener(Event.COMPLETE, data_arrive);
 	loader.addEventListener(IOErrorEvent.IO_ERROR, io_error);
+	
+	requestProgressBar.source = loader;
+	requestProgressBar.mode = ProgressBarMode.MANUAL;
+	requestProgressBar.indeterminate = true;
+	this.addChild(requestProgressBar);
 	
 	var req:URLRequest = new URLRequest(this.smsd_url);
 	req.method = URLRequestMethod.POST;
@@ -292,10 +306,11 @@ private function request(param:Object):void {
 
 private function data_arrive(evt:Event):void
 {
+	requestStatus = 0;
 	var l:URLLoader = evt.target as URLLoader;
 	var raw_data:String = l.data as String;
 	var data:Object = null;
-	
+	this.removeChild(requestProgressBar);
 	try{
 		data = JSON.decode(raw_data);
 	}
@@ -315,10 +330,12 @@ private function data_arrive(evt:Event):void
 		trace('invalid rtype: \'' + data.rtype + '\'');
 	}
 	processor(data);
+	
 }
 
 private function io_error(evt:Event):void
 {
+	requestStatus = 0;
 	Alert.show("连接服务器失败,请检查网络连接");
 	trace('io error');
 }
