@@ -288,37 +288,35 @@
 												width="150"
 												creationComplete="sendProgressBar.setProgress(0, 100)" 
 												visible="false"/>
-								<mx:AdvancedDataGrid id="Logistics_grid" >
-									<mx:dataProvider>
-										<mx:HierarchicalData source="{logistics_data}"/>
-									</mx:dataProvider>
+								<mx:DataGrid id="Logistics_grid" dataProvider="{logistics_data}">
+							
 									<mx:columns>
-										<mx:AdvancedDataGridColumn dataField="date"
+										<mx:DataGridColumn dataField="date"
 														   headerText="日期"
 														   itemRenderer="mx.controls.Text"/>
-										<mx:AdvancedDataGridColumn dataField="name"
+										<mx:DataGridColumn dataField="name"
 														   headerText="姓名"
 														   itemRenderer="mx.controls.Text"/>
-										<mx:AdvancedDataGridColumn dataField="phone"
+										<mx:DataGridColumn dataField="phone"
 														   headerText="手机号"
 														   itemRenderer="mx.controls.Text"/>
-										<mx:AdvancedDataGridColumn dataField="linename" headerText="线路名称"
+										<mx:DataGridColumn dataField="linename" headerText="线路名称"
 														   itemRenderer="mx.controls.Text"/>
-										<mx:AdvancedDataGridColumn dataField="goodsname" headerText="货物品名"
+										<mx:DataGridColumn dataField="goodsname" headerText="货物品名"
 														   itemRenderer="mx.controls.Text"/>
-										<mx:AdvancedDataGridColumn dataField="num" headerText="件数"
+										<mx:DataGridColumn dataField="num" headerText="件数"
 														   itemRenderer="mx.controls.Text"/>
-										<mx:AdvancedDataGridColumn dataField="receipt_id" headerText="单据号"
+										<mx:DataGridColumn dataField="receipt_id" headerText="单据号"
 														   itemRenderer="mx.controls.Text"/>
-										<mx:AdvancedDataGridColumn dataField="money" headerText="金额"
+										<mx:DataGridColumn dataField="money" headerText="金额"
 														   itemRenderer="mx.controls.Text"/>
-										<mx:AdvancedDataGridColumn dataField="company" headerText="物流公司名"
+										<mx:DataGridColumn dataField="company" headerText="物流公司名"
 																   itemRenderer="mx.controls.Text"/>
-										<mx:AdvancedDataGridColumn dataField="company_phone" headerText="联系电话"
+										<mx:DataGridColumn dataField="company_phone" headerText="联系电话"
 																   itemRenderer="mx.controls.Text"/>
 										
 									</mx:columns>
-								</mx:AdvancedDataGrid>
+								</mx:DataGrid>
 							</s:VGroup>
 						</mx:VBox>
 						

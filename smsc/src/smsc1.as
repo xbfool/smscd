@@ -967,20 +967,18 @@ private function processor_sendmessage(param:Object):void{
 	if(ViewStack_main.selectedChild == viewpage_message_special_send){
 		if(this.logistics_send_data == null || this.logistics_send_data.length == 0){
 			this.sendProgressBar.visible = false;
-			this.logistics_data.removeAll();
-			this.logistics_data.source = new Array;
-			this.change_view_stack('message_send');
-			this.change_view_stack('message_special_send');
+			logistics_data.removeAll()
 			Alert.show('处理请求成功');
 			this.request({q:'userinfo', sid:this.session});
 		}else{
 			if(param.errno == 0){
 				this.logistics_send_data.shift();
-				this.logistics_send_data.pop();
 				this.sendProgressBar.setProgress(logistics_send_data_length - logistics_send_data.length,
 					logistics_send_data_length) 
 				
 				if(this.logistics_send_data.length == 0){
+					this.sendProgressBar.visible = false;
+					logistics_data.removeAll()
 					Alert.show('处理请求成功');
 					this.request({q:'userinfo', sid:this.session});
 				}else{
@@ -1428,8 +1426,7 @@ private function change_view_stack(view:String):void{
 	} else if (view == 'message_special_send'){
 		this.request({q:'userinfo', sid:this.session});
 		ViewStack_main.selectedChild = viewpage_message_special_send;
-		if(Logistics_grid != null)
-			Logistics_grid.dataProvider = null;
+		logistics_data.removeAll();
 		
 	} else if (view == "message_check"){
 		request_listcheckmsg();
@@ -2217,7 +2214,7 @@ private function download_import_template(): void{
 private function download_logistics_csv_template_1(): void{	
 	
 	var file:ByteArray = new ByteArray;
-	file.writeMultiByte("日期,姓名,手机号,线路名称,货物品名,件数,单据号,金额，物流公司名，联系电话\r\n", "utf8");
+	file.writeMultiByte("日期,姓名,手机号,线路名称,货物品名,件数,单据号,金额,物流公司名,联系电话\r\n", "utf8");
 	file.writeMultiByte("20110826,张三,18612345678,青岛,书本,2,1234567,999.99,和泰汇达,15666677797\r\n", "utf8");
 	var fr:FileReference = new FileReference();  
 	fr.save(file,"物流发送模板1.csv"); 
@@ -2238,9 +2235,9 @@ private function completeLogisticsHandler(event:Event):void {
 	var contents:String = adds.readMultiByte(adds.length, "utf8");
 	var rows:Array = contents.split("\r\n");
 	trace(rows.length);
-	var dp:Array = new Array;
+
 	logistics_send_data = new Array;
-	
+	logistics_data.removeAll();
 	for ( var i:int = 1; i < rows.length; i++) {
 		var row:String = rows[i];
 		var col:Array = row.split(",");
@@ -2255,12 +2252,13 @@ private function completeLogisticsHandler(event:Event):void {
 			money:col[7],
 			company:col[8],
 			company_phone:col[9]}
-		dp.push(o);
+		
+		logistics_data.addItem(o);
 		var send_string:String = makeLogistics1String(o);
 		logistics_send_data.push([col[2],send_string]);
 	}
 	logistics_send_data_length = logistics_send_data.length
-	logistics_data.source = dp;
+	logistics_data.refresh();
 
 }
 
