@@ -6,6 +6,8 @@ import com.adobe.serialization.json.JSONParseError;
 import com.as3xls.xls.ExcelFile;
 import com.as3xls.xls.Sheet;
 
+import flash.events.Event;
+import flash.events.IOErrorEvent;
 import flash.net.*;
 import flash.net.FileReference;
 import flash.utils.ByteArray;
@@ -14,14 +16,17 @@ import mx.collections.ArrayCollection;
 import mx.collections.HierarchicalData;
 import mx.controls.Alert;
 import mx.controls.CheckBox;
+import mx.controls.Label;
+import mx.controls.ProgressBar;
 import mx.controls.Text;
+import mx.controls.TextArea;
 import mx.controls.dataGridClasses.DataGridColumn;
 import mx.events.AdvancedDataGridEvent;
 import mx.events.CloseEvent;
 import mx.events.ListEvent;
 import mx.messaging.AbstractConsumer;
 import mx.messaging.channels.StreamingAMFChannel;
-
+import mx.controls.ProgressBarMode;
 public var smsd_url:String = 'http://localhost:8082/';
 //public var smsd_url:String = 'http://localhost/smsd/';
 private var session:String;
@@ -36,9 +41,11 @@ private var selected_username:String = '';
 [Bindable] private var user_create_time:String = null; //create_time
 [Bindable] private var user_last_login:String =  null; //last_login
 [Bindable] private var user_commit_msg_num:int = 0;
+[Bindable] private var special_msg_num:int = 0;
 private var ready_commit_msg_num:int = 0;
 
 private var address_file:FileReference = new FileReference();
+private var logistics_file:FileReference = new FileReference();
 [Bindable]
 public var message_type:ArrayCollection = new ArrayCollection(
 	[ {label:"普通短信", data:1}, 
@@ -192,6 +199,11 @@ public var addresslist_data:ArrayCollection = new ArrayCollection();
 [Bindable]
 public var phonebook_data:ArrayCollection = new ArrayCollection();
 [Bindable]
+public var logistics_data:ArrayCollection = new ArrayCollection();
+[Bindable]
+public var logistics_send_data:Array = new Array();
+private var logistics_send_data_length:int = 0;
+[Bindable]
 public var phone_list_data:ArrayCollection = new ArrayCollection();
 [Bindable]
 public var contacterlist_data:ArrayCollection = new ArrayCollection();
@@ -265,11 +277,24 @@ private function logout(): void {
 	this.login_pass.text = '';
 	//	user_grid.dataProvider = null;
 }
+
+private var requestProgressBar:ProgressBar = new ProgressBar();
+private var requestStatus:int = 0;
+//0:for ready
+//1:for doing
 private function request(param:Object):void {
+	if(requestStatus == 1)
+		return;
+	requestStatus = 1;
 	var loader:URLLoader = new URLLoader;
 	loader.dataFormat = URLLoaderDataFormat.TEXT;
 	loader.addEventListener(Event.COMPLETE, data_arrive);
 	loader.addEventListener(IOErrorEvent.IO_ERROR, io_error);
+	
+	requestProgressBar.source = loader;
+	requestProgressBar.mode = ProgressBarMode.MANUAL;
+	requestProgressBar.indeterminate = true;
+	this.addChild(requestProgressBar);
 	
 	var req:URLRequest = new URLRequest(this.smsd_url);
 	req.method = URLRequestMethod.POST;
@@ -281,10 +306,11 @@ private function request(param:Object):void {
 
 private function data_arrive(evt:Event):void
 {
+	requestStatus = 0;
 	var l:URLLoader = evt.target as URLLoader;
 	var raw_data:String = l.data as String;
 	var data:Object = null;
-	
+	this.removeChild(requestProgressBar);
 	try{
 		data = JSON.decode(raw_data);
 	}
@@ -304,10 +330,12 @@ private function data_arrive(evt:Event):void
 		trace('invalid rtype: \'' + data.rtype + '\'');
 	}
 	processor(data);
+	
 }
 
 private function io_error(evt:Event):void
 {
+	requestStatus = 0;
 	Alert.show("连接服务器失败,请检查网络连接");
 	trace('io error');
 }
@@ -391,7 +419,7 @@ private function processor_changepwd(param:Object):void
 private function request_adduser(user:String, name:String, pwd:String, can_weblogin:Boolean,
 								 can_post:Boolean, need_check:Boolean, cm:String, cu:String, ct:String): void {
 	//change_stage(1002);
-	if(id == null && id == ""){
+	if(user == null && user == ""){
 		Alert.show("用户名不能为空,请重新输入");
 	}else{
 		var flags:int = 0;
@@ -780,22 +808,25 @@ private function sendmessage_alertClickHandler(event:CloseEvent):void {
 	}
 }
 
+
+
 private function conitune_sendmessage():void {
+	var add_str:String = null;
 	if(this.phone_address != null && this.phone_address.length > 1000){
 		var tmp_address:Array = this.phone_address.splice(0, 1000);
-		var add_str:String = tmp_address.join(";");
+		add_str = tmp_address.join(";");
 		this.request({q:'sendmessage', sid:this.session, 
 			address:add_str, address_list:0, msg:message_content_input.text, type:PHONE_NUMBER, remain:1});
 	}
 	else if ( this.phone_address != null && this.phone_address.length != 0 )
 	{
-		var add_str:String = this.phone_address.join(";");
+		add_str = this.phone_address.join(";");
 		this.request({q:'sendmessage', sid:this.session, 
 			address:add_str, address_list:0, msg:message_content_input.text, type:PHONE_NUMBER, remain:0});
 		this.phone_address = null;
 	}
 	else {
-		var add_str:String = this.phonename_list.join(";");
+		add_str = this.phonename_list.join(";");
 		this.request({q:'sendmessage', sid:this.session, 
 			address:add_str, address_list:0, msg:message_content_input.text, type:PHONE_NAME, remain:0});
 		this.phonename_list = null;
@@ -898,17 +929,76 @@ private function toAddress(element:*, index:int, arr:Array):String {
 	return element.number;
 }
 
-private function processor_sendmessage(param:Object):void{
-	if( (this.phone_address == null || this.phone_address.length == 0) 
-		&& ( this.phonename_list == null || this.phonename_list.length == 0 )){
-		//		this.request({q:'userinfo', sid:this.session});
-		Alert.show('处理请求成功');
-		user_msg_num = user_msg_num - ready_commit_msg_num;
-		message_content_input.text = '';
-		message_phone_number.removeAll();
-		check_char_count(message_content_input, message_content_count, get_address_str());
+private function start_sendmessagelist():void {
+	if(logistics_send_data != null && 
+		logistics_send_data.length != 0 && 
+		logistics_send_data[0] != null){
+		var c:int = 0;
+
+		for(var i:int = 0;i < logistics_send_data.length;i++){
+			c += compute_msg_count(logistics_send_data[i][1]);
+		}
+		if(c > user_msg_num){
+			Alert.show("余额不足");
+		}else{
+			conitune_sendmessagelist()
+		}
 	}else{
-		conitune_sendmessage();
+		Alert.show("请导入短信列表");
+	}
+}
+private function conitune_sendmessagelist():void {
+	if(logistics_send_data != null && 
+		logistics_send_data.length != 0 && 
+		logistics_send_data[0] != null)
+	{
+		var add_str:String = logistics_send_data[0][0]
+		var msg:String = logistics_send_data[0][1];
+		sendProgressBar.visible = true;
+		sendProgressBar.setProgress(0,
+			logistics_send_data_length) 
+		this.request({q:'sendmessage', sid:this.session, 
+			address:add_str, address_list:0, msg:msg, type:PHONE_NUMBER, remain:1});
+	}
+}
+
+private function processor_sendmessage(param:Object):void{
+
+	if(ViewStack_main.selectedChild == viewpage_message_special_send){
+		if(this.logistics_send_data == null || this.logistics_send_data.length == 0){
+			this.sendProgressBar.visible = false;
+			logistics_data.removeAll()
+			Alert.show('处理请求成功');
+			this.request({q:'userinfo', sid:this.session});
+		}else{
+			if(param.errno == 0){
+				this.logistics_send_data.shift();
+				this.sendProgressBar.setProgress(logistics_send_data_length - logistics_send_data.length,
+					logistics_send_data_length) 
+				
+				if(this.logistics_send_data.length == 0){
+					this.sendProgressBar.visible = false;
+					logistics_data.removeAll()
+					Alert.show('处理请求成功');
+					this.request({q:'userinfo', sid:this.session});
+				}else{
+					conitune_sendmessagelist();
+				}
+			}
+			
+		}
+	}else{
+		if( (this.phone_address == null || this.phone_address.length == 0) 
+			&& ( this.phonename_list == null || this.phonename_list.length == 0 )){
+			//		this.request({q:'userinfo', sid:this.session});
+			Alert.show('处理请求成功');
+			user_msg_num = user_msg_num - ready_commit_msg_num;
+			message_content_input.text = '';
+			message_phone_number.removeAll();
+			check_char_count(message_content_input, message_content_count, get_address_str());
+		}else{
+			conitune_sendmessage();
+		}
 	}
 }
 
@@ -1333,6 +1423,11 @@ private function change_view_stack(view:String):void{
 			message_content_count.text = "总字数: 0  拆分条数: 0  联系人数: 0  总条数: 0";
 		if(message_new_number != null)
 			message_new_number.text = "";
+	} else if (view == 'message_special_send'){
+		this.request({q:'userinfo', sid:this.session});
+		ViewStack_main.selectedChild = viewpage_message_special_send;
+		logistics_data.removeAll();
+		
 	} else if (view == "message_check"){
 		request_listcheckmsg();
 		ViewStack_main.selectedChild = viewpage_message_manage;
@@ -1413,6 +1508,25 @@ private function check_char_count(text:TextArea, count:Label, address:String):vo
 		" 拆分条数: " + (p as int).toString() + 
 		" 联系人数: " + (n as int).toString() + 
 		" 总条数: " + (num as int).toString();
+}
+
+private function compute_msg_count(msg:String):int{
+	var c:int = 0;
+	if(msg.length == 0)
+		c = 0;
+	else if(msg.length <= 70)
+		c = 1;
+	else
+		c = (msg.length - 1) / 65 + 1;
+	return c;
+}
+
+private function compute_msgs_count(msgs:Array):int{
+	var c: int = 0;
+	for(var msg:String in msgs){
+		c += compute_msg_count(msg);
+	}
+	return c;
 }
 // added by hzhou
 private function report_query(username:String, start:Date, end:Date): void {
@@ -2087,7 +2201,7 @@ private function completePhoneManageHandler(event:Event):void
 	adds_array = adds.match(/1[3458]\d{9}/g);
 }
 
-private function download_import_templete(): void{	
+private function download_import_template(): void{	
 	
 	var file:ByteArray = new ByteArray;
 	file.writeMultiByte("编号,姓名,单位,职称,手机号码\r\n", "gb2312");
@@ -2095,6 +2209,67 @@ private function download_import_templete(): void{
 	file.writeMultiByte("2,李四,单位B,职称B,13822222222\r\n", "gb2312");	
 	var fr:FileReference = new FileReference();  
 	fr.save(file,"模版.csv"); 
+}
+
+private function download_logistics_csv_template_1(): void{	
+	
+	var file:ByteArray = new ByteArray;
+	file.writeMultiByte("日期,姓名,手机号,线路名称,货物品名,件数,单据号,金额,物流公司名,联系电话\r\n", "utf8");
+	file.writeMultiByte("20110826,张三,18612345678,青岛,书本,2,1234567,999.99,和泰汇达,15666677797\r\n", "utf8");
+	var fr:FileReference = new FileReference();  
+	fr.save(file,"物流发送模板1.csv"); 
+}
+
+private function import_from_logistics_csv_template_1():void{
+	address_file = new FileReference();
+	address_file.browse();
+	
+	address_file.addEventListener(Event.SELECT, selectHandler);
+	address_file.addEventListener(Event.COMPLETE, completeLogisticsHandler);
+
+}
+
+private function completeLogisticsHandler(event:Event):void {
+	
+	var adds:ByteArray = address_file.data;
+	var contents:String = adds.readMultiByte(adds.length, "utf8");
+	var rows:Array = contents.split("\r\n");
+	trace(rows.length);
+
+	logistics_send_data = new Array;
+	logistics_data.removeAll();
+	for ( var i:int = 1; i < rows.length; i++) {
+		var row:String = rows[i];
+		var col:Array = row.split(",");
+		if ( col.length != 10 ) continue;
+		var o:Object = {date:col[0],
+			name:col[1],
+			phone:col[2],
+			linename:col[3],
+			goodsname:col[4],
+			num:col[5],
+			receipt_id:col[6],
+			money:col[7],
+			company:col[8],
+			company_phone:col[9]}
+		
+		logistics_data.addItem(o);
+		var send_string:String = makeLogistics1String(o);
+		logistics_send_data.push([col[2],send_string]);
+	}
+	logistics_send_data_length = logistics_send_data.length
+	logistics_data.refresh();
+
+}
+
+private function makeLogistics1String(o:Object):String{
+	var t:String = o.name +"您好，您于" + o.company+ 
+					+ o.date + "发送到" +
+					o.linename + o.goodsname + o.num +"件，单据号：" +
+					o.receipt_id + "，货款实发" + o.money 
+					+ "元已存入您账户，请查收！--"+o.company +"物流 咨询" +
+					o.company_phone;
+	return t;
 }
 
 private function import_phonebook_from_xls(): void {	

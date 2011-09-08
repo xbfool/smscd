@@ -48,14 +48,14 @@ class message(dbobj):
         self.sub_num = 0
         self.seed = 0
         
-    def new(self, user_uid, address, address_list, msg, status, channel, total_num = 0, seed = 0):
+    def new(self, user_uid, address, address_list, msg, status, channel, total_num=0, seed=0):
         self.user_uid = user_uid
         self.address = address
         self.address_list = address_list
         self.msg = msg
         self.create_time = datetime.now()
         self.status = status
-        self.last_update =  self.create_time
+        self.last_update = self.create_time
         self.msg_num = self.compute_num()
         self.channel = channel
         self.total_num = total_num
@@ -73,7 +73,7 @@ class message(dbobj):
         self.msg = msg
         self.create_time = create_time
         self.status = status
-        self.last_update =  last_update
+        self.last_update = last_update
         self.msg_num = msg_num    
         self.channel = channel
         self.fail_msg = fail_msg
@@ -134,7 +134,14 @@ class message(dbobj):
                 d['last_update'] = self.last_update.strftime("%y-%m-%d %H:%M")
             else:
                 d['last_update'] = self.create_time.strftime("%y-%m-%d %H:%M")
-            d['fail_msg'] = self.fail_msg
+
+            try:
+                d['fail_msg'] = self.fail_msg.decode('utf8').encode('utf8')
+            except:
+                try:
+                    d['fail_msg'] = self.fail_msg.decode('gbk').encode('utf8')
+                except:
+                    d['fail_msg'] = 'unknown encoding'
             d['total_num'] = self.total_num
             d['sub_num'] = self.sub_num
             d['seed'] = self.seed
