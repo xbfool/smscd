@@ -42,10 +42,10 @@ class sms_sender(object):
             'path': '/swdx/services/APService',
             'mode': 'soap',
             'sub_mode':'hb_ct',
-            'entid': 'hbalswdx3',
-            'uid': 'hbalswdx301',
-            'apid': 'hbalswdx301',
-            'appwd': 'fngopsdjf0[a',
+            'entid': 'hbalswdx4',
+            'uid': 'hbalswdx402',
+            'apid': 'hbalswdx402',
+            'appwd': 'dufwe98r02q39',
             'process_ret' : sms_sender.__process_ret_hb_tc
         }
         settings['hb_ct_02'] = {
