@@ -15,6 +15,7 @@ from message import message
 from traceback import print_exc
 from urlparse import urlparse
 import urllib
+import phonenumber
 from struct import *
 from hashlib import md5
 from base64 import b64encode
@@ -548,6 +549,17 @@ class sms_sender(object):
                 address_list = self.get_filtered_addr(address.split(';'), percent, my_seed)
             print "seed: ", my_seed
             print "addr_list:", address_list
+
+            # get channel according to user channel info
+            pm = phonenumber.phonenumber()
+            channel_type = pm.check_addr(address_list[0])
+            if channel_type == pm.S_CM:
+                user_channel = self.__db.raw_sql_query('SELECT channel_cm FROM user WHERE uid = %s', user_uid)
+            elif channel_type == pm.S_CU:
+                user_channel = self.__db.raw_sql_query('SELECT channel_cu FROM user WHERE uid = %s', user_uid)
+            elif channel_type == pm.S_CT:
+                user_channel = self.__db.raw_sql_query('SELECT channel_ct FROM user WHERE uid = %s', user_uid)
+            channel = user_channel[0][0]
 
             addr = ','.join(address_list)
             #for addr in address_list:
