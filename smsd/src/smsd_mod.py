@@ -121,6 +121,8 @@ class smsd(object):
             self.user_ids[u.uid] = u
             
         message.set_db(self.db, 'message')
+        
+        
         messages = message.load()
                 #compute commit nums
         for m in messages:
@@ -420,7 +422,70 @@ class smsd(object):
          #   new_message = message()        
          #   new_message.new(uid, ';'.join(addr_list), 0, msg, message.F_ADMIT, channel)
          #   self.messages[new_message.uid] = new_message
+     
+    def processor_sendmessagelist(self, u, query): 
+        uid = u.uid
+        lists = query['list']
+        itemindex = 0
+        totalnum = 0
+        for item in lists:
+            try:
+                print itemindex
+                itemindex = itemindex + 1
+                address = item[0]
+                msg = item[1]
                 
+                p = 0
+                msgcontent = ""
+                try:
+                    msgcontent = msg.decode('utf8')
+                except:
+                    try:
+                        msg = msg.decode('gbk').encode('utf8')
+                        msgcontent = msg.decode('utf8')
+                    except:
+                        return 0, {'rtype':'sendmessagelist', 'errno':-1} #unknow encoding
+                if len(msgcontent) == 0:
+                    p = 0
+                elif len(msgcontent) <= 70:
+                    p = 1
+                elif len(msgcontent) <= 500:
+                    p = (len(msgcontent) - 1) / 64 + 1
+                else:
+                    return 0, {'rtype':'sendmessagelist', 'errno':-4} #zero message
+                 
+                num = len(address) * p
+                
+                if num == 0:
+                    return 0, {'rtype':'sendmessagelist', 'errno':-3} #zero message
+                
+                if u.msg_num < num:
+                    return 0, {'rtype':'sendmessagelist', 'errno':-2} #not enough money 
+                
+                pm = phonenumber.phonenumber()
+                split_addr = pm.split_addr([address])
+                seed(time.time())
+                my_seed = randint(0, 10000)
+                for channel, addr in [(u.channel_cm, pm.S_CM),
+                                       (u.channel_cu, pm.S_CU),
+                                       (u.channel_ct, pm.S_CT)]:
+                    if p == 1 or channel in ['shangxintong_01', 'honglian_01',
+                                             'honglian_bjyh',
+                                             'honglian_jtyh',
+                                             'honglian_ty']:
+                        if len(split_addr[addr]) > 0:
+                            self.__split_message(u.uid, split_addr[addr], msg, message.F_ADMIT, channel, my_seed)
+                    else:
+                        for i in range(p):
+                            if len(split_addr[addr]) > 0:
+                                self.__split_message(u.uid, split_addr[addr], "(" + str(i + 1) + "/" + str(p) + ")" + 
+                                            msgcontent[i * 64:(i + 1) * 64].encode('utf8'), message.F_ADMIT, channel, my_seed)
+                totalnum += num
+            except:
+                pass
+        return 0, {'rtype':'sendmessagelist', 'num':totalnum, 'errno': 0}
+            
+        pass          
     def processor_sendmessage(self, u, query):
         #{'q':'sendmessage, 'sid':sid, 'address':list of address, 'address_list' 'msg':message}
         

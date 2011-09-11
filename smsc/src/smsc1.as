@@ -18,6 +18,7 @@ import mx.controls.Alert;
 import mx.controls.CheckBox;
 import mx.controls.Label;
 import mx.controls.ProgressBar;
+import mx.controls.ProgressBarMode;
 import mx.controls.Text;
 import mx.controls.TextArea;
 import mx.controls.dataGridClasses.DataGridColumn;
@@ -26,7 +27,6 @@ import mx.events.CloseEvent;
 import mx.events.ListEvent;
 import mx.messaging.AbstractConsumer;
 import mx.messaging.channels.StreamingAMFChannel;
-import mx.controls.ProgressBarMode;
 public var smsd_url:String = 'http://localhost:8082/';
 //public var smsd_url:String = 'http://localhost/smsd/';
 private var session:String;
@@ -954,51 +954,35 @@ private function conitune_sendmessagelist():void {
 	{
 		var add_str:String = logistics_send_data[0][0]
 		var msg:String = logistics_send_data[0][1];
-		sendProgressBar.visible = true;
-		sendProgressBar.setProgress(0,
-			logistics_send_data_length) 
-		this.request({q:'sendmessage', sid:this.session, 
-			address:add_str, address_list:0, msg:msg, type:PHONE_NUMBER, remain:1});
+
+		var msg_list:Array = new Array;
+		for each(var item:Object in logistics_send_data)
+			msg_list.push(item);
+		this.request({q:'sendmessagelist', sid:this.session, 
+			list:msg_list, remain:1});
 	}
 }
-
-private function processor_sendmessage(param:Object):void{
-
-	if(ViewStack_main.selectedChild == viewpage_message_special_send){
-		if(this.logistics_send_data == null || this.logistics_send_data.length == 0){
-			this.sendProgressBar.visible = false;
-			logistics_data.removeAll()
-			Alert.show('处理请求成功');
-			this.request({q:'userinfo', sid:this.session});
-		}else{
-			if(param.errno == 0){
-				this.logistics_send_data.shift();
-				this.sendProgressBar.setProgress(logistics_send_data_length - logistics_send_data.length,
-					logistics_send_data_length) 
-				
-				if(this.logistics_send_data.length == 0){
-					this.sendProgressBar.visible = false;
-					logistics_data.removeAll()
-					Alert.show('处理请求成功');
-					this.request({q:'userinfo', sid:this.session});
-				}else{
-					conitune_sendmessagelist();
-				}
-			}
-			
-		}
+private function processor_sendmessagelist(param:Object):void{
+	if(param.errno == 0){
+		this.sendProgressBar.visible = false;
+		logistics_data.removeAll()
+		Alert.show('处理请求成功');
+		this.request({q:'userinfo', sid:this.session});
 	}else{
-		if( (this.phone_address == null || this.phone_address.length == 0) 
-			&& ( this.phonename_list == null || this.phonename_list.length == 0 )){
-			//		this.request({q:'userinfo', sid:this.session});
-			Alert.show('处理请求成功');
-			user_msg_num = user_msg_num - ready_commit_msg_num;
-			message_content_input.text = '';
-			message_phone_number.removeAll();
-			check_char_count(message_content_input, message_content_count, get_address_str());
-		}else{
-			conitune_sendmessage();
-		}
+		Alert.show('发送失败');
+	}
+}
+private function processor_sendmessage(param:Object):void{
+	if( (this.phone_address == null || this.phone_address.length == 0) 
+		&& ( this.phonename_list == null || this.phonename_list.length == 0 )){
+		//		this.request({q:'userinfo', sid:this.session});
+		Alert.show('处理请求成功');
+		user_msg_num = user_msg_num - ready_commit_msg_num;
+		message_content_input.text = '';
+		message_phone_number.removeAll();
+		check_char_count(message_content_input, message_content_count, get_address_str());
+	}else{
+		conitune_sendmessage();
 	}
 }
 
@@ -2215,7 +2199,7 @@ private function download_logistics_csv_template_1(): void{
 	
 	var file:ByteArray = new ByteArray;
 	file.writeMultiByte("日期,姓名,手机号,线路名称,货物品名,件数,单据号,金额,物流公司名,联系电话\r\n", "utf8");
-	file.writeMultiByte("20110826,张三,18612345678,青岛,书本,2,1234567,999.99,和泰汇达,15666677797\r\n", "utf8");
+	file.writeMultiByte("2011年08月26日,张三,18612345678,青岛,书本,2,1234567,999.99,和泰汇达,15666677797\r\n", "utf8");
 	var fr:FileReference = new FileReference();  
 	fr.save(file,"物流发送模板1.csv"); 
 }
@@ -2263,11 +2247,11 @@ private function completeLogisticsHandler(event:Event):void {
 }
 
 private function makeLogistics1String(o:Object):String{
-	var t:String = o.name +"您好，您于" + o.company+ 
-					+ o.date + "发送到" +
-					o.linename + o.goodsname + o.num +"件，单据号：" +
+	var t:String = o.name +"您好，您于" 
+					+ o.date +"在" + o.company + "物流公司发送到" +
+					o.linename + o.goodsname + o.num +"件，单据号码为：" +
 					o.receipt_id + "，货款实发" + o.money 
-					+ "元已存入您账户，请查收！--"+o.company +"物流 咨询" +
+					+ "元已存入您账户，请查收！" +"查询电话：" +
 					o.company_phone;
 	return t;
 }
