@@ -1,1 +1,8 @@
 *.pyc
+smsc/.*
+smsc2/.*
+smsc/bin-debug
+smsc2/bin-debug
+smsc/html-template
+smsc2/html-template
+smsd/.*
