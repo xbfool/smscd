@@ -1,12 +1,12 @@
 // ActionScript file
-package com.xbfool.smsc.controller
+package com.xbfool.smsc.command
 {
 	import com.xbfool.smsc.controller.*;
 	import com.xbfool.smsc.model.*;
 	import com.xbfool.smsc.view.*;
 	import org.robotlegs.mvcs.Command;
 	
-	public class LogOut extends Command
+	public class LogoutCommand extends Command
 	{
 		[Inject]
 		public var event:SystemEvent;

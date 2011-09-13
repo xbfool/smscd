@@ -6,7 +6,14 @@ package com.xbfool.smsc.model {
 		private var username:String;
 		private var loggedIn:Boolean;
 		
+		public var sessionId:String;
+		public var smsd_url:String;
+		
 		public function UserProxy() {
+			smsd_url = 'http://localhost:8082/';
+			loggedIn = false;
+			username = '';
+			sessionId = '';
 		}
 		
 		public function setUsername(username:String):void {
@@ -26,6 +33,11 @@ package com.xbfool.smsc.model {
 		
 		public function get userLoggedIn():Boolean{
 			return loggedIn;
+		}
+		
+		public function LogOutAndClean():void{
+			this.username = null;
+			this.loggedIn = false;
 		}
 		
 	}
