@@ -19,8 +19,6 @@ package com.xbfool.smsc.view
 		[Inject]
 		public var requestObj:IRequestService;
 		
-		public var triggerEvent:SystemEvent;
-		
 		public function LoginPageMediator()
 		{
 		}
@@ -43,7 +41,6 @@ package com.xbfool.smsc.view
 		
 		private function whenUserLoggedIn(e:UserProxyEvent):void
 		{
-			eventDispatcher.dispatchEvent(triggerEvent);
 			loginPage.closeAndRemove();
 		}
 		

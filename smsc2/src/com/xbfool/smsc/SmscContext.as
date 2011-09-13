@@ -16,15 +16,18 @@ package com.xbfool.smsc {
 		}
 		
 		override public function startup():void {
+			commandMap.mapEvent(RetEvent.RET, RetCommand, RetEvent);
 			commandMap.mapEvent(AuthReqEvent.AUTH_REQ, AuthReqCommand, AuthReqEvent);
 			commandMap.mapEvent(AuthRetEvent.AUTH_RET, AuthRetCommand, AuthRetEvent);
-			commandMap.mapEvent(RetEvent.RET, RetCommand, RetEvent);
+			commandMap.mapEvent(LogoutEvent.LOGOUT, LogoutCommand, LogoutEvent);
 			injector.mapSingleton(UserProxy);
 			//injector.mapSingletonOf(IRequestService, DummyRequestService);
 			injector.mapSingletonOf(IRequestService, JsonRequestService);
 			mediatorMap.mapView(LoginPage, LoginPageMediator);
+			mediatorMap.mapView(MainPage, MainPageMediator);
 			super.startup();
 			
+			contextView.addChild(new MainPage());
 			contextView.addChild(new LoginPage());
 		}
 	}

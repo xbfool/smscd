@@ -36,8 +36,9 @@ package com.xbfool.smsc.model {
 		}
 		
 		public function LogOutAndClean():void{
-			this.username = null;
+			this.username = '';
 			this.loggedIn = false;
+			this.sessionId = '';
 		}
 		
 	}
