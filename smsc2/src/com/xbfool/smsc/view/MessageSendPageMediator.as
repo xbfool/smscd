@@ -11,8 +11,10 @@ package com.xbfool.smsc.view
 	import com.xbfool.smsc.view.LoginPage;
 	import com.xbfool.smsc.view.LoginPageEvent;
 	
-	import org.robotlegs.mvcs.Mediator;
+	import mx.collections.ArrayCollection;
+	import mx.controls.Alert;
 	
+	import org.robotlegs.mvcs.Mediator;
 	public class MessageSendPageMediator extends Mediator
 	{
 		[Inject]
@@ -21,6 +23,8 @@ package com.xbfool.smsc.view
 		[Inject]
 		public var requestObj:IRequestService;
 		
+		public var address_list:ArrayCollection = new ArrayCollection();
+
 		public function MessageSendPageMediator()
 		{
 		}
@@ -29,21 +33,67 @@ package com.xbfool.smsc.view
 		{
 			eventMap.mapListener(messageSendPage, MessageSendPageEvent.CLEAN, cleanMessageContent);
 			eventMap.mapListener(messageSendPage, MessageSendPageEvent.MESSAGE_CHANGE, changeMessageStatus);
+			eventMap.mapListener(messageSendPage, MessageSendPageEvent.ADD_ADDRESS, addAddress);
+			eventMap.mapListener(messageSendPage, MessageSendPageEvent.ADDRESS_CHANGE, changeMessageStatus);
+			eventMap.mapListener(messageSendPage, MessageSendPageEvent.FILTER_ADDRESS, filterAddress);
+			eventMap.mapListener(messageSendPage, MessageSendPageEvent.DEL_ONE_ADDRESS, delOneAddress);
+			eventMap.mapListener(messageSendPage, MessageSendPageEvent.CLEAN_ALL_ADDRESS, cleanAllAddress);
+			//eventMap.mapListener(messageSendPage, MessageSendPageEvent.SAVE_ADDRESS, saveAddress);
+			messageSendPage.address_grid.dataProvider = address_list;
 		}
 		
 		private function cleanMessageContent(e:MessageSendPageEvent):void {
 			messageSendPage.message_content_text.text = "";
+		
 			messageSendPage.dispatchEvent(new MessageSendPageEvent(MessageSendPageEvent.MESSAGE_CHANGE));
 		}
 		
 		private function changeMessageStatus(e:MessageSendPageEvent):void {
 			var msgStatus:Object = MessageUtil.computeMessageNum(
-				messageSendPage.message_content_text.text, 1);
+				messageSendPage.message_content_text.text, address_list.length);
 			messageSendPage.msgCharCount.text = msgStatus.msgCharCount;
 			messageSendPage.msgSplitNum.text = msgStatus.splitNum;
 			messageSendPage.addressNum.text = msgStatus.addressNum;
 			messageSendPage.totalNum.text = msgStatus.totalNum;
 			
+		}
+		
+		private function addAddress(e:MessageSendPageEvent):void{
+			var address:String = messageSendPage.new_address.text;
+			if(MessageUtil.checkAddressValid(address)){
+				address_list.addItem({number:messageSendPage.new_address.text});
+				messageSendPage.new_address.text = "";
+				messageSendPage.dispatchEvent(new MessageSendPageEvent(MessageSendPageEvent.ADDRESS_CHANGE));
+			} else if(address.length != 0){
+				Alert.show("不是有效的电话号码");	
+			}
+		}
+		
+		private function filterAddress(e:MessageSendPageEvent):void{
+			var dp:Array = address_list.source;
+			var dp1:Array = new Array;
+			dp.sort();
+			var o1:Object = null;
+			var o2:Object = null;
+			while(dp.length > 0) {
+				o2 = dp.shift();
+				if(o1 == null || o2.number != o1.number) {
+					o1 = o2;
+					dp1.push(o1);
+				}		
+			}
+			address_list.source = dp1;
+			messageSendPage.dispatchEvent(new MessageSendPageEvent(MessageSendPageEvent.ADDRESS_CHANGE));
+
+		}
+		
+		private function cleanAllAddress(e:MessageSendPageEvent):void{
+			address_list.source = new Array();
+			messageSendPage.dispatchEvent(new MessageSendPageEvent(MessageSendPageEvent.ADDRESS_CHANGE));
+		}
+		
+		private function delOneAddress(e:MessageSendPageEvent):void{
+			//TODO
 		}
 	}
 }

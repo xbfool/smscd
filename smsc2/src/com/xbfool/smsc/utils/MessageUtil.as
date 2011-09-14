@@ -23,5 +23,18 @@ package com.xbfool.smsc.utils
 					totalNum:totalNum,
 					splitNum:msgNum};
 		}
+		
+		public static function checkAddressValid(address:String):Boolean {
+			if(address.length != 11 || address.charAt(0) != '1' 
+				|| (address.charAt(1) != '3' &&
+					address.charAt(1) != '4' &&
+					address.charAt(1) != '5' &&
+					address.charAt(1) != '8'
+				))
+			{
+				return false;
+			} else
+				return true;
+		}
 	}
 }
