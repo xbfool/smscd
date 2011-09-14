@@ -1,9 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:fx="http://ns.adobe.com/mxml/2009" 
-		   xmlns:s="library://ns.adobe.com/flex/spark" 
-		   xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%">
-	<fx:Declarations>
-		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
-	</fx:Declarations>
-	<s:Button x="5" y="7" label="SendPage"/>
-</mx:Canvas>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%">
+	<s:layout>
+		<s:HorizontalLayout/>
+	</s:layout>
+	<mx:VBox id="viewpage_message_send" width="100%" height="100%">
+		<s:HGroup>
+			<mx:Label text="当前余额" fontSize="25"/>
+			<mx:Label text="123456" fontSize="25" id="userNumLabel"/>
+		</s:HGroup>
+		<mx:VBox width="100%">
+			<mx:VBox width="100%">
+				<mx:HBox width="100%" verticalAlign="middle" height="200">
+					<mx:Label width="20%" fontSize="20" text="短信内容" textAlign="center"/>
+					<mx:TextArea id="message_content_text" height="100%" width="60%" 
+								 change="dispatchEvent(new MessageSendPageEvent(MessageSendPageEvent.MESSAGE_CHANGE))"/>
+					<mx:VBox width="20%" horizontalAlign="center" height="100%">
+						<mx:Button width="100%" height="30%" label="清空内容" fontSize="20"
+								   click="dispatchEvent(new MessageSendPageEvent(MessageSendPageEvent.CLEAN))"/>
+						<mx:Button width="100%" height="70%" label="立即发送" fontSize="40"/>
+					</mx:VBox>
+				</mx:HBox>
+				<mx:HBox width="100%" horizontalAlign="center" verticalAlign="middle">
+					<mx:Label text= "总字数:" fontSize="20"/>
+					<mx:Label id="msgCharCount" text= "0" fontSize="20"/>
+					<mx:Label text= "拆分条数" fontSize="20"/>
+					<mx:Label id="msgSplitNum" text= "0" fontSize="20"/>
+					<mx:Label text= "联系人数" fontSize="20"/>
+					<mx:Label id="addressNum" text= "0" fontSize="20"/>
+					<mx:Label text= "总条数" fontSize="20"/>
+					<mx:Label id="totalNum" text= "0" fontSize="20"/>				
+				</mx:HBox>
+				<mx:HBox width="100%" horizontalAlign="center">
+					<mx:Button label="从通讯录选择" fontSize="20"/>
+					<mx:Button label="导入文件" fontSize="20"/>
+					<mx:Label text="号码文件为txt格式的文件" fontSize="20"/>
+				</mx:HBox>
+				<mx:HBox width="100%" horizontalAlign="center">
+					<mx:Label text="输入接收手机号" fontSize="20"/>
+					<mx:HBox>
+						<mx:TextInput id="message_new_number" fontSize="20"/>
+						<mx:Button label="添加" fontSize="20"/>
+					</mx:HBox>
+				</mx:HBox >		
+			</mx:VBox>
+		</mx:VBox>
+		<mx:VBox width="100%" height="100%">
+			<mx:HBox width="100%">
+				<mx:Button label="过滤重号" fontSize="20"/>	
+				<mx:Button label="清空号码" fontSize="20"/>
+				<mx:Button label="删除号码" fontSize="20"/>
+				<mx:Button label="保存号码" fontSize="20"/>
+			</mx:HBox>
+			<mx:DataGrid width="100%" height="100%">
+			</mx:DataGrid>
+		</mx:VBox>	
+	</mx:VBox>
+</s:Group>

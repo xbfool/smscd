@@ -36,7 +36,7 @@ package com.xbfool.smsc {
 			injector.mapSingleton(UploadMessagePage);
 			mediatorMap.mapView(LoginPage, LoginPageMediator);
 			mediatorMap.mapView(MainPage, MainPageMediator);
-			
+			mediatorMap.mapView(MessageSendPage, MessageSendPageMediator);
 			super.startup();
 			
 			contextView.addChild(new MainPage());
