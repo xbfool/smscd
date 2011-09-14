@@ -6,18 +6,24 @@ package com.xbfool.smsc.view
 	import com.xbfool.smsc.event.*;
 	import com.xbfool.smsc.model.*;
 	import com.xbfool.smsc.services.*;
-	import com.xbfool.smsc.view.LoginPage;
-	import com.xbfool.smsc.view.LoginPageEvent;
+	import com.xbfool.smsc.view.*;
 	
 	import org.robotlegs.mvcs.Mediator;
 	
 	public class MainPageMediator extends Mediator
 	{
-		[Inject]
-		public var mainPage:MainPage;
-		
-		[Inject]
-		public var requestObj:IRequestService;
+		[Inject] public var mainPage:MainPage;
+		[Inject] public var changePasswordPage:ChangePasswordPage;
+		[Inject] public var channelLogPage:ChannelLogPage;
+		[Inject] public var manageAddressPage:ManageAddressPage;
+		[Inject] public var manageUserPage:ManageUserPage;
+		[Inject] public var messageChartPage:MessageChartPage;
+		[Inject] public var moneyLogPage:MoneyLogPage;
+		[Inject] public var messageSendPage:MessageSendPage;
+		[Inject] public var messageLogPage:MessageLogPage;
+		[Inject] public var specialSendPage:SpecialSendPage;
+		[Inject] public var uploadMessagePage:UploadMessagePage;
+		[Inject] public var requestObj:IRequestService;
 		
 		public function MainPageMediator()
 		{
@@ -52,52 +58,62 @@ package com.xbfool.smsc.view
 		private function changeToMessageSendView(e:MainPageEvent):void
 		{
 			clearCurrentView();
-			mainPage.content_panel.addElement(new SendMessagePage());
+			mainPage.content_panel.addElement(messageSendPage);
 		}
 		
 		private function changeToSpecialSendView(e:MainPageEvent):void
 		{
 			clearCurrentView();
+			mainPage.content_panel.addElement(specialSendPage);
+			
 		}
 		
 		private function changeToMessageLogView(e:MainPageEvent):void
 		{
 			clearCurrentView();
+			mainPage.content_panel.addElement(messageLogPage);
 		}
 		
 		private function changeToMessageChartView(e:MainPageEvent):void
 		{
 			clearCurrentView();
+			mainPage.content_panel.addElement(messageChartPage);
 		}
 		
 		private function changeToMoneyLogView(e:MainPageEvent):void
 		{
 			clearCurrentView();
+			mainPage.content_panel.addElement(moneyLogPage);
 		}
 		
 		private function changeToManageAddressView(e:MainPageEvent):void
 		{
 			clearCurrentView();
+			mainPage.content_panel.addElement(manageAddressPage);
 		}
 			
 		private function changeToUploadMessageView(e:MainPageEvent):void
 		{
 			clearCurrentView();
+			mainPage.content_panel.addElement(uploadMessagePage);
 		}
 		
 		private function changeToChannelLogView(e:MainPageEvent):void
 		{
 			clearCurrentView();
+			mainPage.content_panel.addElement(channelLogPage);
 		}
 		
 		private function changeToManageUserView(e:MainPageEvent):void
 		{
 			clearCurrentView();
+			mainPage.content_panel.addElement(manageUserPage);
 		}
 		
 		private function changeToChangePasswordView(e:MainPageEvent):void
 		{
 			clearCurrentView();
+			mainPage.content_panel.addElement(changePasswordPage);
 		}
 	}
 }

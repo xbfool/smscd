@@ -24,8 +24,19 @@ package com.xbfool.smsc {
 			injector.mapSingleton(UserProxy);
 			//injector.mapSingletonOf(IRequestService, DummyRequestService);
 			injector.mapSingletonOf(IRequestService, JsonRequestService);
+			injector.mapSingleton(ChangePasswordPage);
+			injector.mapSingleton(ChannelLogPage);
+			injector.mapSingleton(ManageAddressPage);
+			injector.mapSingleton(ManageUserPage);
+			injector.mapSingleton(MessageChartPage);
+			injector.mapSingleton(MessageLogPage);
+			injector.mapSingleton(MessageSendPage);
+			injector.mapSingleton(MoneyLogPage);
+			injector.mapSingleton(SpecialSendPage);
+			injector.mapSingleton(UploadMessagePage);
 			mediatorMap.mapView(LoginPage, LoginPageMediator);
 			mediatorMap.mapView(MainPage, MainPageMediator);
+			
 			super.startup();
 			
 			contextView.addChild(new MainPage());
