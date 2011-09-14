@@ -20,6 +20,7 @@ package com.xbfool.smsc {
 			commandMap.mapEvent(AuthReqEvent.AUTH_REQ, AuthReqCommand, AuthReqEvent);
 			commandMap.mapEvent(AuthRetEvent.AUTH_RET, AuthRetCommand, AuthRetEvent);
 			commandMap.mapEvent(LogoutEvent.LOGOUT, LogoutCommand, LogoutEvent);
+			
 			injector.mapSingleton(UserProxy);
 			//injector.mapSingletonOf(IRequestService, DummyRequestService);
 			injector.mapSingletonOf(IRequestService, JsonRequestService);

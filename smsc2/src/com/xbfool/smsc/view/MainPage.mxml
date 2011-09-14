@@ -13,8 +13,33 @@
 		<mx:Accordion width="150" height="400" headerHeight="40">
 
 			<s:NavigatorContent width="100%" height="100%" label="短信中心">
+				<s:VGroup>
+					<mx:LinkButton label="短信发送" id="message_send_button"
+								   click="dispatchEvent(new MainPageEvent(MainPageEvent.MESSAGE_SEND_VIEW))"/>
+					<mx:LinkButton label="特殊发送" id="special_send_button"
+								   click="dispatchEvent(new MainPageEvent(MainPageEvent.SPECIAL_SEND_VIEW))"/>
+					<mx:LinkButton label="发送记录" id="message_log_button"
+								   click="dispatchEvent(new MainPageEvent(MainPageEvent.MESSAGE_LOG_VIEW))"/>
+					<mx:LinkButton label="统计汇总" id="message_chart_button"
+								   click="dispatchEvent(new MainPageEvent(MainPageEvent.MESSAGE_CHART_VIEW))"/>
+					<mx:LinkButton label="充值记录" id="money_log_button"
+								   click="dispatchEvent(new MainPageEvent(MainPageEvent.MONEY_LOG_VIEW))"/>
+					<mx:LinkButton label="通讯录管理" id="manage_address_button"
+								   click="dispatchEvent(new MainPageEvent(MainPageEvent.MANAGE_ADDRESS_VIEW))"/>
+					<mx:LinkButton label="上行查询" id="upload_message_button"
+								   click="dispatchEvent(new MainPageEvent(MainPageEvent.UPLOAD_MESSAGE_VIEW))"/>
+					<mx:LinkButton label="通道发送统计" id="channel_log_button"
+								   click="dispatchEvent(new MainPageEvent(MainPageEvent.CHANNEL_LOG_VIEW))"/>
+				</s:VGroup>
+
 			</s:NavigatorContent>
 			<s:NavigatorContent width="100%" height="100%" label="用户管理">
+				<s:VGroup>
+					<mx:LinkButton label="用户设置" id="manage_user_button"
+								   click="dispatchEvent(new MainPageEvent(MainPageEvent.MANAGE_USER_VIEW))"/>
+					<mx:LinkButton label="密码修改" id="change_password_button"
+								   click="dispatchEvent(new MainPageEvent(MainPageEvent.CHANGE_PASSWORD_VIEW))"/>	
+				</s:VGroup>
 			</s:NavigatorContent>
 		</mx:Accordion>
 		<s:Button x="0"
@@ -25,6 +50,6 @@
 				  click="dispatchEvent(new MainPageEvent(MainPageEvent.LOGOUT))"/>
 
 	</s:Panel>
-	<s:Panel width="100%" height="100%">
+	<s:Panel width="100%" height="100%" id="content_panel">
 	</s:Panel>
 </s:Group>
