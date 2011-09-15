@@ -12,6 +12,7 @@ package com.xbfool.smsc.view
 		public static const DEL_ONE_ADDRESS:String = 'del_one_address';
 		public static const CLEAN_ALL_ADDRESS:String = 'clean_all_address';
 		public static const SAVE_ADDRESS:String = 'save_address';
+		public static const IMPORT_ADDRESS_FILE:String = 'import_address_file';
 		public function MessageSendPageEvent(type:String)
 		{
 			super(type);

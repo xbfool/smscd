@@ -10,11 +10,14 @@ package com.xbfool.smsc.view
 	import com.xbfool.smsc.utils.*;
 	import com.xbfool.smsc.view.LoginPage;
 	import com.xbfool.smsc.view.LoginPageEvent;
+	import flash.events.*;
+	import flash.net.FileReference;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
 	
 	import org.robotlegs.mvcs.Mediator;
+
 	public class MessageSendPageMediator extends Mediator
 	{
 		[Inject]
@@ -24,7 +27,8 @@ package com.xbfool.smsc.view
 		public var requestObj:IRequestService;
 		
 		public var address_list:ArrayCollection = new ArrayCollection();
-
+		public var address_file:FileReference = null;
+		public var address_array:Array = new Array;
 		public function MessageSendPageMediator()
 		{
 		}
@@ -38,6 +42,7 @@ package com.xbfool.smsc.view
 			eventMap.mapListener(messageSendPage, MessageSendPageEvent.FILTER_ADDRESS, filterAddress);
 			eventMap.mapListener(messageSendPage, MessageSendPageEvent.DEL_ONE_ADDRESS, delOneAddress);
 			eventMap.mapListener(messageSendPage, MessageSendPageEvent.CLEAN_ALL_ADDRESS, cleanAllAddress);
+			eventMap.mapListener(messageSendPage, MessageSendPageEvent.IMPORT_ADDRESS_FILE, importAddressFile);
 			//eventMap.mapListener(messageSendPage, MessageSendPageEvent.SAVE_ADDRESS, saveAddress);
 			messageSendPage.address_grid.dataProvider = address_list;
 		}
@@ -95,5 +100,32 @@ package com.xbfool.smsc.view
 		private function delOneAddress(e:MessageSendPageEvent):void{
 			//TODO
 		}
+		
+		private function importAddressFile(e:MessageSendPageEvent):void{
+			address_file = new FileReference();
+			address_file.browse();
+			
+			address_file.addEventListener(Event.SELECT, selectHandler);
+			address_file.addEventListener(Event.COMPLETE, completeHandler);
+		}
+		
+		private function completeHandler(event:Event):void
+		{
+			var adds:String = address_file.data.toString();
+			address_array = adds.match(/1[3458]\d{9}/g);
+			for each(var item:String in address_array){
+				address_list.addItem({number:item})
+			}
+
+			address_array = null;
+			address_file = null;
+			messageSendPage.dispatchEvent(new MessageSendPageEvent(MessageSendPageEvent.ADDRESS_CHANGE));
+		}
+		
+		private function selectHandler(event:Event):void
+		{
+			address_file.load();
+		}
+
 	}
 }

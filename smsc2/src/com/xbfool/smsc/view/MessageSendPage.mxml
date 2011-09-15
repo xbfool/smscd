@@ -35,7 +35,8 @@
 				</mx:HBox>
 				<mx:HBox width="100%" horizontalAlign="center">
 					<mx:Button label="从通讯录选择" fontSize="20"/>
-					<mx:Button label="导入文件" fontSize="20"/>
+					<mx:Button label="导入文件" fontSize="20"
+							   click="dispatchEvent(new MessageSendPageEvent(MessageSendPageEvent.IMPORT_ADDRESS_FILE))"/>
 					<mx:Label text="号码文件为txt格式的文件" fontSize="20"/>
 				</mx:HBox>
 				<mx:HBox width="100%" horizontalAlign="center">
