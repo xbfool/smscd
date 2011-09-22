@@ -11,6 +11,7 @@ package com.xbfool.smsc.view
 	import com.xbfool.smsc.view.LoginPage;
 	import com.xbfool.smsc.view.LoginPageEvent;
 	import flash.events.*;
+	import mx.events.*;
 	import flash.net.FileReference;
 	
 	import mx.collections.ArrayCollection;
@@ -43,6 +44,7 @@ package com.xbfool.smsc.view
 			eventMap.mapListener(messageSendPage, MessageSendPageEvent.DEL_ONE_ADDRESS, delOneAddress);
 			eventMap.mapListener(messageSendPage, MessageSendPageEvent.CLEAN_ALL_ADDRESS, cleanAllAddress);
 			eventMap.mapListener(messageSendPage, MessageSendPageEvent.IMPORT_ADDRESS_FILE, importAddressFile);
+			eventMap.mapListener(messageSendPage, MessageSendPageEvent.SEND_MESSAGE, sendMessage);
 			//eventMap.mapListener(messageSendPage, MessageSendPageEvent.SAVE_ADDRESS, saveAddress);
 			messageSendPage.address_grid.dataProvider = address_list;
 		}
@@ -125,6 +127,21 @@ package com.xbfool.smsc.view
 		private function selectHandler(event:Event):void
 		{
 			address_file.load();
+		}
+
+		private function sendMessage(e:MessageSendPageEvent):void {
+			private function sendmessage_alert():void {
+				Alert.buttonWidth = 100;
+				Alert.yesLabel = "是";
+				Alert.noLabel = "取消";
+				Alert.show("确认发送？","发送消息",3,this,doSendMessage);
+			}
+		}
+		
+		private function doSendMessage(event:CloseEvent):void {
+			if (event.detail==Alert.YES){
+				
+			}
 		}
 
 	}

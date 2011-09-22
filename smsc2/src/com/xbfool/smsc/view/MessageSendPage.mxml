@@ -20,7 +20,8 @@
 					<mx:VBox width="20%" horizontalAlign="center" height="100%">
 						<mx:Button width="100%" height="30%" label="清空内容" fontSize="20"
 								   click="dispatchEvent(new MessageSendPageEvent(MessageSendPageEvent.CLEAN))"/>
-						<mx:Button width="100%" height="70%" label="立即发送" fontSize="40"/>
+						<mx:Button width="100%" height="70%" label="立即发送" fontSize="40"
+								   click="dispatchEvent(new MessageSendPageEvent(MessageSendPageEvent.SEND_MESSAGE))"/>
 					</mx:VBox>
 				</mx:HBox>
 				<mx:HBox width="100%" horizontalAlign="center" verticalAlign="middle">
