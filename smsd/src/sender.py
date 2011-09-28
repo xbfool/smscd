@@ -253,8 +253,11 @@ class sms_sender(object):
 #            'process_ret' : sms_sender.__process_ret_dongguan_0769
 #        }
         settings['default'] = settings['hb_ct_01']
+        for item in setttings:
+            item['timeout_count'] = 0
+            item['last_update'] = datetime.now()
         self.settings = settings
-        self.__zhttp_pool = zhttp_pool(1, settings, self.__http_callback)
+        self.__zhttp_pool = zhttp_pool(1, settings, self.__http_callback, timeout_callback=self.__timeout_callback(param, ret))
         
         self.__db = dbsql(**self.cfg.database.raw_dict)
         self.__dblock = Lock()
@@ -262,7 +265,8 @@ class sms_sender(object):
         self.__ret_queue = Queue(0x10000)
         
         self.__pending = []
-        
+        self.timeout_time = 1800
+        self.__timeout_lock = Lock()
         self.__worker_exit_lock = Lock()
         self.__worker_exit_lock.acquire()
         self.__worker_thread = Thread(None, self.__worker, '%s checker thread' % self.__class__.__name__)
@@ -273,10 +277,32 @@ class sms_sender(object):
         self.__worker_exit_lock.release()
         self.__worker_thread.join()
     
+    def __timeout_add(self, setting):
+        self.__timeout_lock.acquire()
+        setting['timeout_count'] += 1
+        setting['last_update'] = datatime.now()
+        self.__timeout_lock.release()
+        
+    def __check_channel_ok(self, setting):
+        if setting['timeout_count'] <= 3:
+            return True
+        elif (datetime.now() - setting['last_update']).total_seconds() > self.timeout_time:
+            self.__timeout_clean(setting)
+            return True
+        else:
+            return False
+    def __timeout_clean(self, setting):
+        self.__timeout_lock.acquire()
+        setting['timeout_count'] = 0
+        setting['last_update'] = datatime.now()
+        self.__timeout_lock.release()
+        
     def __http_callback(self, param, ret):
         # CAUTION: must thread safe
         self.__ret_queue.put((param, ret))
-    
+    def __timeout_callback(self, param, ret):
+        self.__timeout_add(param['setting'])
+        
     def __worker(self):
         while not self.__worker_exit_lock.acquire(False):
             now = datetime.now()
@@ -515,6 +541,7 @@ class sms_sender(object):
                     process = param['setting']['process_ret']
                     param['time'] = now
                     param['ret'] = ret
+                    self.__timeout_clean(param['setting'])
                     count = count + process(self, param)
             except:
                 pass
@@ -581,6 +608,8 @@ class sms_sender(object):
                     parseString('<xml>%s</xml>' % msg)
                 except:
                     print_exc()
+                if not self.__check_channel_ok(setting):
+                    continue               
                 if setting.get('sub_mode') == 'hb_ct':
                     print "in hb_ct..."
                     soap = \
