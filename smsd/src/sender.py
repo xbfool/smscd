@@ -531,7 +531,7 @@ class sms_sender(object):
         return ret
         
     def __process_queue(self):
-        q = self.__db.raw_sql_query('SELECT user_uid, uid,address,msg,channel, msg_num, totaL_num, seed FROM message WHERE status = %s ORDER BY uid DESC LIMIT 500',
+        q = self.__db.raw_sql_query('SELECT user_uid, uid,address,msg,channel, msg_num, totaL_num, seed FROM message WHERE status = %s and channel != "send_card_a" ORDER BY uid DESC LIMIT 500',
                                      message.F_ADMIT)
         count = 0
         for user_uid, uid, address, msg, channel, msg_num, total_num, my_seed in q:
