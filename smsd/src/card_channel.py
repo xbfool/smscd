@@ -80,6 +80,7 @@ def conn_socket():
         return None
     
 def sumbit_sms(clisock, seq_number, card_number, address, msg):
+    print 'submit msg:', seq_number, card_number, address, msg
     send_msg = pack_sm_msg(seq_number, card_number, address, msg)
     clisock.send(send_msg)
 
@@ -92,6 +93,8 @@ def recv_resp(clisock):
             if(bind_resp != ""):
                 sequnce_id = bind_resp[3]
                 if(sequnce_id > 0):
+                    print "bind_resp: ", bind_resp
+                    print "recv seq id: " , sequnce_id
                     return sequnce_id
 
     except:

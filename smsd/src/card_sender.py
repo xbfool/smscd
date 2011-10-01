@@ -63,6 +63,7 @@ class card_sender(object):
         
         self.__dblock = Lock()
         self.init_card_pool()
+        self.init_logger()
         self.card_socket = conn_socket()  
         if self.card_socket == None:
             raise Exception()
@@ -85,6 +86,7 @@ class card_sender(object):
         
         c = self.gen_card_messages(q)
         self.send_card_messages(c)
+
         if c is None:
             return 0
         else:
@@ -97,21 +99,27 @@ class card_sender(object):
                 
     def __resp_worker(self):
         while True:
-            seq = recv_resp(self.card_socket)
-            if(self.seq_pool.get(seq)):
-                uid = self.seq_pool[seq]
-                m = self.message_pool[uid]
-                address = m.address_pool[seq]
-                m.success_pool.add(address)
-                last_update = datetime.now()
-                self.check_and_update_message(m)
+            try:
+                seq = recv_resp(self.card_socket)
+                if(self.seq_pool.get(seq)):
+                    uid = self.seq_pool[seq]
+                    m = self.message_pool[uid]
+                    address = m.address_pool[seq]
+                    m.success_pool.add(address)
+                    last_update = datetime.now()
+                    self.check_and_update_message(m)
+            except:
+                print_exc()
+                self.card_socket = conn_socket()  
     
     def check_and_update_message(self, m):
+        print 'in check_and_update_message'
+        print len(m.success_pool), len(m.address_list)
         if len(m.success_pool) == len(m.address_list):
-            set_message_success(m)
+            self.set_message_success(m)
         
     def set_message_success(self, m):
-
+        print 'send success'
         status = message.F_SEND
         result = 'card send success'
         try:
@@ -119,8 +127,10 @@ class card_sender(object):
                                         (m.msg_num, m.user_uid))
             self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %s where uid = %s', \
                                         (status, m.last_update, result, m.sub_num, m.uid))
+            print 'successfull update'
         except:
-            pass
+            print_exc()
+            print 'update error'
 
     
     def set_message_fail(self, m):
@@ -158,6 +168,7 @@ class card_sender(object):
                 address_list = self.get_filtered_addr(address.split(';'), percent, seed)
 
             m = Msg()
+            m.user_uid = user_uid
             m.uid = uid
             m.address_list = address_list
             m.msg = msg
@@ -195,6 +206,7 @@ class card_sender(object):
     def send_message(self, seq, addr, msg):
         card_number = self.get_send_card_number()
         sumbit_sms(self.card_socket, seq, card_number, addr, msg)
+        self.logger.debug('time: %s, seq: %d,card: %s,addr: %s,msg: \'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
     
     def genseqnum(self):
         if self.seqnum >= 1000000:
@@ -214,6 +226,25 @@ class card_sender(object):
     def init_card_pool(self):
         self.cardpool = CardPool()
         self.cardpool.add_number_by_string('18906413323')
+    
+    def init_logger(self):
+        import glob
+        import logging
+        import logging.handlers
+        
+        LOG_FILENAME = 'card_sender_log.out'
+        
+        # Set up a specific logger with our desired output level
+        my_logger = logging.getLogger('MyLogger')
+        my_logger.setLevel(logging.DEBUG)
+        
+        # Add the log message handler to the logger
+        handler = logging.handlers.RotatingFileHandler(
+                      LOG_FILENAME)
+        
+        my_logger.addHandler(handler)
+        
+        self.logger = my_logger
         
 if __name__ == '__main__':
     sender = card_sender()
