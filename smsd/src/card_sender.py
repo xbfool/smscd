@@ -27,6 +27,8 @@ from base64 import b64encode
 from zlib import compress
 from random import seed, shuffle
 from card_channel import *
+from sqlalchemy import create_engine
+from cardpool import *
 
 def get_filtered_addr(addr, percent, my_seed):
     addr.sort()
@@ -50,6 +52,15 @@ class card_sender(object):
         self.cfg = loadcfg('smsd.ini')
                
         self.__db = dbsql(**self.cfg.database.raw_dict)
+        self.mysql_db = create_engine('mysql+mysqldb://%s:%s@localhost/%s' % 
+                                      (self.cfg['user'],
+                                       self.cfg['passwd'],
+                                       self.cfg['db']))
+        from sqlalchemy.orm import sessionmaker
+        Base.metadata.create_all(self.mysql_db) 
+        Session = sessionmaker(bind=self.mysql_db)
+        self.session = Session()
+        
         self.__dblock = Lock()
         self.__worker_exit_lock = Lock()
         self.__worker_exit_lock.acquire()
@@ -61,6 +72,7 @@ class card_sender(object):
         self.message_pool = {}
         self.seq_pool = {}
         self.card_socket = conn_socket()
+        self.cardpool = CardPool()
         if self.card_socket == None:
             raise Exception()
     def __process_queue(self):
@@ -180,9 +192,13 @@ class card_sender(object):
         return self.seqnum
     
     def get_send_card_number(self):
-        #TODO
-        pass
-    
+        while True:
+            n = self.cardpool.get_next_number()
+            if n is not None:
+                time.sleep(10)
+            else:
+                return n 
+               
 if __name__ == '__main__':
     sender = card_sender()
     

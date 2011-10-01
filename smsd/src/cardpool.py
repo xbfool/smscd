@@ -44,7 +44,7 @@ class CardNumber(Base):
     S_DEL = 2
     status_list = range(3)
     id = Column(Integer, primary_key=True)
-    number = Column(String(50),nullable=False, unique=True)
+    number = Column(String(50), nullable=False, unique=True)
     status = Column(Integer)
     lastupdate = Column(TIMESTAMP)
     hourrate = Column(Integer)
@@ -52,9 +52,9 @@ class CardNumber(Base):
     monthrate = Column(Integer)
     
     
-    def __init__(self, number, 
+    def __init__(self, number,
                  status=0,
-                 lastupdate=None, 
+                 lastupdate=None,
                  hourrate=0,
                  dayrate=0,
                  monthrate=0):
@@ -150,6 +150,9 @@ class CardPool(object):
         self.month_max = 30000
         self.avail_list = deque()
         self.max_size = max_size
+    
+    def add_number_by_string(self, num):
+        self.add_number(CardNumber(num))
         
     def add_number(self, card_number):
         if len(self.numbers) < self.max_size:
@@ -186,4 +189,9 @@ class CardPool(object):
     def update_send_info(self, dt, number):
         self.numbers.get(number, self.null_number).send_one(dt)
             
-
+    def get_next_number(self):
+        dt = datetime.now()
+        n = self.pop_next_number(dt)
+        if n != None:
+            self.update_send_info(dt, number)
+        return n
