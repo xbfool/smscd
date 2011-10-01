@@ -53,34 +53,41 @@ class card_sender(object):
                
         self.__db = dbsql(**self.cfg.database.raw_dict)
         self.mysql_db = create_engine('mysql+mysqldb://%s:%s@localhost/%s' % 
-                                      (self.cfg['user'],
-                                       self.cfg['passwd'],
-                                       self.cfg['db']))
+                                      (self.cfg.database.user,
+                                       self.cfg.database.passwd,
+                                       self.cfg.database.db))
         from sqlalchemy.orm import sessionmaker
         Base.metadata.create_all(self.mysql_db) 
         Session = sessionmaker(bind=self.mysql_db)
         self.session = Session()
         
         self.__dblock = Lock()
+        self.card_socket = conn_socket()  
+        if self.card_socket == None:
+            raise Exception()
         self.__worker_exit_lock = Lock()
         self.__worker_exit_lock.acquire()
         self.__worker_thread = Thread(None, self.__worker, '%s checker thread' % self.__class__.__name__)   
-        self.__worker_thread.start()   
-        self.__resp_thread = Thread(None, self.__resp_worker, '%s resp thread' % self.__class__.__name__)   
-        self.__resp_thread.start()     
+        self.__worker_thread.start() 
+
         self.__message_send_pool = {}
         self.message_pool = {}
         self.seq_pool = {}
-        self.card_socket = conn_socket()
         self.cardpool = CardPool()
-        if self.card_socket == None:
-            raise Exception()
+        self.__resp_thread = Thread(None, self.__resp_worker, '%s resp thread' % self.__class__.__name__)   
+        self.__resp_thread.start()     
+
+
     def __process_queue(self):
         q = self.__db.raw_sql_query('SELECT user_uid,uid,address,msg,seed,msg_num FROM message WHERE status = %s and channel = "send_card_a" ORDER BY uid DESC LIMIT 500',
                                      message.F_ADMIT)
         
         c = self.gen_card_messages(q)
         self.send_card_messages(c)
+        if c is None:
+            return 0
+        else:
+            return len(c)
         
     def __worker(self):
         while not self.__worker_exit_lock.acquire(False):
@@ -169,6 +176,8 @@ class card_sender(object):
         return ret
     
     def send_card_messages(self, c):
+        if c is None:
+            return
         for item in c:
             self.send_card_message(item)
     
@@ -197,6 +206,7 @@ class card_sender(object):
             if n is not None:
                 time.sleep(10)
             else:
+                self.session.commit()
                 return n 
                
 if __name__ == '__main__':
