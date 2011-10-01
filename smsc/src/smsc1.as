@@ -1594,9 +1594,13 @@ private function processor_channelqueryreport(param:Object):void{
 		Alert.show(err_str[param.errno]);
 	} else {
 		var dp:Array = new Array();
+		
 		for ( var j:int = 0; j < param.result.length; j++) {			
 			var co:Object = param.result[j];
-			co.channel = channel_select_data[get_channel_index(co.channel)].label
+			if(co.channel != 'total')
+				co.channel = channel_select_data[get_channel_index(co.channel)].label
+			else
+				co.channel = '总计';
 			co.check = false;
 			dp.push(co);
 		}

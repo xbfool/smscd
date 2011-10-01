@@ -1079,6 +1079,7 @@ class smsd(object):
         pm = phonenumber.phonenumber()
         
         msg_dict = {}
+        total = {'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0, 'sub_num':0}
         for k in self.messages.itervalues():                    
             if pbegin <= k.create_time and k.create_time <= pend:
                 channel = k.channel
@@ -1098,8 +1099,10 @@ class smsd(object):
                 elif k.status == k.F_ADMIT:
                     msg_json['append_num'] = msg_json['append_num'] + k.msg_num
                 
+                for key, value in msg_json.iteritems():
+                    total[key] += value
                 msg_dict[channel] = msg_json
-        
+        msg_dict['total'] = total
         result = []
         for channel, msg_json in msg_dict.items():
             print "channel:" + channel
