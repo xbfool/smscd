@@ -1099,9 +1099,10 @@ class smsd(object):
                 elif k.status == k.F_ADMIT:
                     msg_json['append_num'] = msg_json['append_num'] + k.msg_num
                 
-                for key, value in msg_json.iteritems():
-                    total[key] += value
                 msg_dict[channel] = msg_json
+        for v in msg_dict.values():
+            for key, value in v.iteritems():
+                total[key] += value
         msg_dict['total'] = total
         result = []
         for channel, msg_json in msg_dict.items():
