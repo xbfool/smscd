@@ -193,5 +193,5 @@ class CardPool(object):
         dt = datetime.now()
         n = self.pop_next_number(dt)
         if n != None:
-            self.update_send_info(dt, number)
+            self.update_send_info(dt, n)
         return n

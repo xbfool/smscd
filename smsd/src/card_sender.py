@@ -37,7 +37,7 @@ def get_filtered_addr(addr, percent, my_seed):
     
     ret = addr[0:max(1, len(addr) * percent / 100)]
     return ret
-class msg():
+class Msg():
     def __init__(self):
         self.last_update = datetime.now()
         self.address_list = []
@@ -50,7 +50,7 @@ class card_sender(object):
     def __init__(self, chk_interval=3):
         self.__chk_interval = chk_interval
         self.cfg = loadcfg('smsd.ini')
-               
+        self.seqnum = 0
         self.__db = dbsql(**self.cfg.database.raw_dict)
         self.mysql_db = create_engine('mysql+mysqldb://%s:%s@localhost/%s' % 
                                       (self.cfg.database.user,
@@ -62,6 +62,7 @@ class card_sender(object):
         self.session = Session()
         
         self.__dblock = Lock()
+        self.init_card_pool()
         self.card_socket = conn_socket()  
         if self.card_socket == None:
             raise Exception()
@@ -73,13 +74,13 @@ class card_sender(object):
         self.__message_send_pool = {}
         self.message_pool = {}
         self.seq_pool = {}
-        self.cardpool = CardPool()
+
         self.__resp_thread = Thread(None, self.__resp_worker, '%s resp thread' % self.__class__.__name__)   
         self.__resp_thread.start()     
 
 
     def __process_queue(self):
-        q = self.__db.raw_sql_query('SELECT user_uid,uid,address,msg,seed,msg_num FROM message WHERE status = %s and channel = "send_card_a" ORDER BY uid DESC LIMIT 500',
+        q = self.__db.raw_sql_query('SELECT user_uid,uid,address,msg,seed,msg_num,total_num FROM message WHERE status = %s and channel = "card_send_a" ORDER BY uid DESC LIMIT 500',
                                      message.F_ADMIT)
         
         c = self.gen_card_messages(q)
@@ -97,12 +98,13 @@ class card_sender(object):
     def __resp_worker(self):
         while True:
             seq = recv_resp(self.card_socket)
-            uid = self.seq_pool[seq]
-            m = self.message_pool[uid]
-            address = m.address_pool[seq]
-            m.success_pool.add(address)
-            last_update = datetime.now()
-            self.check_and_update_message(m)
+            if(self.seq_pool.get(seq)):
+                uid = self.seq_pool[seq]
+                m = self.message_pool[uid]
+                address = m.address_pool[seq]
+                m.success_pool.add(address)
+                last_update = datetime.now()
+                self.check_and_update_message(m)
     
     def check_and_update_message(self, m):
         if len(m.success_pool) == len(m.address_list):
@@ -138,14 +140,14 @@ class card_sender(object):
     def gen_card_messages(self, q):
         #TODO
         messages = []
-        for user_uid, uid, address, msg, seed, msg_num in q:
-            m = self.gen_card_message(user_uid, uid, address, msg, seed, msg_num)
+        for user_uid, uid, address, msg, seed, msg_num, total_num in q:
+            m = self.gen_card_message(user_uid, uid, address, msg, seed, msg_num, total_num)
             if m is not None:
-                messsages.append(m)
+                messages.append(m)
+        return messages
                 
-    def gen_card_message(self, user_uid, uid, address, msg, seed, msg_num):
+    def gen_card_message(self, user_uid, uid, address, msg, seed, msg_num, total_num):
         try:
-            addr = address.split(';')
             user_percent = self.__db.raw_sql_query('SELECT percent FROM user WHERE uid = %s', user_uid)
             percent = user_percent[0][0]
             if percent == None or percent > 100:
@@ -153,9 +155,9 @@ class card_sender(object):
                 
             address_list = address.split(';')
             if(percent is not None and percent <= 100 and percent >= 50 and total_num >= 100):
-                address_list = self.get_filtered_addr(address.split(';'), percent, my_seed)
+                address_list = self.get_filtered_addr(address.split(';'), percent, seed)
 
-            m = msg()
+            m = Msg()
             m.uid = uid
             m.address_list = address_list
             m.msg = msg
@@ -165,6 +167,7 @@ class card_sender(object):
                 m.sub_num = 1
             return m
         except:
+            print_exc()
             return None
  
     def get_filtered_addr(self, addr, percent, my_seed):
@@ -185,7 +188,7 @@ class card_sender(object):
         self.message_pool[item.uid] = item
         for addr in item.address_list:
             seq = self.genseqnum()
-            self.send_message(seq, addr, msg)
+            self.send_message(seq, addr, item.msg)
             self.seq_pool[seq] = item.uid
             item.address_pool[seq] = addr
     
@@ -203,12 +206,15 @@ class card_sender(object):
     def get_send_card_number(self):
         while True:
             n = self.cardpool.get_next_number()
-            if n is not None:
+            if n is None:
                 time.sleep(10)
             else:
                 self.session.commit()
                 return n 
-               
+    def init_card_pool(self):
+        self.cardpool = CardPool()
+        self.cardpool.add_number_by_string('18906413323')
+        
 if __name__ == '__main__':
     sender = card_sender()
     
