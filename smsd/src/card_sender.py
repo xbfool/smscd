@@ -94,8 +94,12 @@ class card_sender(object):
         
     def __worker(self):
         while not self.__worker_exit_lock.acquire(False):
-            if self.__process_queue() == 0:
-                sleep(self.__chk_interval)
+            print 'checking queue: ', datetime.now()
+            try:
+                if self.__process_queue() == 0:
+                    sleep(self.__chk_interval)
+            except:
+                print_exc()
                 
     def __resp_worker(self):
         while True:
@@ -225,7 +229,30 @@ class card_sender(object):
                 return n 
     def init_card_pool(self):
         self.cardpool = CardPool()
-        self.cardpool.add_number_by_string('18906413323')
+        self.cardpool.add_number_by_string('13376442584')
+        self.cardpool.add_number_by_string('13376440784')
+        self.cardpool.add_number_by_string('13376442504')
+        self.cardpool.add_number_by_string('13376442714')
+        self.cardpool.add_number_by_string('13376440764')
+        
+        self.cardpool.add_number_by_string('13376440934')
+        self.cardpool.add_number_by_string('13376440914')
+        self.cardpool.add_number_by_string('13376442374')
+        self.cardpool.add_number_by_string('13376442704')
+        self.cardpool.add_number_by_string('13376440694')
+
+        self.cardpool.add_number_by_string('13376442394')
+        self.cardpool.add_number_by_string('13376442344')
+        self.cardpool.add_number_by_string('13376440804')
+        self.cardpool.add_number_by_string('13376440554')
+        self.cardpool.add_number_by_string('13376440924')
+
+        self.cardpool.add_number_by_string('13376442674')
+        self.cardpool.add_number_by_string('13376442894')
+        self.cardpool.add_number_by_string('13376442094')
+        self.cardpool.add_number_by_string('13376442524')
+        self.cardpool.add_number_by_string('13376442384')
+
     
     def init_logger(self):
         import glob
