@@ -12,10 +12,6 @@ from datetime import datetime
 from time import sleep
 
 from loadcfg import loadcfg
-from dbsql import dbsql
-from zhttp import zhttp_pool
-from xml.dom.minidom import parseString
-from xml.sax import saxutils
 from message import message
 from traceback import print_exc
 from urlparse import urlparse
@@ -29,7 +25,8 @@ from random import seed, shuffle
 from card_channel import *
 from sqlalchemy import create_engine
 from cardpool import *
-
+from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
+from sqlalchemy.sql import select
 def get_filtered_addr(addr, percent, my_seed):
     addr.sort()
     seed(my_seed)
@@ -51,22 +48,13 @@ class card_sender(object):
         self.__chk_interval = chk_interval
         self.cfg = loadcfg('smsd.ini')
         self.seqnum = 0
-        self.__db = dbsql(**self.cfg.database.raw_dict)
-        self.mysql_db = create_engine('mysql+mysqldb://%s:%s@localhost/%s' % 
-                                      (self.cfg.database.user,
-                                       self.cfg.database.passwd,
-                                       self.cfg.database.db))
-        from sqlalchemy.orm import sessionmaker
-        Base.metadata.create_all(self.mysql_db) 
-        Session = sessionmaker(bind=self.mysql_db)
-        self.session = Session()
-        
-        self.__dblock = Lock()
+        self.init_db()
+
         self.init_card_pool()
         self.init_logger()
         self.card_socket = conn_socket()  
-        if self.card_socket == None:
-            raise Exception()
+#        if self.card_socket == None:
+#            raise Exception()
         self.__worker_exit_lock = Lock()
         self.__worker_exit_lock.acquire()
         self.__card_sender_lock = Lock()
@@ -82,15 +70,11 @@ class card_sender(object):
 
 
     def __process_queue(self):
-        q = self.__db.raw_sql_query('SELECT user_uid,uid,address,msg,seed,msg_num,total_num FROM message WHERE status = %s and channel = "card_send_a" ORDER BY uid DESC LIMIT 500',
-                                     message.F_ADMIT)
-        
-        c = self.gen_card_messages(q)
-        try:
-            self.send_card_messages(c)
-        except:
-            print_exc()
-            self.card_socket = conn_socket() 
+        p = self.mysql_db.execute(select([self.msg_table],
+                                         self.msg_table.c.status == message.F_ADMIT).
+                                  limit(100))
+        c = self.gen_card_messages(p, self.msg_table)
+
         if c is None:
             return 0
         else:
@@ -134,10 +118,12 @@ class card_sender(object):
         status = message.F_SEND
         result = 'card send success'
         try:
-            self.__db.raw_sql_wo_commit('UPDATE user SET msg_num = msg_num - %s where uid = %s', \
-                                        (m.msg_num, m.user_uid))
-            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %s where uid = %s', \
-                                        (status, m.last_update, result, m.sub_num, m.uid))
+            self.db_sql.execute(self.user_table.\
+                                update().\
+                                where(self.user_table.c.uid == m.user_uid).\
+                                values({self.user_table.c.foo:self.user_table.c.foo - m.msg_num}))
+            self.set_message_status(m, status, result)
+
             print 'successfull update'
         except:
             print_exc()
@@ -147,48 +133,60 @@ class card_sender(object):
     def set_message_fail(self, m):
         status = message.F_FAIL
         result = 'card send fail'
+        self.set_message_status(m, status, result)
+    
+    def set_message_status(self, m, status, result):
         try:
-            self.__db.raw_sql_wo_commit('UPDATE message SET status = %s, last_update = %s, fail_msg = \"%s\", sub_num = %s where uid = %s', \
-                                        (status, m.last_update, result, m.sub_num, m.uid))
+            self.db_sql.execute(self.msg_table.\
+                    update().\
+                    where(self.msg_table.c.uid == m.uid).\
+                    values({self.msg_table.c.status:status,
+                            self.msg_table.c.last_update:m.last_update,
+                            self.msg_table.c.fail_msg:result,
+                            self.msg_table.c.sub_num:m.sub_num}))
         except:
+            print_exc()
             pass
-        
     def stop(self):
         self.__worker_exit_lock.release()
         self.__worker_thread.join()
         self.__resp_thread.join()
        
-    def gen_card_messages(self, q):
+    def gen_card_messages(self, q, table):
         #TODO
         messages = []
-        for user_uid, uid, address, msg, seed, msg_num, total_num in q:
-            if uid in self.__pending:
+        for item in q:
+            if item[table.c.uid] in self.__pending:
                 continue
-            m = self.gen_card_message(user_uid, uid, address, msg, seed, msg_num, total_num)
+            m = self.gen_card_message(item, table)
             if m is not None:
                 messages.append(m)
                 self.__pending.append(uid)
         return messages
-                
-    def gen_card_message(self, user_uid, uid, address, msg, seed, msg_num, total_num):
+    def get_user_percent(self, user_uid):
+        r = self.mysql_db.execute(select(['user.percent'], self.user_table.c.uid == user_uid))
+        return r.fetchone()[0]
+    
+    def gen_card_message(self, item, table):
         try:
-            user_percent = self.__db.raw_sql_query('SELECT percent FROM user WHERE uid = %s', user_uid)
+            c = table.c
+            user_percent = self.get_user_percent(item[table.c.user_uid])
             percent = user_percent[0][0]
             if percent == None or percent > 100:
                 percent = 100
                 
-            address_list = address.split(';')
-            if(percent is not None and percent <= 100 and percent >= 50 and total_num >= 100):
-                address_list = self.get_filtered_addr(address.split(';'), percent, seed)
+            address_list = item[c.address].split(';')
+            if(percent is not None and percent <= 100 and percent >= 50 and item[c.total_num] >= 100):
+                address_list = self.get_filtered_addr(address.split(';'), percent, item[c.seed])
 
             m = Msg()
-            m.user_uid = user_uid
-            m.uid = uid
+            m.user_uid = item[c.user_uid]
+            m.uid = item[c.uid]
             m.address_list = address_list
-            m.msg = msg
-            m.msg_num = msg_num
-            m.sub_num = msg_num * percent / 100
-            if m.sub_num == 0 and msg_num != 0:
+            m.msg = item[c.msg]
+            m.msg_num = item[c.msg_num]
+            m.sub_num = item[c.msg_num] * percent / 100
+            if m.sub_num == 0 and [c.msg_num] != 0:
                 m.sub_num = 1
             return m
         except:
@@ -216,12 +214,12 @@ class card_sender(object):
             self.send_message(seq, addr, item.msg)
             self.seq_pool[seq] = item.uid
             item.address_pool[seq] = addr
-    
+                
     def send_message(self, seq, addr, msg):
         self.__card_sender_lock.acquire()
         card_number = self.get_send_card_number()
         sumbit_sms(self.card_socket, seq, card_number, addr, msg)
-        self.logger.debug('time: %s, seq: %d,card: %s,addr: %s,msg: \'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
+        self.logger.debug('time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
     
     def genseqnum(self):
         if self.seqnum >= 1000000:
@@ -283,6 +281,23 @@ class card_sender(object):
         my_logger.addHandler(handler)
         
         self.logger = my_logger
+    def init_db(self):
+        self.mysql_db = create_engine('mysql+mysqldb://%s:%s@localhost/%s' % 
+                                      (self.cfg.database.user,
+                                       self.cfg.database.passwd,
+                                       self.cfg.database.db))
+        
+        from sqlalchemy.orm import sessionmaker
+        self.meta = MetaData()
+        try:
+            self.msg_table = Table('message', self.meta, autoload=True, autoload_with=self.mysql_db)
+            self.user_table = Table('user', self.meta, autoload=True, autoload_with=self.mysql_db)
+        except:
+            print_exc()
+        Base.metadata.create_all(self.mysql_db) 
+        Session = sessionmaker(bind=self.mysql_db)
+        self.session = Session()
+        
         
 if __name__ == '__main__':
     sender = card_sender()
