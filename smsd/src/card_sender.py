@@ -26,6 +26,7 @@ from card_channel import *
 from sqlalchemy import create_engine
 from cardpool import *
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
+from sqlalchemy.sql import and_, or_, not_
 from sqlalchemy.sql import select
 def get_filtered_addr(addr, percent, my_seed):
     addr.sort()
@@ -52,15 +53,18 @@ class card_sender(object):
 
         self.init_card_pool()
         self.init_logger()
+        self.kill_received = False
+        
         self.card_socket = conn_socket()  
-#        if self.card_socket == None:
-#            raise Exception()
+        if self.card_socket == None:
+            raise Exception()
         self.__worker_exit_lock = Lock()
         self.__worker_exit_lock.acquire()
         self.__card_sender_lock = Lock()
+        self.__sender_semaphone = threading.BoundedSemaphore(0)
         self.__worker_thread = Thread(None, self.__worker, '%s checker thread' % self.__class__.__name__)   
         self.__worker_thread.start() 
-
+        
         self.__message_send_pool = {}
         self.message_pool = {}
         self.seq_pool = {}
@@ -71,26 +75,32 @@ class card_sender(object):
 
     def __process_queue(self):
         p = self.mysql_db.execute(select([self.msg_table],
-                                         self.msg_table.c.status == message.F_ADMIT).
+                                         and_(self.msg_table.c.status == message.F_ADMIT,
+                                         self.msg_table.c.channel == 'card_send_a')).\
                                   limit(100))
-        c = self.gen_card_messages(p, self.msg_table)
 
+        c = self.gen_card_messages(p, self.msg_table)
+        
         if c is None:
             return 0
         else:
+            self.send_card_messages(c)
             return len(c)
         
     def __worker(self):
-        while not self.__worker_exit_lock.acquire(False):
+        while not self.__worker_exit_lock.acquire(False) and not self.kill_received:
             print 'checking queue: ', datetime.now()
             try:
                 if self.__process_queue() == 0:
                     sleep(self.__chk_interval)
             except:
                 print_exc()
-                
+        print 'exit send worker'    
     def __resp_worker(self):
-        while True:
+        while not self.kill_received:
+            if not self.__sender_semaphone.acquire(False):
+                time.sleep(1)
+                continue
             try:
                 seq = recv_resp(self.card_socket)
                 if(self.seq_pool.get(seq)):
@@ -105,7 +115,7 @@ class card_sender(object):
                 self.card_socket = conn_socket() 
             if self.__card_sender_lock.locked(): 
                 self.__card_sender_lock.release()
-    
+        print 'exit resp worker'
     def check_and_update_message(self, m):
         print 'in check_and_update_message'
         print len(m.success_pool), len(m.address_list)
@@ -118,10 +128,10 @@ class card_sender(object):
         status = message.F_SEND
         result = 'card send success'
         try:
-            self.db_sql.execute(self.user_table.\
+            self.mysql_db.execute(self.user_table.\
                                 update().\
                                 where(self.user_table.c.uid == m.user_uid).\
-                                values({self.user_table.c.foo:self.user_table.c.foo - m.msg_num}))
+                                values({self.user_table.c.msg_num:self.user_table.c.msg_num - m.msg_num}))
             self.set_message_status(m, status, result)
 
             print 'successfull update'
@@ -137,7 +147,7 @@ class card_sender(object):
     
     def set_message_status(self, m, status, result):
         try:
-            self.db_sql.execute(self.msg_table.\
+            self.mysql_db.execute(self.msg_table.\
                     update().\
                     where(self.msg_table.c.uid == m.uid).\
                     values({self.msg_table.c.status:status,
@@ -151,6 +161,7 @@ class card_sender(object):
         self.__worker_exit_lock.release()
         self.__worker_thread.join()
         self.__resp_thread.join()
+        print 'all thread join ok'
        
     def gen_card_messages(self, q, table):
         #TODO
@@ -158,10 +169,11 @@ class card_sender(object):
         for item in q:
             if item[table.c.uid] in self.__pending:
                 continue
+            print item
             m = self.gen_card_message(item, table)
             if m is not None:
                 messages.append(m)
-                self.__pending.append(uid)
+                self.__pending.append(m.uid)
         return messages
     def get_user_percent(self, user_uid):
         r = self.mysql_db.execute(select(['user.percent'], self.user_table.c.uid == user_uid))
@@ -170,8 +182,8 @@ class card_sender(object):
     def gen_card_message(self, item, table):
         try:
             c = table.c
-            user_percent = self.get_user_percent(item[table.c.user_uid])
-            percent = user_percent[0][0]
+            percent = self.get_user_percent(item[table.c.user_uid])
+
             if percent == None or percent > 100:
                 percent = 100
                 
@@ -219,6 +231,7 @@ class card_sender(object):
         self.__card_sender_lock.acquire()
         card_number = self.get_send_card_number()
         sumbit_sms(self.card_socket, seq, card_number, addr, msg)
+        self.__sender_semaphone.release()
         self.logger.debug('time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
     
     def genseqnum(self):
@@ -298,11 +311,16 @@ class card_sender(object):
         Session = sessionmaker(bind=self.mysql_db)
         self.session = Session()
         
-        
 if __name__ == '__main__':
     sender = card_sender()
     
     import time
     while True:
-        time.sleep(10)
+        try:
+            time.sleep(1)
+        except KeyboardInterrupt:
+            print "Ctrl-c received! Sending kill to threads..."
+            sender.kill_received = True
+            break
     sender.stop()
+    print 'all exit'
