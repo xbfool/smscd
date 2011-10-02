@@ -74,16 +74,6 @@ def pack_sm_msg(sequence_no, caller, called, msg_content):
     msg_send = struct.pack(msg_fmt, msg_len, command_id, command_status, sequence_no, server_type, source_addr_ton, source_addr_npi, caller, dest_address_ton, dest_addr_npi, called, esm_class, protocol_ID, priority_flag, schedule_delivery_time, validity_peroid, registered_delivery, replace_if_present_flag, data_coding, sm_default_msg_id, sm_length, msg_content)
     return msg_send
 
-def reconn_mysql():
-    while True:
-        try:
-            conn = MySQLdb.connect(host=db_host, port=db_port, user=db_user, passwd=db_passwd, db=db_name, charset=db_charset)
-            logging.info("Mysql retry connection success")
-            break
-        except MySQLdb.Error, e:
-            logging.info("Mysql retry connection error")
-            time.sleep(10)
-    return conn
 #socket reconn
 def reconn_socket():
     try:
@@ -109,41 +99,8 @@ def reconn_socket():
         logging.error(e)
 
 def thread_sumbit_sms(clisock):
-    conn = MySQLdb.connect(host=db_host, port=db_port, user=db_user, passwd=db_passwd, db=db_name, charset=db_charset)
-    cursor = conn.cursor()
     print "Sumbit sms thread mysql connect success!"
     logging.info(" Sumbit sms thread connect to mysql success!")
-#    while True:
-#        try:
-#            sqlstr = "select sequence_id,caller,called,sm_content from smpp_send_"+str(time.strftime('%Y%m',time.localtime(time.time())))+" where status = -2 and sche_send_time <= now()"
-#            n = cursor.execute(sqlstr)
-#            if(n>0):
-#                for row in cursor.fetchall():
-#                    seqence_id = row[0]
-#                    caller = str(row[1])
-#                    called = str(row[2])
-#                    sm_content = str(row[3])
-#                    msg_body = pack_sm_msg(seqence_id, caller, called, sm_content)
-#                    try:
-#                        clisock.send(msg_body)
-###                      cursor.execute("update smpp_send set status = -1 where sequence_id = %s",seqence_id)
-#                        sqlstr = "update smpp_send_"+str(time.strftime('%Y%m',time.localtime(time.time())))+" set status = -1 where sequence_id = %s"
-#                        cursor.execute(sqlstr,seqence_id)
-#                        conn.commit()
-#                    except socket.error,e:
-#                        logging.error("socket error,try to reconnection..")
-#                        conn.close()
-#                        return "0"
-#            else:
-#                logging.info("no data")
-#                time.sleep(10)
-#        except MySQLdb.Error, e:
-#            if e[0]==2006:
-#                logging.info(e)
-#                conn = reconn_mysql()
-#                cursor = conn.cursor()
-#            elif e[0]==1103:
-#                logging.info(e)
 
 
     send_msg = pack_sm_msg(1111111, "18906413323", "18616820727", "test")
@@ -151,8 +108,6 @@ def thread_sumbit_sms(clisock):
 
 
 def thread_recv_resp(clisock):
-#    conn = MySQLdb.connect(host=db_host, port=db_port, user=db_user, passwd=db_passwd, db=db_name, charset=db_charset)
-#    cursor = conn.cursor()
     print "Recv sms response thread mysql connect success!"
     logging.info(" Recv sms response thread connect to mysql success!")
     while True:
@@ -164,18 +119,6 @@ def thread_recv_resp(clisock):
                     sequnce_id = bind_resp[3]
                     if(sequnce_id > 0):
                         print sequnce_id
-#                        try:
-#                            sqlstr = "update smpp_send_" + str(time.strftime('%Y%m', time.localtime(time.time()))) + " set status = 0 where sequence_id = %s"
-#                            cursor.execute(sqlstr, sequnce_id)
-#                            conn.commit()
-#                        except MySQLdb.Error, e:
-#                            if e[0] == 2006:
-#                                logging.info(e)
-#                                conn = reconn_mysql()
-#                                cursor = conn.cursor()
-#                            elif e[0] == 1103:
-#                                logging.info(e)
-
 
         except socket.error, e:
             conn.close()
