@@ -13,7 +13,7 @@ from Queue import Queue
 from traceback import print_exc
 
 class zhttp(object):
-    def __init__(self, host, path = '/', mode = 'POST', port = 80, timeout = 30, **kargs):
+    def __init__(self, host, path='/', mode='POST', port=80, timeout=30, **kargs):
         self.host = host
         self.port = port
         self.timeout = timeout
@@ -31,7 +31,7 @@ class zhttp(object):
     def send(self, **kargs):
         return eval(self.send_eval)
     
-    def send_POST(self, path = None, **kargs):
+    def send_POST(self, path=None, **kargs):
         path = path or self.path
         #data = self.params + '&' + urlencode(kargs)
         data = urlencode(kargs)
@@ -40,7 +40,7 @@ class zhttp(object):
         res = self.conn.getresponse()
         return res.status, res.reason, res.read(), res.getheaders()
 
-    def send_soap(self, path = None, soapaction = None, soap = None, port = 80):
+    def send_soap(self, path=None, soapaction=None, soap=None, port=80):
         # TODO: assemble soap here
         path = path or self.path
         headers = {"Content-type": "text/xml; charset=utf-8",
@@ -50,7 +50,7 @@ class zhttp(object):
         res = self.conn.getresponse()
         return res.status, res.reason, res.read(), res.getheaders()
     
-    def send_GET(self, path = None, **kargs):
+    def send_GET(self, path=None, **kargs):
         # deprecated since url length is limited
         path = path or self.path
         path = path + '?' + self.params + '&' + urlencode(kargs)
@@ -64,7 +64,7 @@ class zhttp_wlock(zhttp):
         self.__lock = Lock()
         zhttp.__init__(self, **kargs)
     
-    def acquire(self, block = True):
+    def acquire(self, block=True):
         return self.__lock.acquire(block)
     
     def release(self):
@@ -73,9 +73,9 @@ class zhttp_wlock(zhttp):
 class zhttp_pool():
     __INVALID_ID = 0
     
-    def __init__(self, thread_pool_size, host_settings, callback, retry = 3, queue_length = 0x10000):
+    def __init__(self, thread_pool_size, host_settings, callback, retry=3, queue_length=0x10000, timeout_callback=None):
         self.__callback = callback
-        
+        self.__timeout_callback = timeout_callback
         self.__req_queue = Queue(queue_length)
         
         self.__retry_list = range(retry)
@@ -87,7 +87,7 @@ class zhttp_pool():
             self.__connection_pools[i] = map(lambda a:zhttp_wlock(**host_settings[i]), (0,) * thread_pool_size)
             
         self.__thread_pool = map(
-            lambda i:Thread(None, self.__worker, '%s thread %i' %(self.__class__.__name__, i)),
+            lambda i:Thread(None, self.__worker, '%s thread %i' % (self.__class__.__name__, i)),
             range(thread_pool_size))
         map(lambda t:t.start(), self.__thread_pool)
         
@@ -124,13 +124,15 @@ class zhttp_pool():
             for i in self.__retry_list:
                 try:
                     ret = current_connection.send(**kargs)
+                    self.__callback(param, ret)
                     break
                 except:
                     print '%s: exception raised, reconnecting(%d)...' % (self.__class__.__name__, i)
                     print_exc()
                     current_connection.close()
                     current_connection.connect()
-            self.__callback(param, ret)
+            if self.__timeout_callback:
+                self.__timeout_callback(param, ret)
 
 def __dummy_callback(queue, ret):
     # caution the callback must be thread safe
@@ -145,8 +147,8 @@ def __selftest1():
     queries = ('python', 'google', 'baidu')
     ret = Queue() 
     for q in queries:
-        p.req('google', ret, wd = q)
-        p.req('baidu', ret, wd = q)
+        p.req('google', ret, wd=q)
+        p.req('baidu', ret, wd=q)
     p.stop()
     
     ret_list = []
@@ -155,9 +157,9 @@ def __selftest1():
     pass
 
 def __selftest0():
-    h = zhttp(host = '58.53.194.80',
-              path = '/swdx/services/APService',
-              mode = 'soap')
+    h = zhttp(host='58.53.194.80',
+              path='/swdx/services/APService',
+              mode='soap')
     
     soap = \
 '''
@@ -178,7 +180,7 @@ def __selftest0():
 ''' \
         % ('xghcdrs005', 'xu=qwe', 'xghcdrs1', 'xghcdrs05', '13436999640', '', 'test sms\n测试短信 \nfrom sender') 
         # % ('just', 'a', 'try', '!', '13436999640', '', 'tset sms\n测试短信 \nfrom sender') 
-    ret = h.send(soapaction = 'http://58.53.194.80/swdx/services/APService/', soap = soap)
+    ret = h.send(soapaction='http://58.53.194.80/swdx/services/APService/', soap=soap)
     print ret[0]
     print ret[1]
     print '\n'.join(map(str, ret[3]))
