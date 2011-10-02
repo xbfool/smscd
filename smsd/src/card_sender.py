@@ -69,13 +69,14 @@ class card_sender(object):
             raise Exception()
         self.__worker_exit_lock = Lock()
         self.__worker_exit_lock.acquire()
+        self.__card_sender_lock = Lock()
         self.__worker_thread = Thread(None, self.__worker, '%s checker thread' % self.__class__.__name__)   
         self.__worker_thread.start() 
 
         self.__message_send_pool = {}
         self.message_pool = {}
         self.seq_pool = {}
-
+        self.__pending = []
         self.__resp_thread = Thread(None, self.__resp_worker, '%s resp thread' % self.__class__.__name__)   
         self.__resp_thread.start()     
 
@@ -85,8 +86,11 @@ class card_sender(object):
                                      message.F_ADMIT)
         
         c = self.gen_card_messages(q)
-        self.send_card_messages(c)
-
+        try:
+            self.send_card_messages(c)
+        except:
+            print_exc()
+            self.card_socket = conn_socket() 
         if c is None:
             return 0
         else:
@@ -109,18 +113,21 @@ class card_sender(object):
                     uid = self.seq_pool[seq]
                     m = self.message_pool[uid]
                     address = m.address_pool[seq]
-                    m.success_pool.add(address)
+                    m.success_pool.add(seq)
                     last_update = datetime.now()
                     self.check_and_update_message(m)
             except:
                 print_exc()
-                self.card_socket = conn_socket()  
+                self.card_socket = conn_socket() 
+            if self.__card_sender_lock.locked(): 
+                self.__card_sender_lock.release()
     
     def check_and_update_message(self, m):
         print 'in check_and_update_message'
         print len(m.success_pool), len(m.address_list)
         if len(m.success_pool) == len(m.address_list):
             self.set_message_success(m)
+            self.__pending.remove(m.uid)
         
     def set_message_success(self, m):
         print 'send success'
@@ -155,9 +162,12 @@ class card_sender(object):
         #TODO
         messages = []
         for user_uid, uid, address, msg, seed, msg_num, total_num in q:
+            if uid in self.__pending:
+                continue
             m = self.gen_card_message(user_uid, uid, address, msg, seed, msg_num, total_num)
             if m is not None:
                 messages.append(m)
+                self.__pending.append(uid)
         return messages
                 
     def gen_card_message(self, user_uid, uid, address, msg, seed, msg_num, total_num):
@@ -208,6 +218,7 @@ class card_sender(object):
             item.address_pool[seq] = addr
     
     def send_message(self, seq, addr, msg):
+        self.__card_sender_lock.acquire()
         card_number = self.get_send_card_number()
         sumbit_sms(self.card_socket, seq, card_number, addr, msg)
         self.logger.debug('time: %s, seq: %d,card: %s,addr: %s,msg: \'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
