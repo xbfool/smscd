@@ -189,7 +189,7 @@ class card_sender(object):
                 
             address_list = item[c.address].split(';')
             if(percent is not None and percent <= 100 and percent >= 50 and item[c.total_num] >= 100):
-                address_list = self.get_filtered_addr(address.split(';'), percent, item[c.seed])
+                address_list = self.get_filtered_addr(item[c.address].split(';'), percent, item[c.seed])
 
             m = Msg()
             m.user_uid = item[c.user_uid]

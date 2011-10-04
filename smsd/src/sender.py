@@ -253,11 +253,11 @@ class sms_sender(object):
 #            'process_ret' : sms_sender.__process_ret_dongguan_0769
 #        }
         settings['default'] = settings['hb_ct_01']
-        for item in setttings:
+        for item in settings:
             item['timeout_count'] = 0
             item['last_update'] = datetime.now()
         self.settings = settings
-        self.__zhttp_pool = zhttp_pool(1, settings, self.__http_callback, timeout_callback=self.__timeout_callback(param, ret))
+        self.__zhttp_pool = zhttp_pool(1, settings, self.__http_callback, timeout_callback=self.__timeout_callback())
         
         self.__db = dbsql(**self.cfg.database.raw_dict)
         self.__dblock = Lock()
@@ -280,7 +280,7 @@ class sms_sender(object):
     def __timeout_add(self, setting):
         self.__timeout_lock.acquire()
         setting['timeout_count'] += 1
-        setting['last_update'] = datatime.now()
+        setting['last_update'] = datetime.now()
         self.__timeout_lock.release()
         
     def __check_channel_ok(self, setting):
@@ -294,7 +294,7 @@ class sms_sender(object):
     def __timeout_clean(self, setting):
         self.__timeout_lock.acquire()
         setting['timeout_count'] = 0
-        setting['last_update'] = datatime.now()
+        setting['last_update'] = datetime.now()
         self.__timeout_lock.release()
         
     def __http_callback(self, param, ret):

@@ -147,51 +147,7 @@ class dbengine_MySQLdb(dbengine):
             pass
         return dbengine.raw_sql_query(self, sql, params)
     
-class dbengine_pyodbc(dbengine):
-    @classmethod
-    def cls_init(cls):
-        if hasattr(cls, 'cls_init_flag'):
-            return
-        
-        import pyodbc as db_api
-        cls.db_api = db_api
-        
-        cls.place_holder = '?'
-        
-        # choose driver, tricky part
-        from ctypes import windll, create_unicode_buffer, c_ushort, byref
-        list_len = c_ushort(0x2000)
-        drivers = create_unicode_buffer(list_len.value)
-        ret = windll.odbccp32.SQLGetInstalledDriversW(drivers, list_len, byref(list_len))
-        assert ret, 'dbengine_pyodbc failed to determine driver: SQLGetInstalledDriversW() returns 0'
-        drivers = filter(None, drivers[:].split(u'\0'))
-        driver_found = False
-        for d in ('SQL Server Native Client 10.0', 'SQL Native Client', 'SQL Server'):
-            if d in drivers:
-                cls.__driver = d
-                driver_found = True
-                break
-        assert driver_found, 'db_engine_pyodbc could not find any appropriate driver'
-        print 'dbengine_pyodbc chooses \'%s\' from %d drivers installed' % (cls.__driver, len(drivers))
-        
-        cls.__exception_encoding = 'cp%d' % windll.kernel32.GetACP()
-        
-        cls.cls_init_flag = True
-    
-    def connect(self):
-        conn = self.db_api.connect(driver = self.__driver, **self.params)
-        self.__svr_name = conn.getinfo(self.db_api.SQL_SERVER_NAME)
-        self.__db_name = self.params.get('database')
-        if self.__db_name == None:
-            self.__db_name = '(unknown database name)'
-        self.__odbc_ver= conn.getinfo(self.db_api.SQL_ODBC_VER)
-        print 'dbengine_pyodbc: successfully connected to %s/%s, odbc version: %s' \
-            % (self.__svr_name, self.__db_name, self.__odbc_ver)
-        return conn
-    
-    def format_exc(self, exc):
-        return 'pyodbc: %s, %s' % (exc.args[0], exc.args[1].decode(self.__exception_encoding).encode('utf-8'))
-    
+ 
 class dbsql(object):
     """ wrapper class for different dbengine classes """
     def __init__(self, engine, **kargs):
