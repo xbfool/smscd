@@ -14,6 +14,7 @@ class WsgiEngine(object):
         self.env = env
         self.start = start_response
         self.ret_callback = None
+        self.context = None
         self.command_dict = {}
         self.ret_callback = {}
         
@@ -37,7 +38,7 @@ class WsgiEngine(object):
     def __iter__(self):
         c = self.command_dict.get(self.env['PATH_INFO'])
         if c:
-            ret_by_command = c['command'](self.env)
+            ret_by_command = c['command'](self.env, self.context)
             ret_for_client = c['ret_type'](ret_by_command)
             yield ret_for_client
         else:
@@ -58,6 +59,9 @@ class WsgiEngine(object):
             return True
         raise(StandardError (errmsg))
     
+    def set_context(self, context):
+        self.context = context
+        
     def __ret_text(self, ret):
         self.start('200 OK', [('Content-type', 'text/plain')])
         return ret

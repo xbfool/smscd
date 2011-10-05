@@ -10,9 +10,9 @@ from smsd2.engine import WsgiEngine
 import unittest
 
 
-def commandJsonA(env):
+def commandJsonA(env, context = None):
     return {'ret': 'haha return commandJsonA'}
-def commandTextA(env):
+def commandTextA(env, context = None):
     return 'haha return commandTextA'
 
 class WsgiEngineTest(unittest.TestCase):
@@ -65,5 +65,7 @@ class WsgiEngineTest(unittest.TestCase):
             json.loads(res.body)
         except AppError:
             self.fail('testAddCommandError')
+            
+            
 if __name__ == '__main__':
     unittest.main()
