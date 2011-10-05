@@ -2,8 +2,8 @@ smsd:
   session_expire : 3600
  
 database:
-  user: root
-  password: 123455
+  user: user
+  password: 123456
   db: smsd
   host: localhost
-  engine: mysqldb
+  engine: mysql+mysqldb

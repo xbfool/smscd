@@ -1,0 +1,5 @@
+smsd:
+  session_expire : 3600
+ 
+database:
+  engine: sqlitememory

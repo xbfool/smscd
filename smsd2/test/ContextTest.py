@@ -7,13 +7,17 @@ import unittest
 from smsd2.context.context import Context
 
 class ContextTest(unittest.TestCase):
-    def testContext(self):
-        c = Context('testyaml.yaml')
+    def testMysqldb(self):
+        c = Context('mysqldb.yaml')
         self.failUnless(c.cfg)
         self.failUnless(c.db)
         self.failUnless(c.meta)
-        pass
-
+    
+    def testSqlite(self):
+        c = Context('sqlite.yaml')
+        self.failUnless(c.cfg)
+        self.failUnless(c.db)
+        self.failUnless(c.meta)
 
 if __name__ == "__main__":
     unittest.main()

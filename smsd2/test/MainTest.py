@@ -6,4 +6,6 @@ if __name__ == '__main__':
                      'YamlTest',
                      'DbTest',
                      'ContextTest',
+                     'ChannelTest',
+                     'ChannelListTest',
                      '--verbosity=2'])

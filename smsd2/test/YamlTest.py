@@ -9,7 +9,7 @@ from smsd2.config.config_reader import loadcfg
 
 class YamlTest(unittest.TestCase):
     def testYaml(self):
-        cfg = loadcfg('testyaml.yaml') 
+        cfg = loadcfg('mysqldb.yaml') 
         self.failUnlessEqual(cfg.smsd.session_expire, 3600)
  
             

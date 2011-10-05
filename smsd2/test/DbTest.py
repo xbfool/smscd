@@ -10,7 +10,7 @@ from traceback import print_exc
 class DbTest(unittest.TestCase):
     def testDb(self):
         try:
-            cfg= loadcfg('testyaml.yaml')
+            cfg= loadcfg('mysqldb.yaml')
             db = create_db(cfg)
             self.failIf(db == None)
         except:
@@ -19,11 +19,20 @@ class DbTest(unittest.TestCase):
 
     def testDbFail(self):
         try:
-            cfg= loadcfg('testyaml.yaml')
+            cfg= loadcfg('mysqldb.yaml')
             cfg['database']['host'] = 'www.google.com'
             db = create_db(cfg)
             self.failUnless(db == None)
         except:
             pass
+        
+    def testSqlite(self):
+        try:
+            cfg= loadcfg('sqlite.yaml')
+            db = create_db(cfg)
+            self.failIf(db == None)
+        except:
+            print_exc()
+            self.fail('testdb Faile')
 if __name__ == "__main__":
     unittest.main()
