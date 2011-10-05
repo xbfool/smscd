@@ -5,4 +5,5 @@ if __name__ == '__main__':
                      'WsgiEngineTest',
                      'YamlTest',
                      'DbTest',
+                     'ContextTest',
                      '--verbosity=2'])
