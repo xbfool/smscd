@@ -43,7 +43,7 @@ class ChannelTest(unittest.TestCase):
         
     def testDelete(self):
         self.channel.add(name='name1', desc='desc1', type='type1')
-        self.failUnless(self.channel.delete_channel_item(1))
+        self.failUnless(self.channel.delete(1))
         res = self.channel.query_by_uid(1)
         self.failIf(res)
     
