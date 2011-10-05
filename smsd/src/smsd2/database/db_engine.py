@@ -10,12 +10,15 @@ from sqlalchemy import create_engine
 from sqlalchemy import MetaData
 
 def create_db(cfg):
-    db = create_engine('%s://%s:%s@%s/%s' % 
-                                  (cfg.database.engine,
-                                   cfg.database.user,
-                                   cfg.database.password,
-                                   cfg.database.host,
-                                   cfg.database.db))
+    if(cfg.database.engine == 'mysql+mysqldb'):
+        db = create_engine('%s://%s:%s@%s/%s' % 
+                                      (cfg.database.engine,
+                                       cfg.database.user,
+                                       cfg.database.password,
+                                       cfg.database.host,
+                                       cfg.database.db))
+    elif(cfg.database.engine == 'sqlitememory'):
+        db = create_engine('sqlite://')
     return db
 
 def create_meta():
