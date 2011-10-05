@@ -94,9 +94,14 @@ class UserN(Base):
         self.children[child.username] = child    
     
     def check_property(self):
-        if self.children == None:
+        try:
+            a = self.children
+        except AttributeError:
             self.children = {}
-        if self.commit_num == None:
+            
+        try:
+            b = self.commit_num
+        except AttributeError:
             self.commit_num = 0
     
     def change_info(self, desc, flags, can_weblogin, can_post, need_check):
