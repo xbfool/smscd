@@ -57,7 +57,7 @@ class ChannelItemController(object):
         except:
             return False
     
-    def delete_channel_item(self, uid):
+    def delete(self, uid):
         try:
             d = self.table.delete(self.table.c.uid==uid)
             self.c.db.execute(d)
