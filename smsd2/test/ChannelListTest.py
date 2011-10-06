@@ -5,11 +5,12 @@ Created on 2011-10-5
 '''
 import unittest
 from smsd2.context.context import Context
-from smsd2.command.Channel import ChannelListController , CreateChannelListTable
+from smsd2.command.Channel import ChannelListController 
+from smsd2.database.create_table import create_table
 class ChannelTest(unittest.TestCase):
     def setUp(self):
         self.c = Context('sqlite.yaml')
-        CreateChannelListTable(self.c.meta, self.c.db)
+        create_table(self.c.db)
         self.channel = ChannelListController(self.c)
         
     def tearDown(self):

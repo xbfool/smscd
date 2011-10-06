@@ -17,33 +17,6 @@ class ChannelItem(object):
         self.desc = desc
         self.type = type
     
-def CreateChannelItemTable(meta, db):
-        channel = Table('ChannelItem', meta,
-            Column('uid', Integer, primary_key = True),
-            Column('name', String(50), nullable = False, unique = True),
-            Column('desc', String(50)),
-            Column('type', String(50), nullable = False),
-            Column('status', Integer, DefaultClause("0")),
-            Column('last_update', DateTime)
-            )
-        meta.create_all(tables=[channel],bind=db)
-    
-def CreateChannelListTable(meta, db):
-        list = Table('ChannelList', meta,
-            Column('uid', Integer, primary_key = True),
-            Column('name', String(50), nullable = False, unique = True),
-            Column('desc', String(100)),
-            Column('cm1', Integer, DefaultClause("-1")),
-            Column('cm2', Integer, DefaultClause("-1")),
-            Column('cm3', Integer, DefaultClause("-1")),
-            Column('cu1', Integer, DefaultClause("-1")),
-            Column('cu2', Integer, DefaultClause("-1")),
-            Column('cu3', Integer, DefaultClause("-1")),
-            Column('ct1', Integer, DefaultClause("-1")),
-            Column('ct2', Integer, DefaultClause("-1")),
-            Column('ct3', Integer, DefaultClause("-1")),
-            )
-        meta.create_all(tables=[list],bind=db)
 class ChannelItemController(object):
     def __init__(self, context):
         self.c = context
