@@ -56,7 +56,7 @@ class Command(object):
         c = self.dispatch_callback(**param)
         if c:
             try:
-                return c(self.context, **param)
+                return self.ret_callback(param, c(self.context, **param))
             except:
                 print_exc()
                 if self.command_error_callback:
@@ -77,7 +77,7 @@ class Command(object):
         except:
             return None 
         
-    def __default_ret(self, param, **ret):
+    def __default_ret(self, param, ret):
         r = {}
         for k, v in ret.iteritems():
             r[k] = v

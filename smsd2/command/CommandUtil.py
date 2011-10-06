@@ -6,6 +6,6 @@ Created on 2011-10-6
 
 def ret_util(ret):
     if ret:
-        return {'errno': 0, 'errtext':'command exec success', 'value': ret}
+        return {'errno': 0, 'errtext':'command exec success', 'ret': ret}
     else:
-        return {'errno': -1, 'errtext':'command exec failed', 'value': ret}  
+        return {'errno': -1, 'errtext':'command exec failed', 'ret': ret}  

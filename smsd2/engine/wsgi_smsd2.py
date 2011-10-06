@@ -3,7 +3,7 @@
 
 
 import WsgiEngine
-from smsd2.command.ChannelCommand import SmsdCommand
+from smsd2.command.SmsdCommand import SmsdCommand
 from smsd2.context.context import Context
 from smsd2.database.create_table import create_table
 
@@ -13,7 +13,7 @@ class Smsd2(WsgiEngine.WsgiEngine):
         WsgiEngine.WsgiEngine.__init__(self, env, start_response)
         self.c = Context('config.yaml')
         create_table(self.c.db)
-        self.add_command(SmsdCommand(self.c), '/channel', 'json')
+        self.add_command(SmsdCommand(self.c), '/smsd', 'json')
         
         
 def wsgiref_daemon():

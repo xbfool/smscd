@@ -9,8 +9,8 @@ Created on 2011-10-4
 
 import json
 from traceback import print_exc
-from smsd2.utils.utils import urldecode
-
+from smsd2.utils.utils import rec_uni2str
+import datetime
 class WsgiEngine(object):
     def __init__(self, env=None, start_response=None):
         self.env = env
@@ -30,9 +30,13 @@ class WsgiEngine(object):
         
     def __call__(self, env, start_response):
         query = self.__get_query(env)
+        self.env = env
+        self.start = start_response
         c = self.command_dict.get(env['PATH_INFO'])
         if c:
+            print query
             ret_by_command = c['command'](**query)
+            print ret_by_command
             ret_for_client = c['ret_type'](ret_by_command)
             return ret_for_client
         else:
@@ -60,7 +64,7 @@ class WsgiEngine(object):
         if length > 0:
             post_data = env['wsgi.input'].read(length)
             try:
-                query = urldecode(post_data)
+                query = rec_uni2str(json.loads(post_data))
             except:
                 query = {}
         return query
@@ -87,8 +91,10 @@ class WsgiEngine(object):
         return ret
     
     def __ret_json(self, ret):
+        dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) else obj
+        
         self.start('200 OK', [('Content-type', 'application/json')])
-        return json.dumps(ret, separators=(',', ':'))
+        return json.dumps(ret, separators=(',', ':'), default=dthandler)
     
     def __not_found(self):
         self.start('404 NOT FOUND', [('Content-type', 'text/plain')])

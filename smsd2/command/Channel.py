@@ -6,8 +6,8 @@ Created on 2011-10-4
 
 @author: xbfool
 '''
-from sqlalchemy import Table, Column, Integer, String, select, DefaultClause
-from sqlalchemy.types import DateTime
+from sqlalchemy import Table, select
+
 from traceback import print_exc
 from datetime import datetime
 class ChannelItem(object):

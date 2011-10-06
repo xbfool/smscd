@@ -39,7 +39,7 @@ package com.xbfool.smsc.services
 			req.method = URLRequestMethod.POST;
 			req.contentType = 'application/json';
 			req.data = JSON.encode(param);
-			
+			trace(req.data)
 			loader.load(req);
 			this.is_requesting = true
 		}
@@ -61,13 +61,13 @@ package com.xbfool.smsc.services
 			if(data == null){
 				trace('json parser returns nothing');
 			}
-			var rtype:String = data['rtype'];
-			if(rtype == null){
-				trace('no rtype');
+			var command:String = data['command'];
+			if(command == null){
+				trace('no command');
 			}
 			
-			if(!RequestEvent.CheckType(data.rtype)){
-				trace('invalid rtype: \'' + data.rtype + '\'');
+			if(!RequestEvent.CheckType(data.command)){
+				trace('invalid command: \'' + data.command + '\'');
 			}	
 			
 			dispatch(new RetEvent(RetEvent.RET, data));

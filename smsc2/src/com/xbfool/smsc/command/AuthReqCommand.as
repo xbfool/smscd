@@ -16,7 +16,7 @@ package com.xbfool.smsc.command
 
 			override public function execute():void
 			{
-				reqestService.request({q:'auth', user:event.userName, pass:SHA1.hash(event.passWord)});
+				reqestService.request({command:'user_login', username:event.userName, password:SHA1.hash(event.passWord)});
 			}
 			
 		}

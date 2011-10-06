@@ -1,7 +1,8 @@
 from ChannelCommand import *
+from UserCommand import *
 from smsd2.command.Command import Command
 from smsd2.command.Channel import ChannelItemController, ChannelListController
-
+from smsd2.command.User import UserController
 
 
 class SmsdCommand(Command):
@@ -12,7 +13,8 @@ class SmsdCommand(Command):
                          command_error_callback = self.__method_error_callback__)
         self.context.set_controller(
                                     channel_item = ChannelItemController(self.context),
-                                    channel_list = ChannelListController(self.context)
+                                    channel_list = ChannelListController(self.context),
+                                    user = UserController(self.context),
                                     )
         command_list = [channel_item_add,
                         channel_item_del,
@@ -25,7 +27,8 @@ class SmsdCommand(Command):
                         channel_list_update,
                         channel_list_query_by_uid,
                         channel_list_query_by_name,
-                        channel_list_query_all
+                        channel_list_query_all,
+                        user_login
                         ]
                         
         self.add_all(*command_list)

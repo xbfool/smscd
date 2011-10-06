@@ -23,11 +23,12 @@ package com.xbfool.smsc.command
 				trace('request error')
 			}
 			
-			switch(event.param.rtype){
-				case 'auth':{
+			switch(event.param.command){
+				case 'user_login':{
+					trace(event.param);
 					dispatch(new AuthRetEvent(
 						AuthRetEvent.AUTH_RET,
-						event.param.username,
+						event.param.ret.user.username,
 						event.param.sid,
 						event.param.errno==null?0:event.param.errno));
 				}
