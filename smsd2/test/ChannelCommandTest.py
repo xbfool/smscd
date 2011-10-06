@@ -5,7 +5,7 @@ Created on 2011-10-6
 '''
 import unittest
 from smsd2.context.context import Context
-from smsd2.command.ChannelCommand import SmsdCommand
+from smsd2.command.SmsdCommand import SmsdCommand
 from smsd2.database.create_table import create_table
 class ChannelCommandTest(unittest.TestCase):
     def setUp(self):

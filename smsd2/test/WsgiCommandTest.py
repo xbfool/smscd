@@ -1,6 +1,6 @@
 from webtest import TestApp
 from smsd2.engine import WsgiEngine
-from smsd2.command.ChannelCommand import SmsdCommand
+from smsd2.command.SmsdCommand import SmsdCommand
 from smsd2.context.context import Context
 from smsd2.database.create_table import create_table
 import json
