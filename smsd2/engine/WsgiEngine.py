@@ -8,9 +8,11 @@ Created on 2011-10-4
 '''
 
 import json
+from traceback import print_exc
+from smsd2.utils.utils import urldecode
 
 class WsgiEngine(object):
-    def __init__(self, env, start_response):
+    def __init__(self, env=None, start_response=None):
         self.env = env
         self.start = start_response
         self.ret_callback = None
@@ -27,23 +29,40 @@ class WsgiEngine(object):
         self.ret_callback['text'] = self.__ret_text
         
     def __call__(self, env, start_response):
-        c = self.command_dict.get(self.env['PATH_INFO'])
+        print env
+        query = self.__get_query(env)
+        print query
+        c = self.command_dict.get(env['PATH_INFO'])
         if c:
-            ret_by_command = c['command'](env)
+            ret_by_command = c['command'](**query)
             ret_for_client = c['ret_type'](ret_by_command)
             return ret_for_client
         else:
-            return self.__not_found(start_response)
+            print_exc()
+            return self.__not_found()
     
     def __iter__(self):
+        print self.env
+        query = self.__get_query(self.env)
+        print query
         c = self.command_dict.get(self.env['PATH_INFO'])
         if c:
-            ret_by_command = c['command'](self.env, self.context)
+            ret_by_command = c['command'](**query)
             ret_for_client = c['ret_type'](ret_by_command)
             yield ret_for_client
         else:
+            print_exc()
             yield self.__not_found()
         
+    def __get_query(self, env):
+        length = int(env['CONTENT_LENGTH'])
+        if length > 0:
+            post_data = env['wsgi.input'].read(length)
+            try:
+                query = urldecode(post_data)
+            except:
+                query = {}
+        return query
     def add_command(self, command, path, ret_type):
         errmsg = ''
         if self.command_dict.get(path):

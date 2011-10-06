@@ -130,12 +130,10 @@ package com.xbfool.smsc.view
 		}
 
 		private function sendMessage(e:MessageSendPageEvent):void {
-			private function sendmessage_alert():void {
 				Alert.buttonWidth = 100;
 				Alert.yesLabel = "是";
 				Alert.noLabel = "取消";
-				Alert.show("确认发送？","发送消息",3,this,doSendMessage);
-			}
+				//Alert.show("确认发送？","发送消息",3,this,doSendMessage(e);
 		}
 		
 		private function doSendMessage(event:CloseEvent):void {

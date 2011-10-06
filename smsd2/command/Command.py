@@ -15,7 +15,8 @@ class Command(object):
                  ret_callback = None,
                  no_command_callback = None, 
                  command_error_callback = None,
-                 dispatch_callback = None):
+                 dispatch_callback = None,
+                 check_ret_callback = None):
         self.dictc = {}
         self.context = context
         self.no_command_callback = no_command_callback
@@ -32,6 +33,10 @@ class Command(object):
         else:
             self.dispatch_callback = self.__default_dispatch
             
+        if check_ret_callback:
+            self.__check_ret_callback = check_ret_callback
+        else:
+            self.__check_ret_callback = self.__default_check_ret
     def add(self, name, callback):
         if self.dictc.get(name):
             raise Exception('the %s command is duplicated', name)
@@ -41,14 +46,17 @@ class Command(object):
     def add_all(self, *func_list, **func_dict):
         for i in func_list:
             self.add(i.__name__, i)
-        for k, v in func_list:
+        for k, v in func_dict:
             self.add(k, v)
             
-    def __call__(self, param):
-        c = self.dispatch_callback(param)
+    def check_ret(self, ret):
+        return self.__check_ret_callback(ret)
+        
+    def __call__(self, **param):
+        c = self.dispatch_callback(**param)
         if c:
             try:
-                return self.dict[c](self.context, param)
+                return c(self.context, **param)
             except:
                 print_exc()
                 if self.command_error_callback:
@@ -62,10 +70,10 @@ class Command(object):
                 else:
                     return None
     
-    def __default_dispatch(self, param):
+    def __default_dispatch(self, **param):
         try:
             c = param['command']
-            return self.dict.get(c)
+            return self.dictc.get(c)
         except:
             return None 
         
@@ -76,3 +84,9 @@ class Command(object):
         r['req_param'] = param
         r['command'] = param['command']
         return r
+    
+    def __default_check_ret(self, ret):
+        if ret['errno'] == 0:
+            return True
+        else:
+            return False

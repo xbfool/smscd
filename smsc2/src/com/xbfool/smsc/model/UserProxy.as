@@ -10,7 +10,7 @@ package com.xbfool.smsc.model {
 		public var smsd_url:String;
 		
 		public function UserProxy() {
-			smsd_url = 'http://localhost:8082/';
+			smsd_url = 'http://localhost:8080/';
 			loggedIn = false;
 			username = '';
 			sessionId = '';

@@ -1,11 +1,6 @@
 from webtest import TestApp
 from webtest import AppError
 from smsd2.engine import WsgiEngine
-#
-#app = TestApp(WsgiEngine.WsgiEngine)
-#res = app.get('/index.html')
-#print res.status
-#print res.body
 
 import unittest
 
@@ -52,7 +47,7 @@ class WsgiEngineTest(unittest.TestCase):
             self.fail('testAddCommandError')
         except StandardError :
             pass
-    
+        
     def testJsonCommand(self):
         class TestEngine(WsgiEngine.WsgiEngine):
             def __init__(self, env, start_response):

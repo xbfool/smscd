@@ -15,8 +15,8 @@ class ChannelCommand(Command):
     def __init__(self, context):
         Command.__init__(self,
                          context,
-                         self.__none_method_callback__, 
-                         self.__method_error_callback__)
+                         no_command_callback  = self.__none_method_callback__, 
+                         command_error_callback = self.__method_error_callback__)
         self.context.set_controller(
                                     channel_item = ChannelItemController(self.context),
                                     channel_list = ChannelListController(self.context)
@@ -57,7 +57,7 @@ def channel_item_add(context, **args):
                    'status', 'last_update']:
             new_arg[key] = value
     c = context.get_controller('channel_item')
-    ret = c.add(args)       
+    ret = c.add(**args)       
     return ret_util(ret)
         
 def channel_item_del(context, **args):
@@ -104,7 +104,7 @@ def channel_list_add(context, **args):
                    'ct1', 'ct2', 'ct3' ]:
             new_arg[key] = value
     c = context.get_controller('channel_list')
-    ret = c.add(new_arg)       
+    ret = c.add(**new_arg)       
     return ret_util(ret)
         
 def channel_list_del(context, **args):
