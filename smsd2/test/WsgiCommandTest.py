@@ -1,6 +1,6 @@
 from webtest import TestApp
 from smsd2.engine import WsgiEngine
-from smsd2.command.ChannelCommand import ChannelCommand
+from smsd2.command.ChannelCommand import SmsdCommand
 from smsd2.context.context import Context
 from smsd2.database.create_table import create_table
 import json
@@ -14,7 +14,7 @@ class WsgiEngineTest(unittest.TestCase):
                 WsgiEngine.WsgiEngine.__init__(self, env, start_response)
                 self.c = Context('sqlite.yaml')
                 create_table(self.c.db)
-                self.add_command(ChannelCommand(self.c), '/channel', 'json')
+                self.add_command(SmsdCommand(self.c), '/channel', 'json')
         self.app = TestApp(TestEngine)
     
     def tearDown(self):

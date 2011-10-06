@@ -3,11 +3,11 @@ from webtest import AppError
 from smsd2.engine import WsgiEngine
 
 import unittest
+from traceback import print_exc
 
-
-def commandJsonA(env, context = None):
+def commandJsonA(**param):
     return {'ret': 'haha return commandJsonA'}
-def commandTextA(env, context = None):
+def commandTextA(**param):
     return 'haha return commandTextA'
 
 class WsgiEngineTest(unittest.TestCase):
@@ -33,6 +33,7 @@ class WsgiEngineTest(unittest.TestCase):
             self.app = TestApp(TestEngine)
             self.app.get('/jsonA')
         except AppError:
+            print_exc()
             self.fail('testAddCommandError')
             
     def testAddCommandError(self):

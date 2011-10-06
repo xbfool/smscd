@@ -29,9 +29,7 @@ class WsgiEngine(object):
         self.ret_callback['text'] = self.__ret_text
         
     def __call__(self, env, start_response):
-        print env
         query = self.__get_query(env)
-        print query
         c = self.command_dict.get(env['PATH_INFO'])
         if c:
             ret_by_command = c['command'](**query)
@@ -42,9 +40,7 @@ class WsgiEngine(object):
             return self.__not_found()
     
     def __iter__(self):
-        print self.env
         query = self.__get_query(self.env)
-        print query
         c = self.command_dict.get(self.env['PATH_INFO'])
         if c:
             ret_by_command = c['command'](**query)
@@ -55,7 +51,12 @@ class WsgiEngine(object):
             yield self.__not_found()
         
     def __get_query(self, env):
-        length = int(env['CONTENT_LENGTH'])
+        length = 0
+        query = {}
+        try:
+            length = int(env['CONTENT_LENGTH'])
+        except:
+            pass
         if length > 0:
             post_data = env['wsgi.input'].read(length)
             try:
