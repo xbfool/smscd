@@ -34,6 +34,9 @@ package com.xbfool.smsc {
 			injector.mapSingleton(MoneyLogPage);
 			injector.mapSingleton(SpecialSendPage);
 			injector.mapSingleton(UploadMessagePage);
+			injector.mapSingleton(ChannelItemManagePage);
+			injector.mapSingleton(ChannelListManagePage);
+			injector.mapSingleton(UserChannelManagePage);
 			mediatorMap.mapView(LoginPage, LoginPageMediator);
 			mediatorMap.mapView(MainPage, MainPageMediator);
 			mediatorMap.mapView(MessageSendPage, MessageSendPageMediator);

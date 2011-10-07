@@ -25,23 +25,30 @@ package com.xbfool.smsc.view
 		[Inject] public var uploadMessagePage:UploadMessagePage;
 		[Inject] public var requestObj:IRequestService;
 		
+		[Inject] public var channelItemManagePage:ChannelItemManagePage;
+		[Inject] public var channelListManagePage:ChannelListManagePage;
+		[Inject] public var userChannelManagePage:UserChannelManagePage;
 		public function MainPageMediator()
 		{
 		}
 		
 		override public function onRegister():void
 		{
-			eventMap.mapListener(mainPage, MainPageEvent.LOGOUT, whenUserLoggedOut);
-			eventMap.mapListener(mainPage, MainPageEvent.MESSAGE_SEND_VIEW, changeToMessageSendView);
-			eventMap.mapListener(mainPage, MainPageEvent.SPECIAL_SEND_VIEW, changeToSpecialSendView);
-			eventMap.mapListener(mainPage, MainPageEvent.MESSAGE_LOG_VIEW, changeToMessageLogView);
-			eventMap.mapListener(mainPage, MainPageEvent.MESSAGE_CHART_VIEW, changeToMessageChartView);
-			eventMap.mapListener(mainPage, MainPageEvent.MONEY_LOG_VIEW, changeToMoneyLogView);
-			eventMap.mapListener(mainPage, MainPageEvent.MANAGE_ADDRESS_VIEW, changeToManageAddressView);
-			eventMap.mapListener(mainPage, MainPageEvent.UPLOAD_MESSAGE_VIEW, changeToUploadMessageView);
-			eventMap.mapListener(mainPage, MainPageEvent.CHANNEL_LOG_VIEW, changeToChannelLogView);
-			eventMap.mapListener(mainPage, MainPageEvent.MANAGE_USER_VIEW, changeToManageUserView);
-			eventMap.mapListener(mainPage, MainPageEvent.CHANGE_PASSWORD_VIEW, changeToChangePasswordView);
+//			eventMap.mapListener(mainPage, MainPageEvent.LOGOUT, whenUserLoggedOut);
+//			eventMap.mapListener(mainPage, MainPageEvent.MESSAGE_SEND_VIEW, changeToMessageSendView);
+//			eventMap.mapListener(mainPage, MainPageEvent.SPECIAL_SEND_VIEW, changeToSpecialSendView);
+//			eventMap.mapListener(mainPage, MainPageEvent.MESSAGE_LOG_VIEW, changeToMessageLogView);
+//			eventMap.mapListener(mainPage, MainPageEvent.MESSAGE_CHART_VIEW, changeToMessageChartView);
+//			eventMap.mapListener(mainPage, MainPageEvent.MONEY_LOG_VIEW, changeToMoneyLogView);
+//			eventMap.mapListener(mainPage, MainPageEvent.MANAGE_ADDRESS_VIEW, changeToManageAddressView);
+//			eventMap.mapListener(mainPage, MainPageEvent.UPLOAD_MESSAGE_VIEW, changeToUploadMessageView);
+//			eventMap.mapListener(mainPage, MainPageEvent.CHANNEL_LOG_VIEW, changeToChannelLogView);
+//			eventMap.mapListener(mainPage, MainPageEvent.MANAGE_USER_VIEW, changeToManageUserView);
+//			eventMap.mapListener(mainPage, MainPageEvent.CHANGE_PASSWORD_VIEW, changeToChangePasswordView);
+			
+			eventMap.mapListener(mainPage, MainPageEvent.CHANNEL_ITEM_MANAGE_VIEW, changeToChannelItemManageView);
+			eventMap.mapListener(mainPage, MainPageEvent.CHANNEL_LIST_MANAGE_VIEW, changeToChannelListManageView);
+			eventMap.mapListener(mainPage, MainPageEvent.USER_CHANNEL_MANAGE_VIEW, changeToUserChannelManageView);
 		}
 		
 		private function whenUserLoggedOut(e:MainPageEvent):void 
@@ -53,6 +60,24 @@ package com.xbfool.smsc.view
 		private function clearCurrentView():void 
 		{
 			mainPage.content_panel.removeAllElements();
+		}
+		
+		private function changeToChannelItemManageView(e:MainPageEvent):void
+		{
+			clearCurrentView();
+			mainPage.content_panel.addElement(channelItemManagePage);
+		}
+		
+		private function changeToChannelListManageView(e:MainPageEvent):void
+		{
+			clearCurrentView();
+			mainPage.content_panel.addElement(channelListManagePage);
+		}
+		
+		private function changeToUserChannelManageView(e:MainPageEvent):void
+		{
+			clearCurrentView();
+			mainPage.content_panel.addElement(userChannelManagePage);
 		}
 		
 		private function changeToMessageSendView(e:MainPageEvent):void
