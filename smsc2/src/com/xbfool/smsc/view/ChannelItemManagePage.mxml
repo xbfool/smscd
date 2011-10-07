@@ -5,5 +5,9 @@
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
 	</fx:Declarations>
-	<s:Button x="5" y="7" label="ChannelItemManage"/>
+	<s:VGroup>
+		<s:Button label="获取所有通道"/>
+		<s:Button label="增加通道" 
+				  click="dispatchEvent(new ChannelItemPageEvent(ChannelItemPageEvent.CHANNEL_ITEM_ADD_PAGE))"/>
+	</s:VGroup>	
 </s:Group>
