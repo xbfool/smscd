@@ -11,9 +11,13 @@ package com.xbfool.smsc.services
 	
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
+	import flash.events.TimerEvent;
 	import flash.net.*;
+	import flash.utils.Timer;
 	
 	import mx.controls.Alert;
+	import mx.events.CloseEvent;
+	import mx.managers.PopUpManager;
 	
 	import org.robotlegs.mvcs.Actor;
 	public class JsonRequestService extends Actor implements IRequestService
@@ -21,6 +25,9 @@ package com.xbfool.smsc.services
 		[Inject]
 		public var userProxy:UserProxy;
 		public var is_requesting:Boolean = false;
+		private var alrt:Alert;
+		private var alrtTimer:Timer;
+		private var selfCloseAlert:SelfCloseAlert = new SelfCloseAlert(2000)
 		public function JsonRequestService()
 		{
 		}
@@ -81,9 +88,10 @@ package com.xbfool.smsc.services
 		{
 			dispatch(new ProcessingEvent(ProcessingEvent.PROCESSING_END));
 			this.is_requesting = false;
-			Alert.show("连接服务器失败,请检查网络连接");
+			this.selfCloseAlert.showAlert("连接服务器失败,请检查网络连接", "错误");
 			trace('io error');
 		}
+		
 
 	}
 }
