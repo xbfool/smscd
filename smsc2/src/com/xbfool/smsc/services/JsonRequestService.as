@@ -25,10 +25,11 @@ package com.xbfool.smsc.services
 		{
 		}
 		
-		public function request(param:Object, sub_path = ""):void
+		public function request(param:Object, sub_path:String = ""):void
 		{	
 			if(this.is_requesting)
 				return
+			dispatch(new ProcessingEvent(ProcessingEvent.PROCESSING_BEGIN));
 			var loader:URLLoader = new URLLoader;
 			loader.dataFormat = URLLoaderDataFormat.TEXT;
 			loader.addEventListener(Event.COMPLETE, data_arrive);
@@ -40,12 +41,15 @@ package com.xbfool.smsc.services
 			req.contentType = 'application/json';
 			req.data = JSON.encode(param);
 			trace(req.data)
+			this.is_requesting = true;
+			
 			loader.load(req);
-			this.is_requesting = true
+
 		}
 		
 		private function data_arrive(evt:Event):void
 		{
+			dispatch(new ProcessingEvent(ProcessingEvent.PROCESSING_END));
 			this.is_requesting = false;
 			var l:URLLoader = evt.target as URLLoader;
 			var raw_data:String = l.data as String;
@@ -75,6 +79,7 @@ package com.xbfool.smsc.services
 		
 		private function io_error(evt:Event):void
 		{
+			dispatch(new ProcessingEvent(ProcessingEvent.PROCESSING_END));
 			this.is_requesting = false;
 			Alert.show("连接服务器失败,请检查网络连接");
 			trace('io error');

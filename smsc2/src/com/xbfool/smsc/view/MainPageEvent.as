@@ -1,5 +1,4 @@
 // ActionScript file
-// ActionScript file
 package com.xbfool.smsc.view
 {
 	import flash.events.Event;

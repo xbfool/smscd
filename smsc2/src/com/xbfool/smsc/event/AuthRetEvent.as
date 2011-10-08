@@ -22,7 +22,7 @@ package com.xbfool.smsc.event
 		
 		override public function clone():Event
 		{
-			return new AuthReqEvent(this.type,
+			return new AuthRetEvent(this.type,
 				this.userName,
 				this.sessionId,
 				this.errno);
