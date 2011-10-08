@@ -20,10 +20,10 @@ class WsgiEngineTest(unittest.TestCase):
     def tearDown(self):
         self.app = None
 
-    def testCommandchannel_item_add(self):
-        ret = self.app.post('/channel', {'command': 'channel_item_add', 'name':'name1', 'desc':'desc1', 'type':'abc'})
-        self.failUnless(json.loads(ret.body)['errno'] == 0)
-            
+#    def testCommandchannel_item_add(self):
+#        ret = self.app.post('/channel', {'command': 'channel_item_add', 'name':'name1', 'desc':'desc1', 'type':'abc'})
+#        self.failUnless(json.loads(ret.body)['errno'] == 0)
+#        
             
 if __name__ == '__main__':
     unittest.main()

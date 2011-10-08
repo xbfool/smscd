@@ -8,6 +8,6 @@ if __name__ == '__main__':
                      'ContextTest',
                      'ChannelTest',
                      'ChannelListTest',
-                     'ChannelCommandTest',
+                     'SmsdCommandTest',
                      'WsgiCommandTest',
                      '--verbosity=2'])

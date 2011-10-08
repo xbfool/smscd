@@ -3,7 +3,7 @@ Created on 2011-10-5
 
 @author: xbfool
 '''
-
+ 
 from smsd2.config.config_reader import loadcfg
 from smsd2.database.db_engine import create_meta, create_db
 class Context:
