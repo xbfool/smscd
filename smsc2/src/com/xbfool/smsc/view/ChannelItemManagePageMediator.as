@@ -37,11 +37,11 @@ package com.xbfool.smsc.view
 		}
 		private function onQuery(e:ChannelItemPageEvent):void
 		{
-			
+			dispatch(new ChannelItemEvent(ChannelItemEvent.CHANNEL_ITEM_QUERY));
 		}
 		private function onAddItem(e:ChannelItemPageEvent):void
 		{
-			dispatch(new ChannelItemAddEvent(ChannelItemAddEvent.CHANNEL_ITEM_ADD,
+			dispatch(new ChannelItemEvent(ChannelItemEvent.CHANNEL_ITEM_ADD,
 				channelItemAddPage.channel_name.text,
 				channelItemAddPage.channel_desc.text,
 				channelItemAddPage.channel_type.text));

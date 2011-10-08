@@ -32,6 +32,12 @@ package com.xbfool.smsc.command
 						event.param.sid,
 						event.param.errno==null?0:event.param.errno));
 				}
+				case 'channel_item_add':{
+					//TODO
+				}
+				case 'channel_item_query':{
+					trace(event.param);
+				}
 			}
 		}
 		

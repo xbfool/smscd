@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%">
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
 	</fx:Declarations>
-	<s:VGroup>
-		<s:Button label="获取所有通道"/>
-		<s:Button label="增加通道" 
-				  click="dispatchEvent(new ChannelItemPageEvent(ChannelItemPageEvent.CHANNEL_ITEM_ADD_PAGE))"/>
+	<s:VGroup width="100%" height = "100%">
+		<s:HGroup >
+			<s:Button label="获取所有通道" 
+					  click="dispatchEvent(new ChannelItemPageEvent(ChannelItemPageEvent.CHANNEL_ITEM_QUERY))"/>
+			<s:Button label="增加通道" 
+					  click="dispatchEvent(new ChannelItemPageEvent(ChannelItemPageEvent.CHANNEL_ITEM_ADD_PAGE))"/>
+
+		</s:HGroup>
+		<mx:DataGrid id="channel_item_grid" width="400" height="100%">
+			
+		</mx:DataGrid>
 	</s:VGroup>	
 </s:Group>

@@ -34,7 +34,7 @@ package com.xbfool.smsc {
 			commandMap.mapEvent(AuthReqEvent.AUTH_REQ, AuthReqCommand, AuthReqEvent);
 			commandMap.mapEvent(AuthRetEvent.AUTH_RET, AuthRetCommand, AuthRetEvent);
 			commandMap.mapEvent(LogoutEvent.LOGOUT, LogoutCommand, LogoutEvent);
-			commandMap.mapEvent(ChannelItemAddEvent.CHANNEL_ITEM_ADD, ChannelItemAddCommand, ChannelItemAddEvent);
+			commandMap.mapEvent(ChannelItemEvent.CHANNEL_ITEM_ADD, ChannelItemAddCommand, ChannelItemEvent);
 			commandMap.mapEvent(ProcessingEvent.PROCESSING_BEGIN, ProcessingCommand, ProcessingEvent);
 		}
 		
