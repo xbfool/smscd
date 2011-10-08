@@ -7,7 +7,8 @@ package com.xbfool.smsc.event
 	public class ChannelItemEvent extends Event
 	{
 		static public const CHANNEL_ITEM_ADD:String = 'channel_item_add';
-		static public const CHANNEL_ITEM_QUERY:String = 'channel_item_query';
+		static public const CHANNEL_ITEM_QUERY_RET:String = 'channel_item_query_ret';
+		static public const CHANNEL_ITEM_QUERY_REQ:String = 'channel_item_query_req';
 		public var name: String;
 		public var desc: String;
 		public var ctype: String;

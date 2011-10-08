@@ -8,7 +8,7 @@ package com.xbfool.smsc.model {
 		
 		public var sessionId:String;
 		public var smsd_url:String;
-		
+		public var channel_item_list:Object;
 		public function UserProxy() {
 			smsd_url = 'http://localhost:8080/smsd';
 			loggedIn = false;

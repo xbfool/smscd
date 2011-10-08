@@ -31,12 +31,17 @@ package com.xbfool.smsc.command
 						event.param.ret.user.username,
 						event.param.sid,
 						event.param.errno==null?0:event.param.errno));
+					break;
 				}
 				case 'channel_item_add':{
 					//TODO
+					break;
 				}
-				case 'channel_item_query':{
+				case 'channel_item_query_all':{
 					trace(event.param);
+					dispatch(new ChannelItemEvent(ChannelItemEvent.CHANNEL_ITEM_QUERY_RET,
+						"","","",event.param.errno, event.param.ret));
+					break;
 				}
 			}
 		}

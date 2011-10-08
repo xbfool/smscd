@@ -11,7 +11,9 @@ package com.xbfool.smsc.controller
 		
 		public static function CheckType(type:String):Boolean {
 			var list:Object = {
-				'user_login':'auth'
+				'user_login':'auth',
+				'channel_item_add':'channel_item_add',
+				'channel_item_query_all':'channel_item_query_all'
 			};
 				
 			if(list[type] != null)

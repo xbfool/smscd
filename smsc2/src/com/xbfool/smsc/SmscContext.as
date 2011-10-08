@@ -36,6 +36,8 @@ package com.xbfool.smsc {
 			commandMap.mapEvent(LogoutEvent.LOGOUT, LogoutCommand, LogoutEvent);
 			commandMap.mapEvent(ChannelItemEvent.CHANNEL_ITEM_ADD, ChannelItemAddCommand, ChannelItemEvent);
 			commandMap.mapEvent(ProcessingEvent.PROCESSING_BEGIN, ProcessingCommand, ProcessingEvent);
+			commandMap.mapEvent(ChannelItemEvent.CHANNEL_ITEM_QUERY_REQ, ChannelItemQueryReqCommand, ChannelItemEvent);
+			//commandMap.mapEvent(ChannelItemEvent.CHANNEL_ITEM_QUERY_RET, ChannelItemQueryRetCommand, ChannelItemEvent);
 		}
 		
 		public function init_injector():void{
@@ -62,7 +64,7 @@ package com.xbfool.smsc {
 		public function init_map_view():void{
 			mediatorMap.mapView(LoginPage, LoginPageMediator);
 			mediatorMap.mapView(ChannelItemManagePage, ChannelItemManagePageMediator);
-			mediatorMap.mapView(ChannelItemAddPage, ChannelItemManagePageMediator);
+			//mediatorMap.mapView(ChannelItemAddPage, ChannelItemManagePageMediator);
 			mediatorMap.mapView(MainPage, MainPageMediator);
 			mediatorMap.mapView(MessageSendPage, MessageSendPageMediator);
 			mediatorMap.mapView(ProcessingBarPage, ProcessingBarPageMediator);

@@ -55,7 +55,9 @@ class ChannelItemController(object):
         try:
             sel = select([self.table], self.table.c.name==nameArg)
             res = self.c.db.execute(sel)
-            return res.fetchone()
+            r =  res.fetchone()
+            ret = dict(r.items())
+            return ret
         except:
             print_exc()
             return None
@@ -64,7 +66,9 @@ class ChannelItemController(object):
         try:
             sel = select([self.table], self.table.c.uid==uid)
             res = self.c.db.execute(sel)
-            return res.fetchone()
+            r =  res.fetchone()
+            ret = dict(r.items())
+            return ret
         except:
             print_exc()
             return None
@@ -72,8 +76,10 @@ class ChannelItemController(object):
     def query_all(self):
         sel = select([self.table])
         res = self.c.db.execute(sel)
-        ret = res.fetchall()
-        return ret
+        rlist = []
+        for r in res:
+            rlist.append(dict(r.items()))
+        return rlist
     
     
 class ChannelListController(object):
@@ -110,7 +116,9 @@ class ChannelListController(object):
         try:
             sel = select([self.table], self.table.c.name==nameArg)
             res = self.c.db.execute(sel)
-            return res.fetchone()
+            r =  res.fetchone()
+            ret = dict(r.items())
+            return ret
         except:
             print_exc()
             return None
@@ -119,7 +127,9 @@ class ChannelListController(object):
         try:
             sel = select([self.table], self.table.c.uid==uid)
             res = self.c.db.execute(sel)
-            return res.fetchone()
+            r =  res.fetchone()
+            ret = dict(r.items())
+            return ret
         except:
             print_exc()
             return None
@@ -127,5 +137,7 @@ class ChannelListController(object):
     def query_all(self):
         sel = select([self.table])
         res = self.c.db.execute(sel)
-        ret = res.fetchall()
-        return ret
+        rlist = []
+        for r in res:
+            rlist.append(dict(r.items()))
+        return rlist

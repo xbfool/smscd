@@ -9,7 +9,7 @@ package com.xbfool.smsc.command
 	
 	import org.robotlegs.mvcs.Command;
 	
-	public class ChannelItemQueryRet extends Command
+	public class ChannelItemQueryRetCommand extends Command
 	{
 		[Inject]
 		public var event:ChannelItemEvent;
@@ -22,6 +22,7 @@ package com.xbfool.smsc.command
 		{
 			//TODO
 			trace(event.query_ret_object);
+			userProxy.channel_item_list = event.query_ret_object;
 		}
 		
 	}

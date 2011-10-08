@@ -96,7 +96,12 @@ class WsgiEngine(object):
         dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) else obj
         
         self.start('200 OK', [('Content-type', 'application/json')])
-        return json.dumps(ret, separators=(',', ':'), default=dthandler)
+        try:
+            ret = json.dumps(ret, separators=(',', ':'), default=dthandler)
+            return ret
+        except:
+            print_exc()
+            return None
     
     def __not_found(self):
         self.start('404 NOT FOUND', [('Content-type', 'text/plain')])

@@ -8,15 +8,18 @@ Created on 2011-10-5
 
 '''
 from CommandUtil import *
-
+from datetime import datetime
 def channel_item_add(context, **args):
     new_arg = {}
     for key, value in args.iteritems():
         if key in ['name', 'desc', 'type',
                    'status', 'last_update']:
             new_arg[key] = value
+    if new_arg.get('last_update') == None:
+        new_arg['last_update'] = datetime.now()
+
     c = context.get_controller('channel_item')
-    ret = c.add(**args)       
+    ret = c.add(**new_arg)       
     return ret_util(ret)
         
 def channel_item_del(context, **args):
@@ -33,6 +36,8 @@ def channel_item_update(context, **args):
         if key in ['name', 'desc', 'type',
                    'status', 'last_update']:
             new_arg[key] = value
+    if new_arg.get('last_update') == None:
+        new_arg['last_update'] = datetime.now()
     c = context.get_controller('channel_item')
     ret = c.update(uid, **new_arg)
     return ret_util(ret)
