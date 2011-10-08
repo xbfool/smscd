@@ -33,6 +33,8 @@ class WsgiEngine(object):
         self.env = env
         self.start = start_response
         c = self.command_dict.get(env['PATH_INFO'])
+        if not c:
+            c = self.command_dict.get(env['SCRIPT_NAME'])
         if c:
             print query
             ret_by_command = c['command'](**query)
