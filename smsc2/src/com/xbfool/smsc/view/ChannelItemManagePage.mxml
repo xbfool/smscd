@@ -13,8 +13,37 @@
 					  click="dispatchEvent(new ChannelItemPageEvent(ChannelItemPageEvent.CHANNEL_ITEM_ADD_PAGE))"/>
 
 		</s:HGroup>
+		
 		<mx:DataGrid id="channel_item_grid" width="100%" height="100%">
-			
+			<mx:columns>
+				<mx:DataGridColumn dataField="uid" headerText="UID"/>
+				<mx:DataGridColumn dataField="name" headerText="通道名"/>
+				<mx:DataGridColumn dataField="desc" headerText="通道描述"/>
+				<mx:DataGridColumn dataField="type" headerText="类型"/>
+				<mx:DataGridColumn dataField="status" headerText="状态"/>
+				<mx:DataGridColumn dataField="last_update" headerText="最后更新时间"/>
+			</mx:columns>
 		</mx:DataGrid>
+		
+		<mx:Form width="100%" height="100%">
+			<mx:FormItem label="uid">
+				<mx:Label text="{channel_item_grid.selectedItem.uid}"/>
+			</mx:FormItem>
+			<mx:FormItem label="通道名">
+				<mx:TextInput text="{channel_item_grid.selectedItem.name}"/>
+			</mx:FormItem>
+			<mx:FormItem label="通道描述">
+				<mx:TextInput text="{channel_item_grid.selectedItem.desc}"/>
+			</mx:FormItem>
+			<mx:FormItem label="通道类型">
+				<mx:TextInput text="{channel_item_grid.selectedItem.type}"/>
+			</mx:FormItem>
+			<mx:FormItem label="通道状态">
+				<mx:TextInput text="{channel_item_grid.selectedItem.status}"/>
+			</mx:FormItem>
+			<mx:FormItem label="最后修改时间">
+				<mx:Label text="{channel_item_grid.selectedItem.uid}"/>
+			</mx:FormItem>
+		</mx:Form>
 	</s:VGroup>	
 </s:Group>
