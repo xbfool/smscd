@@ -5,7 +5,7 @@ package com.xbfool.smsc.command
 	import com.xbfool.smsc.model.*;
 	import com.xbfool.smsc.view.*;
 	import org.robotlegs.mvcs.Command;
-	
+	import com.xbfool.smsc.view.main.*;
 	public class LogoutCommand extends Command
 	{	
 		[Inject]

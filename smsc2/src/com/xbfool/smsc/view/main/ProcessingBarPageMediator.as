@@ -1,4 +1,4 @@
-package com.xbfool.smsc.view
+package com.xbfool.smsc.view.main
 {
 	import org.robotlegs.mvcs.Mediator;
 	import com.xbfool.smsc.view.*;

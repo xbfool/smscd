@@ -8,7 +8,7 @@
 	
 	<mx:Script>
 		<![CDATA[
-			import com.xbfool.smsc.view.LoginPageEvent;
+			import com.xbfool.smsc.view.main.LoginPageEvent;
 			
 			public function closeAndRemove():void
 			{

@@ -4,8 +4,9 @@ package com.xbfool.smsc {
 	import com.xbfool.smsc.event.*;
 	import com.xbfool.smsc.model.*;
 	import com.xbfool.smsc.services.*;
-	import com.xbfool.smsc.view.*;
-	
+	import com.xbfool.smsc.view.message.*;
+	import com.xbfool.smsc.view.main.*;
+	import com.xbfool.smsc.view.channel.*;
 	import mx.logging.Log;
 	
 	import org.robotlegs.mvcs.Context;

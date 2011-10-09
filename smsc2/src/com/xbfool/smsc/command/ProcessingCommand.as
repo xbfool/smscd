@@ -3,9 +3,8 @@ package com.xbfool.smsc.command
 {
 	import com.xbfool.smsc.controller.*;
 	import com.xbfool.smsc.model.*;
-	import com.xbfool.smsc.view.*;
+	import com.xbfool.smsc.view.main.*;
 	import org.robotlegs.mvcs.Command;
-	
 	public class ProcessingCommand extends Command
 	{	
 		[Inject]

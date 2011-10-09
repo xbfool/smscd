@@ -1,13 +1,13 @@
 // ActionScript file
-package com.xbfool.smsc.view
+package com.xbfool.smsc.view.main
 {
 	import com.xbfool.smsc.command.*;
 	import com.xbfool.smsc.controller.*;
 	import com.xbfool.smsc.event.*;
 	import com.xbfool.smsc.model.*;
 	import com.xbfool.smsc.services.*;
-	import com.xbfool.smsc.view.LoginPage;
-	import com.xbfool.smsc.view.LoginPageEvent;
+	import com.xbfool.smsc.view.main.LoginPage;
+	import com.xbfool.smsc.view.main.LoginPageEvent;
 	
 	import org.robotlegs.mvcs.Mediator;
 

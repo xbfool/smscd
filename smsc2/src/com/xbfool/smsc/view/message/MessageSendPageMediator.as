@@ -1,6 +1,6 @@
 // ActionScript file
 // ActionScript file
-package com.xbfool.smsc.view
+package com.xbfool.smsc.view.message
 {
 	import com.xbfool.smsc.command.*;
 	import com.xbfool.smsc.controller.*;
@@ -8,8 +8,8 @@ package com.xbfool.smsc.view
 	import com.xbfool.smsc.model.*;
 	import com.xbfool.smsc.services.*;
 	import com.xbfool.smsc.utils.*;
-	import com.xbfool.smsc.view.LoginPage;
-	import com.xbfool.smsc.view.LoginPageEvent;
+	import com.xbfool.smsc.view.main.LoginPage;
+	import com.xbfool.smsc.view.main.LoginPageEvent;
 	import flash.events.*;
 	import mx.events.*;
 	import flash.net.FileReference;

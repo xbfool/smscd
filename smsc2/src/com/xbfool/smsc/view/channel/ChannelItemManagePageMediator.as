@@ -1,5 +1,5 @@
 // ActionScript file
-package com.xbfool.smsc.view
+package com.xbfool.smsc.view.channel
 {
 	import com.xbfool.smsc.command.*;
 	import com.xbfool.smsc.controller.*;

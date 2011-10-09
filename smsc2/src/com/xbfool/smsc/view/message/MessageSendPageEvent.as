@@ -1,4 +1,4 @@
-package com.xbfool.smsc.view
+package com.xbfool.smsc.view.message
 {
 	import flash.events.Event;
 	

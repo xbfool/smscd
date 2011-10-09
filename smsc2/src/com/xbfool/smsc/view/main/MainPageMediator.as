@@ -1,5 +1,5 @@
 // ActionScript file
-package com.xbfool.smsc.view
+package com.xbfool.smsc.view.main
 {
 	import com.xbfool.smsc.command.*;
 	import com.xbfool.smsc.controller.*;
@@ -9,6 +9,17 @@ package com.xbfool.smsc.view
 	import com.xbfool.smsc.view.*;
 	
 	import org.robotlegs.mvcs.Mediator;
+	import com.xbfool.smsc.view.channel.ChannelItemManagePage;
+	import com.xbfool.smsc.view.channel.ChannelListManagePage;
+	import com.xbfool.smsc.view.channel.UserChannelManagePage;
+	import com.xbfool.smsc.view.message.ManageAddressPage;
+	import com.xbfool.smsc.view.message.ManageUserPage;
+	import com.xbfool.smsc.view.message.MessageChartPage;
+	import com.xbfool.smsc.view.message.MessageLogPage;
+	import com.xbfool.smsc.view.message.MessageSendPage;
+	import com.xbfool.smsc.view.channel.ChannelLogPage;
+	import com.xbfool.smsc.view.message.UploadMessagePage;
+	import com.xbfool.smsc.view.message.SpecialSendPage;
 	
 	public class MainPageMediator extends Mediator
 	{
