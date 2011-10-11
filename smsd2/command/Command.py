@@ -53,30 +53,43 @@ class Command(object):
         return self.__check_ret_callback(ret)
         
     def __call__(self, **param):
-        c = self.dispatch_callback(**param)
-        if c:
+        c_list = self.dispatch_callback(**param)
+        ret_list = []
+        for i, p in c_list:
             try:
-                return self.ret_callback(param, c(self.context, **param))
+                ret = self.ret_callback(p, i(self.context, **p))
+               
             except:
                 print_exc()
                 if self.command_error_callback:
-                    return self.command_error_callback(self.context, param)
+                    ret =  self.command_error_callback(self.context, p)
                 else:
-                    return None
-
-        else:
-                if self.no_command_callback:
-                    return self.no_command_callback(self.context, param)
-                else:
-                    return None
+                    ret = None
+            if ret != None: 
+                ret_list.append(ret)
+        return ret_list
     
     def __default_dispatch(self, **param):
+        try:
+            c = param['command']
+            if c == 'comp_req':
+                c_list = []
+                for item in param['request_list']:
+                    ret_c = self.__dispatch_one(**item)
+                    if ret_c != None:
+                        c_list.append((ret_c, item))
+                return c_list
+            else:
+                return [(self.dictc.get(c), param)]
+        except:
+            return [] 
+    
+    def __dispatch_one(self, **param):
         try:
             c = param['command']
             return self.dictc.get(c)
         except:
             return None 
-        
     def __default_ret(self, param, ret):
         r = {}
         for k, v in ret.iteritems():

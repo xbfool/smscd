@@ -22,26 +22,26 @@ package com.xbfool.smsc.command
 			if(event.param.errno != 0){
 				trace('request error')
 			}
-			
-			switch(event.param.command){
-				case 'user_login':{
-					trace(event.param);
-					dispatch(new AuthRetEvent(
-						AuthRetEvent.AUTH_RET,
-						event.param.ret.user.username,
-						event.param.sid,
-						event.param.errno==null?0:event.param.errno));
-					break;
-				}
-				case 'channel_item_add':{
-					//TODO
-					break;
-				}
-				case 'channel_item_query_all':{
-					trace(event.param);
-					dispatch(new ChannelItemEvent(ChannelItemEvent.CHANNEL_ITEM_QUERY_RET,
-						"","","",event.param.errno, event.param.ret));
-					break;
+			for each (var item:Object in event.param){
+				switch(item.command){
+					case 'user_login':{
+						dispatch(new AuthRetEvent(
+							AuthRetEvent.AUTH_RET,
+							item.ret.user.username,
+							item.sid,
+							item.errno==null?0:item.errno));
+						break;
+					}
+					case 'channel_item_add':{
+						//TODO
+						break;
+					}
+					case 'channel_item_query_all':{
+						trace(event.param);
+						dispatch(new ChannelItemEvent(ChannelItemEvent.CHANNEL_ITEM_QUERY_RET,
+							"","","",item.errno, item.ret));
+						break;
+					}
 				}
 			}
 		}

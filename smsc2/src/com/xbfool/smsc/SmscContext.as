@@ -4,9 +4,10 @@ package com.xbfool.smsc {
 	import com.xbfool.smsc.event.*;
 	import com.xbfool.smsc.model.*;
 	import com.xbfool.smsc.services.*;
-	import com.xbfool.smsc.view.message.*;
-	import com.xbfool.smsc.view.main.*;
 	import com.xbfool.smsc.view.channel.*;
+	import com.xbfool.smsc.view.main.*;
+	import com.xbfool.smsc.view.message.*;
+	
 	import mx.logging.Log;
 	
 	import org.robotlegs.mvcs.Context;
@@ -38,6 +39,7 @@ package com.xbfool.smsc {
 			commandMap.mapEvent(ChannelItemEvent.CHANNEL_ITEM_ADD, ChannelItemAddCommand, ChannelItemEvent);
 			commandMap.mapEvent(ProcessingEvent.PROCESSING_BEGIN, ProcessingCommand, ProcessingEvent);
 			commandMap.mapEvent(ChannelItemEvent.CHANNEL_ITEM_QUERY_REQ, ChannelItemQueryReqCommand, ChannelItemEvent);
+			commandMap.mapEvent(CompReqEvent.CompReq, CompReqCommand, CompReqEvent);
 			//commandMap.mapEvent(ChannelItemEvent.CHANNEL_ITEM_QUERY_RET, ChannelItemQueryRetCommand, ChannelItemEvent);
 		}
 		
