@@ -12,4 +12,3 @@ if __name__ == '__main__':
                      'WsgiCommandTest',
                      '--verbosity=2'])
 
-#TODO：

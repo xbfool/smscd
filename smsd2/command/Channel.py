@@ -56,7 +56,9 @@ class ChannelItemController(object):
             sel = select([self.table], self.table.c.name==nameArg)
             res = self.c.db.execute(sel)
             r =  res.fetchone()
-            ret = dict(r.items())
+            ret = {}
+            if r:
+                ret = dict(r.items())
             return ret
         except:
             print_exc()
@@ -67,7 +69,9 @@ class ChannelItemController(object):
             sel = select([self.table], self.table.c.uid==uid)
             res = self.c.db.execute(sel)
             r =  res.fetchone()
-            ret = dict(r.items())
+            ret = {}
+            if r:
+                ret = dict(r.items())
             return ret
         except:
             print_exc()
@@ -117,7 +121,9 @@ class ChannelListController(object):
             sel = select([self.table], self.table.c.name==nameArg)
             res = self.c.db.execute(sel)
             r =  res.fetchone()
-            ret = dict(r.items())
+            ret = {}
+            if r:
+                ret = dict(r.items())
             return ret
         except:
             print_exc()
@@ -127,8 +133,10 @@ class ChannelListController(object):
         try:
             sel = select([self.table], self.table.c.uid==uid)
             res = self.c.db.execute(sel)
+            ret = {}
             r =  res.fetchone()
-            ret = dict(r.items())
+            if r:
+                ret = dict(r.items())
             return ret
         except:
             print_exc()

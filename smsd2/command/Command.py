@@ -99,7 +99,7 @@ class Command(object):
         return r
     
     def __default_check_ret(self, ret):
-        if ret['errno'] == 0:
-            return True
-        else:
-            return False
+        for i in ret:
+            if i['errno'] != 0:
+                return False
+        return True

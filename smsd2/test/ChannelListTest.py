@@ -31,16 +31,16 @@ class ChannelTest(unittest.TestCase):
         res = self.channel.query_by_name('name1')
         self.failUnless(res)
         a = res
-        self.failUnless(a.name == 'name1')
-        self.failUnless(a.desc == 'desc1')
+        self.failUnless(a['name'] == 'name1')
+        self.failUnless(a['desc'] == 'desc1')
     
     def testQueryByUid(self):
         self.channel.add(name='name1', desc='desc1')
         res = self.channel.query_by_uid(1)
         self.failUnless(res)
         a = res
-        self.failUnless(a.name == 'name1')
-        self.failUnless(a.desc == 'desc1') 
+        self.failUnless(a['name'] == 'name1')
+        self.failUnless(a['desc'] == 'desc1') 
         
     def testDelete(self):
         self.channel.add(name='name1', desc='desc1')
@@ -53,7 +53,7 @@ class ChannelTest(unittest.TestCase):
         self.failUnless(self.channel.update(1, name='name2'))
         self.failUnless(self.channel.query_by_uid(1))
         a = self.channel.query_by_name('name2')
-        self.failUnless(a.name == 'name2')
+        self.failUnless(a['name'] == 'name2')
     def testQueryAll(self):
         self.channel.add(name='name1', desc='desc1')
         self.channel.add(name='name2', desc='desc2')
