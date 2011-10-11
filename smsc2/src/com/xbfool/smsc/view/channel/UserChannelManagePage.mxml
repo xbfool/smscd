@@ -31,13 +31,13 @@
 				<mx:Label text="{channel_list_grid.selectedItem.uid}"/>
 			</mx:FormItem>
 			<mx:FormItem label="用户名">
-				<mx:TextInput />
+				<mx:Label text="{channel_list_grid.selectedItem.name}"/>
 			</mx:FormItem>
 			<mx:FormItem label="用户备注">
-				<mx:TextInput />
+				<mx:Label text="{channel_list_grid.selectedItem.desc}"/>
 			</mx:FormItem>
 			<mx:FormItem label="剩余条数">
-				<mx:TextInput />
+				<mx:Label text="{channel_list_grid.selectedItem.msg_num}"/>
 			</mx:FormItem>
 			<mx:FormItem label="通道名">
 				<mx:TextInput />

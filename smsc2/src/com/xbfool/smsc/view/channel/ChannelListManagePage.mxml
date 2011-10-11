@@ -1,14 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%"
+		 creationComplete="init()">
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+		<mx:StringValidator id="channel_name_validator" maxLength="20" minLength="2" property="text" source="{channel_name}"
+							tooLongError="字符数超出限制" tooShortError="请输入至少2个字" trigger="{channel_name}"
+							triggerEvent="change"/>	
+		<mx:StringValidator id="channel_desc_validator" maxLength="20" minLength="2" property="text" source="{channel_desc}"
+							tooLongError="字符数超出限制" tooShortError="请输入至少2个字" trigger="{channel_desc}"
+							triggerEvent="change"/>	
 	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.validators.Validator;
+			import mx.events.ValidationResultEvent;
+			import mx.validators.ZipCodeValidatorDomainType;
+			import mx.controls.Alert;
+			
+			[Bindable]
+			private var validatorArr:Array;
+			
+			public function closeAndRemove():void
+			{
+				parent.removeChild(this);
+			}
+			private function init():void {
+				validatorArr = new Array();
+				validatorArr.push(channel_name_validator);
+				validatorArr.push(channel_desc_validator);
+			}
+			
+			private function validateForm(evt:MouseEvent):void {
+				var validatorErrorArray:Array = Validator.validateAll(validatorArr);;
+				var isValidForm:Boolean = validatorErrorArray.length == 0;
+				if (isValidForm) {
+					dispatchEvent(new ChannelItemPageEvent(ChannelItemPageEvent.CHANNEL_ITEM_UPDATE));
+				} else {
+					var err:ValidationResultEvent;
+					var errorMessageArray:Array = [];
+					for each (err in validatorErrorArray) {
+						var errField:String = FormItem(err.currentTarget.source.parent).label
+						errorMessageArray.push(errField + ": " + err.message);
+					}
+					Alert.show(errorMessageArray.join("\n\n"), "Invalid form...", Alert.OK);
+				}
+			}
+
+		]]>
+	</fx:Script>
 	<s:VGroup width="100%" height = "100%" color="#000000">
 		<s:HGroup >
-			<s:Button label="获取所有通道列表" 
-					  />
 			<s:Button label="增加通道列表" 
 					  />
 			
@@ -37,10 +80,10 @@
 				<mx:Label text="{channel_list_grid.selectedItem.uid}"/>
 			</mx:FormItem>
 			<mx:FormItem label="通道名">
-				<mx:TextInput text="{channel_list_grid.selectedItem.name}"/>
+				<mx:TextInput id="channel_name" text="{channel_list_grid.selectedItem.name}"/>
 			</mx:FormItem>	
 			<mx:FormItem label="通道描述">	
-				<mx:TextInput text="{channel_list_grid.selectedItem.desc}"/>
+				<mx:TextInput id="channel_desc" text="{channel_list_grid.selectedItem.desc}"/>
 			</mx:FormItem>
 			
 			<mx:FormItem  label="通道选择">
@@ -82,7 +125,7 @@
 			<mx:FormItem width="100%">
 				
 				<mx:HBox width="100%">
-					<s:Button id="okButton" label="修改"/>
+					<s:Button id="okButton" label="修改" click="validateForm(event)"/>
 					<s:Button label="删除当前项"/>				
 				</mx:HBox>
 			</mx:FormItem>
