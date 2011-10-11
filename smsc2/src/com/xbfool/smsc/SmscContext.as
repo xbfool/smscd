@@ -9,19 +9,24 @@ package com.xbfool.smsc {
 	import com.xbfool.smsc.view.message.*;
 	
 	import mx.logging.Log;
+	import mx.messaging.Channel;
 	
 	import org.robotlegs.mvcs.Context;
 
 	public class SmscContext extends Context {
 		public var mainPage:MainPage;
 		public var processingBarPage:ProcessingBarPage;
+		public var channelItemManagePage:ChannelItemManagePage;
+		public var channelListManagePage:ChannelListManagePage;
 		public function SmscContext() {
 			super();
 		}
 		
 		override public function startup():void {
 			this.mainPage = new MainPage();
-			this.processingBarPage = new ProcessingBarPage()
+			this.processingBarPage = new ProcessingBarPage();
+			this.channelItemManagePage = new ChannelItemManagePage();
+			this.channelListManagePage = new ChannelListManagePage();
 			this.init_command();
 			this.init_injector();
 			this.init_map_view();
@@ -56,8 +61,8 @@ package com.xbfool.smsc {
 			injector.mapSingleton(MoneyLogPage);
 			injector.mapSingleton(SpecialSendPage);
 			injector.mapSingleton(UploadMessagePage);
-			injector.mapSingleton(ChannelItemManagePage);
-			injector.mapSingleton(ChannelListManagePage);
+			injector.mapValue(ChannelItemManagePage, this.channelItemManagePage);
+			injector.mapValue(ChannelListManagePage, this.channelListManagePage);
 			injector.mapSingleton(UserChannelManagePage);
 			injector.mapSingleton(ChannelItemAddPage);
 			injector.mapValue(ProcessingBarPage, this.processingBarPage);
@@ -67,7 +72,6 @@ package com.xbfool.smsc {
 		public function init_map_view():void{
 			mediatorMap.mapView(LoginPage, LoginPageMediator);
 			mediatorMap.mapView(ChannelItemManagePage, ChannelItemManagePageMediator);
-			//mediatorMap.mapView(ChannelItemAddPage, ChannelItemManagePageMediator);
 			mediatorMap.mapView(MainPage, MainPageMediator);
 			mediatorMap.mapView(MessageSendPage, MessageSendPageMediator);
 			mediatorMap.mapView(ProcessingBarPage, ProcessingBarPageMediator);

@@ -20,6 +20,8 @@ package com.xbfool.smsc.view.channel
 		public var channelItemAddPage:ChannelItemAddPage;
 		[Inject]
 		public var requestObj:IRequestService;
+		[Inject]
+		public var user:UserProxy;
 		public var channel_item_list:ArrayCollection = new ArrayCollection();
 		
 		public function ChannelItemManagePageMediator()
@@ -29,44 +31,62 @@ package com.xbfool.smsc.view.channel
 		override public function onRegister():void
 		{
 			// view listeners
-			eventMap.mapListener(channelItemManagePage, ChannelItemPageEvent.CHANNEL_ITEM_ADD_PAGE, onAdd);
-			eventMap.mapListener(channelItemAddPage, ChannelItemPageEvent.CHANNEL_ITEM_ADD_ITEM, onAddItem);
-			eventMap.mapListener(channelItemManagePage, ChannelItemPageEvent.CHANNEL_ITEM_QUERY, onQuery);
-			eventMap.mapListener(eventDispatcher, ChannelItemEvent.CHANNEL_ITEM_QUERY_RET, onQueryBack);
 			channelItemManagePage.channel_item_grid.dataProvider = channel_item_list;
+			
+			eventMap.mapListener(channelItemManagePage, ChannelPageEvent.CHANNEL_ITEM_ADD_PAGE, onAddPage);
+			eventMap.mapListener(channelItemAddPage, ChannelPageEvent.CHANNEL_ITEM_ADD_ITEM, onAddItem);
+			eventMap.mapListener(channelItemManagePage, ChannelPageEvent.CHANNEL_ITEM_UPDATE, onUpdate);
+			eventMap.mapListener(channelItemManagePage, ChannelPageEvent.CHANNEL_ITEM_DELETE, onDelete);
+			eventMap.mapListener(eventDispatcher, CompRetEvent.COMP_RET, onQueryBack);
+			channel_item_list.source = user.channel_item_list;
 		}
 		
-		private function onAdd(e:ChannelItemPageEvent):void
+		private function onAddPage(e:ChannelPageEvent):void
 		{
 			contextView.addChild(channelItemAddPage);
 		}
-		private function onQuery(e:ChannelItemPageEvent):void
+		
+		private function onQuery(e:ChannelPageEvent):void
 		{
 			dispatch(new ChannelItemEvent(ChannelItemEvent.CHANNEL_ITEM_QUERY_REQ));
 		}
-		private function onAddItem(e:ChannelItemPageEvent):void
+		
+		private function onAddItem(e:ChannelPageEvent):void
 		{
-			if(	channelItemAddPage.channel_name.text != "" &&
-				channelItemAddPage.channel_desc.text != "" &&
-				channelItemAddPage.channel_type.text != ""){
-				dispatch(new ChannelItemEvent(ChannelItemEvent.CHANNEL_ITEM_ADD,
-					channelItemAddPage.channel_name.text,
-					channelItemAddPage.channel_desc.text,
-					channelItemAddPage.channel_type.text));
-			} 
-				
+			var req_list:Array = [{
+				command:'channel_item_add',
+				name:channelItemAddPage.channel_name.text,
+				desc:channelItemAddPage.channel_desc.text,
+				type:channelItemAddPage.channel_type.text},
+				{command:'channel_item_query_all'}];
+			dispatch(new CompReqEvent(CompReqEvent.CompReq, req_list));
 		}
 		
-		private function onQueryBack(e:ChannelItemEvent):void
+		private function onQueryBack(e:CompRetEvent):void
 		{
-			var dp:Array = new Array;
-			for each (var item:Object in e.query_ret_object){
-				item.id = item.uid;
-				dp.push(item);
-			}
-			channel_item_list.source = dp;
-			
-
+			channel_item_list.source = user.channel_item_list;
+		}
+		
+		private function onUpdate(e:ChannelPageEvent):void
+		{
+			var req_list:Array = [{
+				command:'channel_item_update',
+				uid:channelItemManagePage.channel_uid.text,
+				values:{
+				name:channelItemManagePage.channel_name.text,
+				desc:channelItemManagePage.channel_desc.text,
+				type:channelItemManagePage.channel_type.text}},
+				{command:'channel_item_query_all'}];
+			dispatch(new CompReqEvent(CompReqEvent.CompReq, req_list));
+		}
+		
+		private function onDelete(e:ChannelPageEvent):void
+		{
+			var req_list:Array = [{
+				command:'channel_item_del',
+				uid:channelItemManagePage.channel_uid.text},
+				{command:'channel_item_query_all'}];
+			dispatch(new CompReqEvent(CompReqEvent.CompReq, req_list));
 		}
 		
 	}

@@ -43,7 +43,7 @@
 				var validatorErrorArray:Array = Validator.validateAll(validatorArr);;
 				var isValidForm:Boolean = validatorErrorArray.length == 0;
 				if (isValidForm) {
-					dispatchEvent(new ChannelItemPageEvent(ChannelItemPageEvent.CHANNEL_ITEM_ADD_ITEM));
+					dispatchEvent(new ChannelPageEvent(ChannelPageEvent.CHANNEL_ITEM_ADD_ITEM));
 					closeAndRemove()
 				} else {
 					var err:ValidationResultEvent;
@@ -92,7 +92,6 @@
 				<s:Button id="okButton" label="确定"
 						  click="validateForm(event)"/>
 				<s:Button label="取消" click="closeAndRemove()"/>		
-				<s:Button id="test"/>		
 			</mx:HBox>			
 		</mx:FormItem>		
 	</mx:Form>

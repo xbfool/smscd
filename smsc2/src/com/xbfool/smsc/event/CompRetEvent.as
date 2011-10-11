@@ -4,19 +4,17 @@ package com.xbfool.smsc.event
 	
 	public class CompRetEvent extends Event
 	{
-		static public const COMP_RET:String = 'compret';
-		public var ret:Object;
-		public var errno:int;
-		public function CompRetEvent(type:String, errno:int, ret:Object)
+		static public const COMP_RET:String = 'comp_ret';
+
+		public function CompRetEvent(type:String)
 		{
-			this.errno = errno;
-			this.ret = ret;
+
 			super(type, bubbles, cancelable);
 		}
 		
 		override public function clone():Event
 		{
-			return new CompRetEvent(this.type, this.errno, this.ret);
+			return new CompRetEvent(this.type);
 		}
 	}
 }

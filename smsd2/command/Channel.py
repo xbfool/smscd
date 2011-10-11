@@ -81,8 +81,9 @@ class ChannelItemController(object):
         sel = select([self.table])
         res = self.c.db.execute(sel)
         rlist = []
-        for r in res:
-            rlist.append(dict(r.items()))
+        if res != None:
+            for r in res:
+                rlist.append(dict(r.items()))
         return rlist
     
     
@@ -146,6 +147,7 @@ class ChannelListController(object):
         sel = select([self.table])
         res = self.c.db.execute(sel)
         rlist = []
-        for r in res:
-            rlist.append(dict(r.items()))
+        if res != None:
+            for r in res:
+                rlist.append(dict(r.items()))
         return rlist
