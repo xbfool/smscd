@@ -1,63 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
-		   xmlns:s="library://ns.adobe.com/flex/spark" 
-		   width="100%"
-		   height="100%"
-		   backgroundColor="#000000"
-		   creationComplete="onCC()"
-		   backgroundAlpha="0.9">
-	
-	<mx:Script>
+
+<mx:Canvas xmlns:fx="http://ns.adobe.com/mxml/2009"
+		   xmlns:s="library://ns.adobe.com/flex/spark"
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   width="100%" height="100%" backgroundAlpha="0.9" backgroundColor="#000000"
+		   creationComplete="onCC()">	
+	<fx:Script>
 		<![CDATA[
-		import com.xbfool.smsc.view.main.LoginPageEvent;
-		
-		public function closeAndRemove():void
-		{
-			channel_name.text = "";
-			channel_desc.text = "";
-			channel_type.text = "";
-			parent.removeChild(this);
-		}
-		
-		protected function onCC():void
-		{
-			channel_name.setFocus();
-		}
+			import com.xbfool.smsc.view.main.LoginPageEvent;
+			
+			public function closeAndRemove():void
+			{
+				channel_name.text = "";
+				channel_desc.text = "";
+				channel_type.text = "";
+				parent.removeChild(this);
+			}
+			
+			protected function onCC():void
+			{
+				channel_name.setFocus();
+				init();
+			}
+			
+			
+			import mx.validators.Validator;
+			import mx.events.ValidationResultEvent;
+			import mx.validators.ZipCodeValidatorDomainType;
+			import mx.controls.Alert;
+			
+			[Bindable]
+			private var validatorArr:Array;
+			
+			private function init():void {
+				validatorArr = new Array();
+				validatorArr.push(channel_name_validator);
+				validatorArr.push(channel_desc_validator);
+				validatorArr.push(channel_type_validator);
+			}
+			
+			private function validateForm(evt:MouseEvent):void {
+				var validatorErrorArray:Array = Validator.validateAll(validatorArr);;
+				var isValidForm:Boolean = validatorErrorArray.length == 0;
+				if (isValidForm) {
+					dispatchEvent(new ChannelItemPageEvent(ChannelItemPageEvent.CHANNEL_ITEM_ADD_ITEM));
+					closeAndRemove()
+				} else {
+					var err:ValidationResultEvent;
+					var errorMessageArray:Array = [];
+					for each (err in validatorErrorArray) {
+						var errField:String = FormItem(err.currentTarget.source.parent).label
+						errorMessageArray.push(errField + ": " + err.message);
+					}
+					Alert.show(errorMessageArray.join("\n\n"), "Invalid form...", Alert.OK);
+				}
+			}
+
 		]]>
-	</mx:Script>
-	
-	<mx:Form verticalCenter="0"
-			 horizontalCenter="0"
-			 backgroundAlpha="1.0"
-			 backgroundColor="#FFFFFF"
-			 cornerRadius="16"
-			 defaultButton="{okButton}">
+	</fx:Script>
+	<fx:Declarations>
+		<mx:StringValidator id="channel_name_validator" maxLength="20" minLength="2" property="text" source="{channel_name}"
+							tooLongError="字符数超出限制" tooShortError="请输入至少2个字" trigger="{channel_name}"
+							triggerEvent="change"/>	
+		<mx:StringValidator id="channel_desc_validator" maxLength="20" minLength="2" property="text" source="{channel_desc}"
+							tooLongError="字符数超出限制" tooShortError="请输入至少2个字" trigger="{channel_desc}"
+							triggerEvent="change"/>	
+		<mx:StringValidator id="channel_type_validator" maxLength="20" minLength="2" property="text" source="{channel_type}"
+							tooLongError="字符数超出限制" tooShortError="请输入至少2个字" trigger="{channel_type}"
+							triggerEvent="change"/>	
+	</fx:Declarations>
+	<mx:Form backgroundAlpha="1.0" backgroundColor="#FFFFFF" cornerRadius="16"
+			 defaultButton="{okButton}" horizontalCenter="0" verticalCenter="0">
 		
 		<mx:FormHeading label="增加新通道"/>
 		
 		<mx:FormItem label="通道名">
-			<mx:TextInput id="channel_name" width="200"/>
+			<s:TextInput id="channel_name" width="200"/>
 		</mx:FormItem>
 		
 		<mx:FormItem label="通道备注">
-			<mx:TextInput id="channel_desc" width="200"/>
+			<s:TextInput id="channel_desc" width="200"/>
 		</mx:FormItem>
 		
 		<mx:FormItem label="通道类型">
-			<mx:TextInput id="channel_type" width="200"/>
+			<s:TextInput id="channel_type" width="200"/>
 		</mx:FormItem>
 		
 		<mx:FormItem width="100%">
 			
 			<mx:HBox width="100%">
 				<s:Button id="okButton" label="确定"
-						  click="dispatchEvent(new ChannelItemPageEvent(ChannelItemPageEvent.CHANNEL_ITEM_ADD_ITEM));
-						  closeAndRemove()"/>
-				<s:Button label="取消" click= "closeAndRemove()"/>				
-			</mx:HBox>
-			
-		</mx:FormItem>
-		
+						  click="validateForm(event)"/>
+				<s:Button label="取消" click="closeAndRemove()"/>		
+				<s:Button id="test"/>		
+			</mx:HBox>			
+		</mx:FormItem>		
 	</mx:Form>
-	
 </mx:Canvas>
+
