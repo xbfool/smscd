@@ -72,12 +72,13 @@
 			}
 			public function display_name(index:int):String{
 				for(var i:int = 0; i < myDP.source.length; i++){
-					if(myDP.source[i].uid == index)
-						trace("hahah"+ myDP.source[i].name)
-						return myDP.source[i].name + ":" + display_status(myDP.source[0].status);
+					if(myDP[i].uid == index){
+						trace("hahah"+ myDP[i].name)
+						return myDP.source[i].name + ":" + display_status(myDP[0].status);
+					}
 				}
 				
-				return myDP.source[0].name + ":" + display_status(myDP.source[0].status);
+				return myDP[0].name + ":" + display_status(myDP[0].status);
 			}
 		]]>
 	</fx:Script>
@@ -96,63 +97,63 @@
 				<mx:DataGridColumn dataField="cm1" headerText="移动1">
 					<mx:itemRenderer>
 						<fx:Component>
-							<mx:Label text="{parentDocument.display_name(data)}"/>	
+							<mx:Label text="{parentDocument.display_name(data.cm1)}"/>	
 						</fx:Component>
 					</mx:itemRenderer>
 				</mx:DataGridColumn>
 				<mx:DataGridColumn dataField="cm2" headerText="移动2">
 					<mx:itemRenderer>
 						<fx:Component>
-							<mx:Label text="{parentDocument.display_name(data)}"/>	
+							<mx:Label text="{parentDocument.display_name(data.cm2)}"/>	
 						</fx:Component>
 					</mx:itemRenderer>
 				</mx:DataGridColumn>
 				<mx:DataGridColumn dataField="cm3" headerText="移动3">
 					<mx:itemRenderer>
 						<fx:Component>
-							<mx:Label text="{parentDocument.display_name(data)}"/>	
+							<mx:Label text="{parentDocument.display_name(data.cm3)}"/>	
 						</fx:Component>
 					</mx:itemRenderer>
 				</mx:DataGridColumn>
 				<mx:DataGridColumn dataField="cu1" headerText="联通1">
 					<mx:itemRenderer>
 						<fx:Component>
-							<mx:Label text="{parentDocument.display_name(data)}"/>	
+							<mx:Label text="{parentDocument.display_name(data.cu1)}"/>	
 						</fx:Component>
 					</mx:itemRenderer>
 				</mx:DataGridColumn>
 				<mx:DataGridColumn dataField="cu2" headerText="联通2">
 					<mx:itemRenderer>
 						<fx:Component>
-							<mx:Label text="{parentDocument.display_name(data)}"/>	
+							<mx:Label text="{parentDocument.display_name(data.cu2)}"/>	
 						</fx:Component>
 					</mx:itemRenderer>
 				</mx:DataGridColumn>
 				<mx:DataGridColumn dataField="cu3" headerText="联通3">
 					<mx:itemRenderer>
 						<fx:Component>
-							<mx:Label text="{parentDocument.display_name(data)}"/>	
+							<mx:Label text="{parentDocument.display_name(data.cu3)}"/>	
 						</fx:Component>
 					</mx:itemRenderer>
 				</mx:DataGridColumn>	
 				<mx:DataGridColumn dataField="ct1" headerText="电信1">
 					<mx:itemRenderer>
 						<fx:Component>
-							<mx:Label text="{parentDocument.display_name(data)}"/>	
+							<mx:Label text="{parentDocument.display_name(data.ct1)}"/>	
 						</fx:Component>
 					</mx:itemRenderer>
 				</mx:DataGridColumn>
 				<mx:DataGridColumn dataField="ct2" headerText="电信2">
 					<mx:itemRenderer>
 						<fx:Component>
-							<mx:Label text="{parentDocument.display_name(data)}"/>	
+							<mx:Label text="{parentDocument.display_name(data.ct2)}"/>	
 						</fx:Component>
 					</mx:itemRenderer>
 				</mx:DataGridColumn>
 				<mx:DataGridColumn dataField="ct3" headerText="电信3">
 					<mx:itemRenderer>
 						<fx:Component>
-							<mx:Label text="{parentDocument.display_name(data)}"/>	
+							<mx:Label text="{parentDocument.display_name(data.ct3)}"/>	
 						</fx:Component>
 					</mx:itemRenderer>
 				</mx:DataGridColumn>		
@@ -162,7 +163,7 @@
 		<mx:Form height="100%" backgroundAlpha="1.0" backgroundColor="#FFFFFF" cornerRadius="16"
 				 horizontalCenter="0" verticalCenter="0">
 			<mx:FormItem label="uid">
-				<mx:Label text="{channel_list_grid.selectedItem.uid}"/>
+				<mx:Label id="channel_uid" text="{channel_list_grid.selectedItem.uid}"/>
 			</mx:FormItem>
 			<mx:FormItem label="通道名">
 				<mx:TextInput id="channel_name" text="{channel_list_grid.selectedItem.name}"/>
@@ -256,7 +257,7 @@
 				
 				<mx:HBox width="100%">
 					<s:Button id="okButton" label="修改" click="validateForm(event)"/>
-					<s:Button label="删除当前项" click="dispatchEvent(new ChannelPageEvent(ChannelPageEvent.CHANNEL_ITEM_DELETE))"/>				
+					<s:Button label="删除当前项" click="dispatchEvent(new ChannelPageEvent(ChannelPageEvent.CHANNEL_LIST_DELETE))"/>				
 				</mx:HBox>
 			</mx:FormItem>
 		</mx:Form>

@@ -75,12 +75,34 @@ package com.xbfool.smsc.view.channel
 		
 		private function onUpdate(e:ChannelPageEvent):void
 		{
-			
+			var req_list:Array = [{
+				command:'channel_list_update',
+				uid:channelListManagePage.channel_uid.text,
+				values:{
+				name:channelListManagePage.channel_name.text,
+				desc:channelListManagePage.channel_desc.text,
+				cm1:channelListManagePage.cm1.selectedItem.uid,
+				cm2:channelListManagePage.cm2.selectedItem.uid,
+				cm3:channelListManagePage.cm3.selectedItem.uid,
+				cu1:channelListManagePage.cu1.selectedItem.uid,
+				cu2:channelListManagePage.cu2.selectedItem.uid,
+				cu3:channelListManagePage.cu3.selectedItem.uid,
+				ct1:channelListManagePage.ct1.selectedItem.uid,
+				ct2:channelListManagePage.ct2.selectedItem.uid,
+				ct3:channelListManagePage.ct3.selectedItem.uid
+				}
+			},
+				{command:'channel_list_query_all'}];
+			dispatch(new CompReqEvent(CompReqEvent.CompReq, req_list));
 		}
 		
 		private function onDelete(e:ChannelPageEvent):void
 		{
-			
+			var req_list:Array = [{
+				command:'channel_list_del',
+				uid:channelListManagePage.channel_uid.text},
+				{command:'channel_list_query_all'}];
+			dispatch(new CompReqEvent(CompReqEvent.CompReq, req_list));
 		}
 	}
 }
