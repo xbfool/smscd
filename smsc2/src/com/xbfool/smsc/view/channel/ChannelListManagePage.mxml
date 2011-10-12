@@ -2,6 +2,7 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%"
+		 xmlns:channel="com.xbfool.smsc.view.channel.*"
 		 creationComplete="init()">
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
@@ -56,6 +57,28 @@
 				}
 				return 0;
 			}
+			
+			private function display_status(status:int):String{
+				switch(status){
+					case 0:
+						return "正常";
+					case 1:
+						return "停止";
+					case 2:
+						return "错误挂起";
+						
+				}
+				return "未知";
+			}
+			public function display_name(index:int):String{
+				for(var i:int = 0; i < myDP.source.length; i++){
+					if(myDP.source[i].uid == index)
+						trace("hahah"+ myDP.source[i].name)
+						return myDP.source[i].name + ":" + display_status(myDP.source[0].status);
+				}
+				
+				return myDP.source[0].name + ":" + display_status(myDP.source[0].status);
+			}
 		]]>
 	</fx:Script>
 	<s:VGroup width="100%" height = "100%" color="#000000">
@@ -70,15 +93,69 @@
 				<mx:DataGridColumn dataField="uid" headerText="UID"/>
 				<mx:DataGridColumn dataField="name" headerText="通道列表名"/>
 				<mx:DataGridColumn dataField="desc" headerText="通道列表描述"/>
-				<mx:DataGridColumn dataField="cm1" headerText="移动1"/>
-				<mx:DataGridColumn dataField="cu1" headerText="联通1"/>
-				<mx:DataGridColumn dataField="ct1" headerText="电信1"/>
-				<mx:DataGridColumn dataField="cm2" headerText="移动2"/>
-				<mx:DataGridColumn dataField="cu2" headerText="联通2"/>
-				<mx:DataGridColumn dataField="ct2" headerText="电信2"/>
-				<mx:DataGridColumn dataField="cm3" headerText="移动3"/>
-				<mx:DataGridColumn dataField="cu3" headerText="联通3"/>
-				<mx:DataGridColumn dataField="ct3" headerText="电信3"/>
+				<mx:DataGridColumn dataField="cm1" headerText="移动1">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn dataField="cm2" headerText="移动2">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn dataField="cm3" headerText="移动3">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn dataField="cu1" headerText="联通1">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn dataField="cu2" headerText="联通2">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn dataField="cu3" headerText="联通3">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>	
+				<mx:DataGridColumn dataField="ct1" headerText="电信1">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn dataField="ct2" headerText="电信2">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn dataField="ct3" headerText="电信3">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>		
 			</mx:columns>
 		</mx:DataGrid>
 		
@@ -102,6 +179,7 @@
 									dataProvider="{myDP}"
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm1)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="移动2">
@@ -109,6 +187,7 @@
 									dataProvider="{myDP}"
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm2)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="移动3">
@@ -116,6 +195,7 @@
 									dataProvider="{myDP}"
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm3)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									/>
 				</mx:FormItem>
 			</mx:HBox>
@@ -125,6 +205,7 @@
 									dataProvider="{myDP}"
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu1)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="联通2">
@@ -132,6 +213,7 @@
 									dataProvider="{myDP}"
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu2)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="联通3">
@@ -139,6 +221,7 @@
 									dataProvider="{myDP}"
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu3)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									/>
 				</mx:FormItem>
 			</mx:HBox>
@@ -148,6 +231,7 @@
 									dataProvider="{myDP}"
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct1)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="电信2">
@@ -155,6 +239,7 @@
 									dataProvider="{myDP}"
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct2)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="电信3">
@@ -162,6 +247,7 @@
 									dataProvider="{myDP}"
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct3)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									/>
 				</mx:FormItem>
 			</mx:HBox>

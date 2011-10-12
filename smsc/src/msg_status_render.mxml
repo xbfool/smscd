@@ -2,6 +2,7 @@
 <mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml">
 	<mx:Script>
 		<![CDATA[
+			
 			private function display(status:int):String{
 				switch(status){
 					case 1:
