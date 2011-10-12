@@ -65,6 +65,7 @@ package com.xbfool.smsc {
 			injector.mapValue(ChannelListManagePage, this.channelListManagePage);
 			injector.mapSingleton(UserChannelManagePage);
 			injector.mapSingleton(ChannelItemAddPage);
+			injector.mapSingleton(ChannelListAddPage);
 			injector.mapValue(ProcessingBarPage, this.processingBarPage);
 			injector.mapValue(MainPage, this.mainPage);
 		}
@@ -72,6 +73,7 @@ package com.xbfool.smsc {
 		public function init_map_view():void{
 			mediatorMap.mapView(LoginPage, LoginPageMediator);
 			mediatorMap.mapView(ChannelItemManagePage, ChannelItemManagePageMediator);
+			mediatorMap.mapView(ChannelListManagePage, ChannelListManagePageMediator);
 			mediatorMap.mapView(MainPage, MainPageMediator);
 			mediatorMap.mapView(MessageSendPage, MessageSendPageMediator);
 			mediatorMap.mapView(ProcessingBarPage, ProcessingBarPageMediator);

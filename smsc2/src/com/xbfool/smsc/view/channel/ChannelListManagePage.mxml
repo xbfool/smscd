@@ -14,13 +14,15 @@
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
-			import mx.validators.Validator;
-			import mx.events.ValidationResultEvent;
-			import mx.validators.ZipCodeValidatorDomainType;
+			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
-			
+			import mx.events.ValidationResultEvent;
+			import mx.validators.Validator;
+			import mx.validators.ZipCodeValidatorDomainType;
 			[Bindable]
 			private var validatorArr:Array;
+			[Bindable]
+			public var myDP:ArrayCollection = new ArrayCollection();
 			
 			public function closeAndRemove():void
 			{
@@ -47,7 +49,13 @@
 					Alert.show(errorMessageArray.join("\n\n"), "Invalid form...", Alert.OK);
 				}
 			}
-
+			private function get_channel_index(i:int):int{
+				for(var j:int; j < myDP.length;j++){
+					if(myDP[j].uid == i)
+						return j;
+				}
+				return 0;
+			}
 		]]>
 	</fx:Script>
 	<s:VGroup width="100%" height = "100%" color="#000000">
@@ -90,35 +98,71 @@
 			
 			<mx:HBox>
 				<mx:FormItem label="移动1">
-					<s:DropDownList/>
+					<s:DropDownList id="cm1" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="name"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm1)}"
+									/>
 				</mx:FormItem>
 				<mx:FormItem label="移动2">
-					<s:DropDownList/>
+					<s:DropDownList id="cm2" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="name"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm2)}"
+									/>
 				</mx:FormItem>
 				<mx:FormItem label="移动3">
-					<s:DropDownList/>
+					<s:DropDownList id="cm3" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="name"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm3)}"
+									/>
 				</mx:FormItem>
 			</mx:HBox>
 			<mx:HBox>
 				<mx:FormItem label="联通1">
-					<s:DropDownList/>
+					<s:DropDownList id="cu1" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="name"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu1)}"
+									/>
 				</mx:FormItem>
 				<mx:FormItem label="联通2">
-					<s:DropDownList/>
+					<s:DropDownList id="cu2" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="name"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu2)}"
+									/>
 				</mx:FormItem>
 				<mx:FormItem label="联通3">
-					<s:DropDownList/>
+					<s:DropDownList id="cu3" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="name"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu3)}"
+									/>
 				</mx:FormItem>
 			</mx:HBox>
 			<mx:HBox>
 				<mx:FormItem label="电信1">
-					<s:DropDownList/>
+					<s:DropDownList id="ct1" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="name"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct1)}"
+									/>
 				</mx:FormItem>
 				<mx:FormItem label="电信2">
-					<s:DropDownList/>
+					<s:DropDownList id="ct2" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="name"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct2)}"
+									/>
 				</mx:FormItem>
 				<mx:FormItem label="电信3">
-					<s:DropDownList/>
+					<s:DropDownList id="ct3" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="name"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct3)}"
+									/>
 				</mx:FormItem>
 			</mx:HBox>
 			</mx:FormItem>

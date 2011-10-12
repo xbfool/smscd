@@ -1103,7 +1103,7 @@
 								<mx:CheckBox id="manage_user_can_post" label="允许访问接口"
 											 selected="{select_user_can_post}"/>
 							</mx:FormItem>
-							<mx:FormItem label="百分比">
+							<mx:FormItem label="百分比" visible="{channel_enabled}">
 								<mx:ComboBox id="manager_user_percent" visible="{channel_enabled}"
 											 dataProvider="{user_percent_list}"
 											 selectedIndex="{select_user_percent}"/>

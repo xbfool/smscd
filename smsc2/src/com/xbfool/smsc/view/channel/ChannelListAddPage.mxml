@@ -13,8 +13,7 @@
 			import com.xbfool.smsc.view.main.LoginPageEvent;
 			import mx.collections.ArrayCollection;
 			[Bindable]
-			public var myDP:ArrayCollection = new ArrayCollection(
-				[ {name:"Flex", price:100}]);
+			public var myDP:ArrayCollection = new ArrayCollection();
 			public function closeAndRemove():void
 			{
 				parent.removeChild(this);
@@ -38,7 +37,7 @@
 				var validatorErrorArray:Array = Validator.validateAll(validatorArr);;
 				var isValidForm:Boolean = validatorErrorArray.length == 0;
 				if (isValidForm) {
-					dispatchEvent(new ChannelPageEvent(ChannelPageEvent.CHANNEL_ITEM_ADD_ITEM));
+					dispatchEvent(new ChannelPageEvent(ChannelPageEvent.CHANNEL_LIST_ADD_ITEM));
 					closeAndRemove()
 				} else {
 					var err:ValidationResultEvent;
@@ -85,18 +84,21 @@
 					<s:DropDownList id="cm1" prompt="请选择通道"
 									dataProvider="{myDP}"
 									labelField="name"
+									selectedIndex="0"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="移动2">
 					<s:DropDownList id="cm2" prompt="请选择通道"
 									dataProvider="{myDP}"
 									labelField="name"
+									selectedIndex="0"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="移动3">
 					<s:DropDownList id="cm3" prompt="请选择通道"
 									dataProvider="{myDP}"
 									labelField="name"
+									selectedIndex="0"
 									/>
 				</mx:FormItem>
 			</mx:HBox>
@@ -105,18 +107,21 @@
 					<s:DropDownList id="cu1" prompt="请选择通道"
 									dataProvider="{myDP}"
 									labelField="name"
+									selectedIndex="0"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="联通2">
 					<s:DropDownList id="cu2" prompt="请选择通道"
 									dataProvider="{myDP}"
 									labelField="name"
+									selectedIndex="0"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="联通3">
 					<s:DropDownList id="cu3" prompt="请选择通道"
 									dataProvider="{myDP}"
 									labelField="name"
+									selectedIndex="0"
 									/>
 				</mx:FormItem>
 			</mx:HBox>
@@ -125,18 +130,21 @@
 					<s:DropDownList id="ct1" prompt="请选择通道"
 									dataProvider="{myDP}"
 									labelField="name"
+									selectedIndex="0"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="电信2">
 					<s:DropDownList id="ct2" prompt="请选择通道"
 									dataProvider="{myDP}"
 									labelField="name"
+									selectedIndex="0"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="电信3">
 					<s:DropDownList id="ct3" prompt="请选择通道"
 									dataProvider="{myDP}"
 									labelField="name"
+									selectedIndex="0"
 									/>
 				</mx:FormItem>
 			</mx:HBox>
