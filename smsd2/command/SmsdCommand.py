@@ -28,7 +28,9 @@ class SmsdCommand(Command):
                         channel_list_query_by_uid,
                         channel_list_query_by_name,
                         channel_list_query_all,
-                        user_login
+                        user_login,
+                        user_query_all,
+                        user_update_channel_list,
                         ]
                         
         self.add_all(*command_list)

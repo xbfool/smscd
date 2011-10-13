@@ -13,6 +13,8 @@ class UserController(object):
         self.c = context
         self.user_t = Table('user', self.c.meta, autoload=True, autoload_with=self.c.db)
         self.session_t =  Table('sessions', self.c.meta, autoload=True, autoload_with=self.c.db)
+        self.channel_list_t = Table('ChannelList', self.c.meta, autoload=True, autoload_with=self.c.db)
+        
     def login(self, username, password):
         try:
             sel = select([self.user_t], self.user_t.c.username==username)
@@ -30,3 +32,36 @@ class UserController(object):
         except:
             print_exc()
             return None  
+        
+    def __channel_list_exist(self, id):
+        try:
+            sel = select([self.channel_list_t], self.channel_list_t.c.uid==id)
+            res = self.c.db.execute(sel)
+            r =  res.fetchone()
+            if r:
+                True
+            else:
+                return False
+        except:
+            print_exc()
+            return False
+        
+    def query_all(self):
+        sel = select([self.user_t])
+        res = self.c.db.execute(sel)
+        rlist = []
+        if res != None:
+            for r in res:
+                rlist.append(dict(r.items()))
+        return rlist
+    
+    def update_channel_list(self, uid, channel_list_id):
+        try:
+            if not self.__channel_list_exist(channel_list_id):
+                return False
+            up = self.user_t.update().where(self.user_t.c.uid == uid).values(channel_list_id = channel_list_id)
+            self.c.db.execute(up)
+            return True
+        except:
+            print_exc()
+            return False
