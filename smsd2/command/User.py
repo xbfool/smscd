@@ -39,7 +39,7 @@ class UserController(object):
             res = self.c.db.execute(sel)
             r =  res.fetchone()
             if r:
-                True
+                return True
             else:
                 return False
         except:

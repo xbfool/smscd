@@ -31,9 +31,6 @@ package com.xbfool.smsc.command
 							item.errno==null?0:item.errno));
 						break;
 					}
-					case 'channel_item_add':{
-						break;
-					}
 					case 'channel_item_query_all':{
 						if(item.errno == 0){
 							user.channel_item_list = item.ret;
@@ -43,6 +40,12 @@ package com.xbfool.smsc.command
 					case 'channel_list_query_all':{
 						if(item.errno == 0){
 							user.channel_list_list = item.ret;
+						}
+						break;
+					}
+					case 'user_query_all':{
+						if(item.errno == 0){
+							user.user_channel_list = item.ret;
 						}
 						break;
 					}

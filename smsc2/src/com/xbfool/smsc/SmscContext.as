@@ -18,6 +18,7 @@ package com.xbfool.smsc {
 		public var processingBarPage:ProcessingBarPage;
 		public var channelItemManagePage:ChannelItemManagePage;
 		public var channelListManagePage:ChannelListManagePage;
+		public var userChannelManagePage:UserChannelManagePage;
 		public function SmscContext() {
 			super();
 		}
@@ -63,6 +64,7 @@ package com.xbfool.smsc {
 			injector.mapSingleton(UploadMessagePage);
 			injector.mapValue(ChannelItemManagePage, this.channelItemManagePage);
 			injector.mapValue(ChannelListManagePage, this.channelListManagePage);
+			injector.mapValue(UserChannelManagePage, this.userChannelManagePage);
 			injector.mapSingleton(UserChannelManagePage);
 			injector.mapSingleton(ChannelItemAddPage);
 			injector.mapSingleton(ChannelListAddPage);
@@ -74,6 +76,7 @@ package com.xbfool.smsc {
 			mediatorMap.mapView(LoginPage, LoginPageMediator);
 			mediatorMap.mapView(ChannelItemManagePage, ChannelItemManagePageMediator);
 			mediatorMap.mapView(ChannelListManagePage, ChannelListManagePageMediator);
+			mediatorMap.mapView(UserChannelManagePage, UserChannelManagePageMediator);
 			mediatorMap.mapView(MainPage, MainPageMediator);
 			mediatorMap.mapView(MessageSendPage, MessageSendPageMediator);
 			mediatorMap.mapView(ProcessingBarPage, ProcessingBarPageMediator);

@@ -19,7 +19,8 @@ package com.xbfool.smsc.command
 			{
 				var request_list:Array = [{command:'user_login', username:event.userName, password:SHA1.hash(event.passWord)},
 										   {command:'channel_item_query_all'},
-										   {command:'channel_list_query_all'}];
+										   {command:'channel_list_query_all'},
+										   {command:'user_query_all'}];
 					
 				
 				

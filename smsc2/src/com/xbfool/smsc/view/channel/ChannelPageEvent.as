@@ -15,6 +15,8 @@ package com.xbfool.smsc.view.channel
 		public static const CHANNEL_LIST_ADD_ITEM:String = 'channel_list_add_item';
 		public static const CHANNEL_LIST_DELETE:String = 'channel_list_delete';
 		public static const CHANNEL_LIST_UPDATE:String = 'channel_list_update';
+		
+		public static const USER_CHANNEL_LIST_UPDATE:String = 'user_channel_list_update';
 		public function ChannelPageEvent(type:String)
 		{
 			super(type, true);

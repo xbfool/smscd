@@ -5,7 +5,7 @@ Created on 2011-10-6
 '''
 
 def ret_util(ret):
-    if ret is not None:
+    if ret or ret is []:
         return {'errno': 0, 'errtext':'command exec success', 'ret': ret}
     else:
         return {'errno': -1, 'errtext':'command exec failed', 'ret': ret}  
