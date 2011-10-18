@@ -1,0 +1,221 @@
+'''
+Created on 2011-10-18
+
+@author: xbfool
+'''
+from process_ret_sd_ct import process_ret_sd_ct
+from process_ret_changshang_a import process_ret_changshang_a
+from process_ret_dongguan_0769 import process_ret_dongguan_0769
+from process_ret_hb_ct import process_ret_hb_ct
+from process_ret_hlyd import process_ret_hlyd
+from process_ret_honglian import process_ret_honglian
+from process_ret_maoming_ct import process_ret_maoming_ct
+from process_ret_scp_0591 import process_ret_scp_0591
+from process_ret_shangxintong import process_ret_shangxintong
+class sender_settings():
+    def __init__(self):
+        settings = {}
+        settings['sd_ct_01'] = {
+            'name': 'sd_ct_01',
+            'host': '219.146.6.117',
+            'path': '/AIS/HTTPService/SendSMS.aspx',
+            'mode': 'POST',
+            'sub_mode': 'sd_ct',
+            'uid': '12345678901',
+            'pwd': 'fd1234',
+            'process_ret': process_ret_sd_ct
+        }
+        settings['hb_ct_01'] = {
+            'name': 'hb_ct_01', #0712a
+            'host': '58.53.194.80',
+            'path': '/swdx/services/APService',
+            'mode': 'soap',
+            'sub_mode':'hb_ct',
+            'entid': 'hbalswdx4',
+            'uid': 'hbalswdx402',
+            'apid': 'hbalswdx402',
+            'appwd': 'dufwe98r02q39',
+            'process_ret' : process_ret_hb_ct
+        }
+        settings['hb_ct_02'] = {
+            'name': 'hb_ct_02',
+            'host': '58.53.194.80',
+            'path': '/swdx/services/APService',
+            'mode': 'soap',
+            'sub_mode':'hb_ct',
+            'entid': 'szsccp',
+            'uid': 'sccp02',
+            'apid': 'apszsccp02',
+            'appwd': '7878779',
+            'process_ret' : process_ret_hb_ct
+        }
+        settings['hb_ct_03'] = {
+            'name': 'hb_ct_03',
+            'host': '58.53.194.80',
+            'path': '/swdx/services/APService',
+            'mode': 'soap',
+            'sub_mode':'hb_ct',
+            'entid': 'jzidcgs',
+            'uid': 'jzidc2',
+            'apid': 'jzidc2',
+            'appwd': 'abcjzidc2',
+            'process_ret' : process_ret_hb_ct
+        }
+        settings['hb_ct_04'] = {
+            'name': 'hb_ct_04',
+            'host': '58.53.194.80',
+            'path': '/swdx/services/APService',
+            'mode': 'soap',
+            'sub_mode':'hb_ct',
+            'entid': 'hbtmbckj',
+            'uid': 'hbtmbckj',
+            'apid': 'hbtmbckj',
+            'appwd': 'b5EZq4BW',
+            'webpwd': 'sdj5alk6',
+            'process_ret' : process_ret_hb_ct
+        }
+        settings['hlyd_01'] = {
+            'name': 'hlyd_01',
+            'host': 'hl.my2my.cn',
+            'path': '/services/esmsservice',
+            'mode': 'soap',
+            'sub_mode': 'hlyd',
+            'cpid': '9033',
+            'cppwd': '123456',
+            'process_ret' : process_ret_hlyd
+        }
+        settings['changshang_a_01'] = {
+            'name': 'changshagn_a_01',
+            'host': '123.196.114.68',
+            'port': '8080',
+            'path': '/sms_send2.do',
+            'mode': 'POST',
+            'sub_mode': 'changshang_a',
+            'corp_id': '101083',
+            'corp_pwd': 'f101083',
+            'corp_service':'10655lt',
+            'process_ret' : process_ret_changshang_a
+        }
+        
+        settings['changshang_a_02'] = {
+            'name': 'changshagn_a_02',
+            'host': '123.196.114.68',
+            'port': '8080',
+            'path': '/sms_send2.do',
+            'mode': 'POST',
+            'sub_mode': 'changshang_a',
+            'corp_id': '10108301',
+            'corp_pwd': 'f101083',
+            'corp_service':'10659dx',
+            'process_ret' : process_ret_changshang_a
+        }
+        
+        settings['changshang_a_03'] = {
+            'name': 'changshagn_a_03',
+            'host': '123.196.114.68',
+            'port': '8080',
+            'path': '/sms_send2.do',
+            'mode': 'POST',
+            'sub_mode': 'changshang_a',
+            'corp_id': '10108302',
+            'corp_pwd': 'f101083',
+            'corp_service':'0514yd',
+            'process_ret' : process_ret_changshang_a
+        }
+        
+        settings['changshang_a_04'] = {
+            'name': 'changshagn_a_04',
+            'host': '123.196.114.68',
+            'port': '8080',
+            'path': '/sms_send2.do',
+            'mode': 'POST',
+            'sub_mode': 'changshang_a',
+            'corp_id': '10108304',
+            'corp_pwd': 'f101083',
+            'corp_service':'lthy',
+            'process_ret' : process_ret_changshang_a
+        }
+        
+        settings['honglian_01'] = {
+            'name': 'honglian_01',
+            'host': '219.238.160.81',
+            'path': '/interface/limitnew.asp',
+            'mode': 'POST',
+            'sub_mode': 'honglian',
+            'username':'jnfd',
+            'password':'647185',
+            'epid':'372',
+            'process_ret': process_ret_honglian
+        }
+        
+        settings['honglian_bjyh'] = {
+            'name': 'honglian_bjyh',
+            'host': '219.238.160.81',
+            'path': '/interface/limitnew.asp',
+            'mode': 'POST',
+            'sub_mode': 'honglian',
+            'username':'jnfdbjyh',
+            'password':'123456',
+            'epid':'606',
+            'process_ret': process_ret_honglian
+        }
+        
+        settings['honglian_jtyh'] = {
+            'name': 'honglian_jtyh',
+            'host': '219.238.160.81',
+            'path': '/interface/limitnew.asp',
+            'mode': 'POST',
+            'sub_mode': 'honglian',
+            'username':'fdjtyh',
+            'password':'123456',
+            'epid':'607',
+            'process_ret': process_ret_honglian
+        }
+                
+        settings['honglian_ty'] = {
+            'name': 'honglian_ty',
+            'host': '219.238.160.81',
+            'path': '/interface/limitnew.asp',
+            'mode': 'POST',
+            'sub_mode': 'honglian',
+            'username':'fdzxyy',
+            'password':'123456',
+            'epid':'6101',
+            'process_ret': process_ret_honglian
+        }
+        settings['shangxintong_01'] = {
+            'name': 'shangxintong_01',
+            'host': '218.15.25.98',
+            'path': '/sxt_webservice/services/SMSService?wsdl',
+            'mode': 'soap',
+            'port': '8081',
+            'sub_mode': 'shangxintong',
+            'account': 'ykxx',
+            'password': '123789',
+            'process_ret' : process_ret_shangxintong
+        }
+        settings['maoming_ct_0668'] = {
+            'name': 'maoming_ct_0668',
+            'host': '113.107.163.203',
+            'path': '/WebService1.6/sendSMS',
+            'port': '8080',
+            'sub_mode': 'maoming_ct',
+            'srcmobile': 'fuda',
+            'password': 'fudaduanxin123',
+            'mode': 'POST',
+            'process_ret': process_ret_maoming_ct
+        }
+        settings['scp_0591_a'] = {
+            'name': 'scp_0591a',
+            'host': 'www.smsbird.cn',
+            'path': '/UserInterface/SendSmsBatch.asp',
+            'port': '8000',
+            'sub_mode': 'scp_0591',
+            'UserName': '90088',
+            'Password': '123456',
+            'mode': 'GET',
+            'process_ret': process_ret_scp_0591
+        }
+        settings['default'] = settings['hb_ct_01']
+        
+        self.__settings = settings
