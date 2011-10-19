@@ -218,4 +218,4 @@ class sender_settings():
         }
         settings['default'] = settings['hb_ct_01']
         
-        self.__settings = settings
+        self.settings = settings

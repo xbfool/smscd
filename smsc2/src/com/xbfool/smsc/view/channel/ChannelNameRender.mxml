@@ -16,5 +16,5 @@
 			}
 		]]>
 	</mx:Script>
-	<mx:Label  text="{data.name} : {display(data.status)}"/>
+	<mx:Label  text="{data.desc} : {data.name} : {display(data.status)}"/>
 </mx:HBox>

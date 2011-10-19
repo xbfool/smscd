@@ -6,34 +6,32 @@ from threading import Thread, Lock
 from datetime import datetime
 from time import sleep
 
-from smsd2.sender.loadcfg import loadcfg
-from dbsql import dbsql
+
 from zhttp import zhttp_pool
 from xml.dom.minidom import parseString
 from xml.sax import saxutils
-from msg_status import msg_status
+
 from traceback import print_exc
 import phonenumber
 from base64 import b64encode
 from zlib import compress
 from random import seed, shuffle
 from settings import sender_settings
-
+from ChannelController import ChannelController
+from msg_util import *
 class sms_sender(object):
     def __init__(self, chk_interval=3):
         self.__chk_interval = chk_interval
-        self.cfg = loadcfg('smsd.ini')
-        
-        self.settings = sender_settings()
-        for item in self.settings:
+        self.channel_controller = ChannelController()
+        self.msg_controller = MsgController()
+        self.settings = sender_settings().settings
+        for item in self.settings.itervalues():
             item['timeout_count'] = 0
             item['last_update'] = datetime.now()
         
-        self.__zhttp_pool = zhttp_pool(1, self.settings, self.__http_callback, timeout_callback=self.__timeout_callback())
+        self.__zhttp_pool = zhttp_pool(1, self.settings, self.__http_callback, timeout_callback=self.__timeout_callback)
         
-        self.__db = dbsql(**self.cfg.database.raw_dict)
-        self.__dblock = Lock()
-        
+
         self.__ret_queue = Queue(0x10000)
         
         self.__pending = []
@@ -43,7 +41,7 @@ class sms_sender(object):
         self.__worker_exit_lock.acquire()
         self.__worker_thread = Thread(None, self.__worker, '%s checker thread' % self.__class__.__name__)
         self.__worker_thread.start()
-    
+
     def stop(self):
         self.__zhttp_pool.stop()
         self.__worker_exit_lock.release()
@@ -81,7 +79,7 @@ class sms_sender(object):
             # process returns
             self.__process_ret(now)
             # process pending queue from database
-            if self.__process_queue() == 0:
+            if self.__process_queue_new() == 0:
                 #print '%s: no pending queue, sleep for %d seconds' % (self.__class__.__name__, self.__chk_interval)
                 sleep(self.__chk_interval)
     
@@ -114,14 +112,35 @@ class sms_sender(object):
         if count > 0:
             self.__db.raw_commit()
     
-    def get_filtered_addr(self, addr, percent, my_seed):
-        addr.sort()
-        seed(my_seed)
-        shuffle(addr)
+    def get_filtered_addr(self, addr, percent, my_seed, total_num=0):
+        if(percent is not None and percent <= 100 and percent >= 50 and total_num >= 100):
+            addr.sort()
+            seed(my_seed)
+            shuffle(addr)
+            
+            ret = addr[0:max(1, len(addr) * percent / 100)]
+            return ret
+        else:
+            return addr
         
-        ret = addr[0:max(1, len(addr) * percent / 100)]
-        return ret
-        
+    def __process_queue_new(self):
+        messages = self.msg_controller.get_messages()
+        count = 0
+        for msg in messages:
+            if msg['uid'] in self.__pending:
+                print self.__pending
+                continue
+            self.__pending.append(msg['uid'])
+            
+            msg['addr'] = msg['address'].split(';')
+            #processor = self.channel_controller.get_processor(msg)
+            #processor.send(msg)
+            self.get_filtered_addr(msg['address'].split(';'), msg['percent'], msg['seed'], msg['total_num'])
+            print msg
+            
+            count += 1
+        return count
+
     def __process_queue(self):
         q = self.__db.raw_sql_query('SELECT user_uid, uid,address,msg,channel, msg_num, total_num, seed FROM message WHERE status = %s and channel != "card_send_a" ORDER BY uid DESC LIMIT 500',
                                      msg_status.F_ADMIT)
@@ -341,7 +360,7 @@ class sms_sender(object):
                     % (setting['UserName'], setting['UserPwd'], b64encode(compress(msgtext)), 0)
                     self.__zhttp_pool.req(channel, {'user_uid':user_uid, 'setting':setting, 'uid':uid, 'msg_num':msg_num, 'percent':percent},
                                       soapaction='http://61.145.168.234:90/Interface.asmx',
-                                      soap=soap)   
+                                      soap=soap)  
                     count += 1
                 elif setting.get('sub_mode') == 'maoming_ct':
                     print "in maoming_ct"

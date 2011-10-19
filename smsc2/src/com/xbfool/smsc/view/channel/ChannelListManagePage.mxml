@@ -74,11 +74,11 @@
 				for(var i:int = 0; i < myDP.source.length; i++){
 					if(myDP[i].uid == index){
 						trace("hahah"+ myDP[i].name)
-						return myDP.source[i].name + ":" + display_status(myDP[0].status);
+						return myDP.source[i].desc + ":" + display_status(myDP[0].status);
 					}
 				}
 				
-				return myDP[0].name + ":" + display_status(myDP[0].status);
+				return myDP[0].desc + ":" + display_status(myDP[0].status);
 			}
 		]]>
 	</fx:Script>
@@ -89,7 +89,7 @@
 			
 		</s:HGroup>
 		
-		<mx:DataGrid id="channel_list_grid" width="100%" height="100%">
+		<mx:DataGrid id="channel_list_grid" height="100%">
 			<mx:columns>
 				<mx:DataGridColumn dataField="uid" headerText="UID"/>
 				<mx:DataGridColumn dataField="name" headerText="通道列表名"/>
@@ -181,6 +181,7 @@
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm1)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="移动2">
@@ -189,6 +190,7 @@
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm2)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="移动3">
@@ -197,6 +199,7 @@
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm3)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
 									/>
 				</mx:FormItem>
 			</mx:HBox>
@@ -207,6 +210,7 @@
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu1)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="联通2">
@@ -215,6 +219,7 @@
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu2)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="联通3">
@@ -223,6 +228,7 @@
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu3)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
 									/>
 				</mx:FormItem>
 			</mx:HBox>
@@ -233,6 +239,7 @@
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct1)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="电信2">
@@ -241,6 +248,7 @@
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct2)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
 									/>
 				</mx:FormItem>
 				<mx:FormItem label="电信3">
@@ -249,6 +257,7 @@
 									labelField="name"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct3)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
 									/>
 				</mx:FormItem>
 			</mx:HBox>
