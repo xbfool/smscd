@@ -12,6 +12,8 @@ from process_ret_honglian import process_ret_honglian
 from process_ret_maoming_ct import process_ret_maoming_ct
 from process_ret_scp_0591 import process_ret_scp_0591
 from process_ret_shangxintong import process_ret_shangxintong
+from process_req import *
+
 class sender_settings():
     def __init__(self):
         settings = {}
@@ -23,7 +25,8 @@ class sender_settings():
             'sub_mode': 'sd_ct',
             'uid': '12345678901',
             'pwd': 'fd1234',
-            'process_ret': process_ret_sd_ct
+            'process_ret': process_ret_sd_ct,
+            'process_req': process_req_sd_ct
         }
         settings['hb_ct_01'] = {
             'name': 'hb_ct_01', #0712a
@@ -35,7 +38,8 @@ class sender_settings():
             'uid': 'hbalswdx402',
             'apid': 'hbalswdx402',
             'appwd': 'dufwe98r02q39',
-            'process_ret' : process_ret_hb_ct
+            'process_ret' : process_ret_hb_ct,
+            'process_req' : process_req_hb_ct
         }
         settings['hb_ct_02'] = {
             'name': 'hb_ct_02',
@@ -47,7 +51,8 @@ class sender_settings():
             'uid': 'sccp02',
             'apid': 'apszsccp02',
             'appwd': '7878779',
-            'process_ret' : process_ret_hb_ct
+            'process_ret' : process_ret_hb_ct,
+            'process_req' : process_req_hb_ct
         }
         settings['hb_ct_03'] = {
             'name': 'hb_ct_03',
@@ -59,7 +64,8 @@ class sender_settings():
             'uid': 'jzidc2',
             'apid': 'jzidc2',
             'appwd': 'abcjzidc2',
-            'process_ret' : process_ret_hb_ct
+            'process_ret' : process_ret_hb_ct,
+            'process_req' : process_req_hb_ct
         }
         settings['hb_ct_04'] = {
             'name': 'hb_ct_04',
@@ -72,7 +78,8 @@ class sender_settings():
             'apid': 'hbtmbckj',
             'appwd': 'b5EZq4BW',
             'webpwd': 'sdj5alk6',
-            'process_ret' : process_ret_hb_ct
+            'process_ret' : process_ret_hb_ct,
+            'process_req' : process_req_hb_ct
         }
         settings['hlyd_01'] = {
             'name': 'hlyd_01',
@@ -82,7 +89,8 @@ class sender_settings():
             'sub_mode': 'hlyd',
             'cpid': '9033',
             'cppwd': '123456',
-            'process_ret' : process_ret_hlyd
+            'process_ret' : process_ret_hlyd,
+            'process_req' : process_req_hlyd
         }
         settings['changshang_a_01'] = {
             'name': 'changshagn_a_01',
@@ -94,7 +102,8 @@ class sender_settings():
             'corp_id': '101083',
             'corp_pwd': 'f101083',
             'corp_service':'10655lt',
-            'process_ret' : process_ret_changshang_a
+            'process_ret' : process_ret_changshang_a,
+            'process_req' : process_req_changshang_a
         }
         
         settings['changshang_a_02'] = {
@@ -107,7 +116,8 @@ class sender_settings():
             'corp_id': '10108301',
             'corp_pwd': 'f101083',
             'corp_service':'10659dx',
-            'process_ret' : process_ret_changshang_a
+            'process_ret' : process_ret_changshang_a,
+            'process_req' : process_req_changshang_a
         }
         
         settings['changshang_a_03'] = {
@@ -120,7 +130,8 @@ class sender_settings():
             'corp_id': '10108302',
             'corp_pwd': 'f101083',
             'corp_service':'0514yd',
-            'process_ret' : process_ret_changshang_a
+            'process_ret' : process_ret_changshang_a,
+            'process_req' : process_req_changshang_a
         }
         
         settings['changshang_a_04'] = {
@@ -133,7 +144,8 @@ class sender_settings():
             'corp_id': '10108304',
             'corp_pwd': 'f101083',
             'corp_service':'lthy',
-            'process_ret' : process_ret_changshang_a
+            'process_ret' : process_ret_changshang_a,
+            'process_req' : process_req_changshang_a
         }
         
         settings['honglian_01'] = {
@@ -145,7 +157,8 @@ class sender_settings():
             'username':'jnfd',
             'password':'647185',
             'epid':'372',
-            'process_ret': process_ret_honglian
+            'process_ret': process_ret_honglian,
+            'process_req': process_req_honglian,
         }
         
         settings['honglian_bjyh'] = {
@@ -157,7 +170,8 @@ class sender_settings():
             'username':'jnfdbjyh',
             'password':'123456',
             'epid':'606',
-            'process_ret': process_ret_honglian
+            'process_ret': process_ret_honglian,
+            'process_req': process_req_honglian,
         }
         
         settings['honglian_jtyh'] = {
@@ -169,7 +183,8 @@ class sender_settings():
             'username':'fdjtyh',
             'password':'123456',
             'epid':'607',
-            'process_ret': process_ret_honglian
+            'process_ret': process_ret_honglian,
+            'process_req': process_req_honglian,
         }
                 
         settings['honglian_ty'] = {
@@ -181,7 +196,8 @@ class sender_settings():
             'username':'fdzxyy',
             'password':'123456',
             'epid':'6101',
-            'process_ret': process_ret_honglian
+            'process_ret': process_ret_honglian,
+            'process_req': process_req_honglian,
         }
         settings['shangxintong_01'] = {
             'name': 'shangxintong_01',
@@ -192,7 +208,8 @@ class sender_settings():
             'sub_mode': 'shangxintong',
             'account': 'ykxx',
             'password': '123789',
-            'process_ret' : process_ret_shangxintong
+            'process_ret' : process_ret_shangxintong,
+            'process_req' : process_req_shangxintong
         }
         settings['maoming_ct_0668'] = {
             'name': 'maoming_ct_0668',
@@ -203,10 +220,11 @@ class sender_settings():
             'srcmobile': 'fuda',
             'password': 'fudaduanxin123',
             'mode': 'POST',
-            'process_ret': process_ret_maoming_ct
+            'process_ret': process_ret_maoming_ct,
+            'process_req' : process_ret_maoming_ct
         }
         settings['scp_0591_a'] = {
-            'name': 'scp_0591a',
+            'name': 'scp_0591_a',
             'host': 'www.smsbird.cn',
             'path': '/UserInterface/SendSmsBatch.asp',
             'port': '8000',
@@ -214,8 +232,22 @@ class sender_settings():
             'UserName': '90088',
             'Password': '123456',
             'mode': 'GET',
-            'process_ret': process_ret_scp_0591
+            'process_ret': process_ret_scp_0591,
+            'process_req' : process_req_scp_0591
+        }
+        settings['card_send_a'] = {
+            'name': 'card_send_a',
+            'sub_mode': 'card_send',
+            'mode': 'GET',
+            'host': 'localhost',
+            'path': '/',
+            'port': '8000',
+            'process_ret': None,
+            'process_req' : None
         }
         settings['default'] = settings['hb_ct_01']
         
         self.settings = settings
+        for item in settings:
+            item['timeout_count'] = 0
+            item['last_update'] = 0
