@@ -5,7 +5,7 @@ Created on 2011-10-18
 '''
 
 from xml.dom.minidom import parseString
-import db_controller
+
 from traceback import print_exc
 def process_ret_shangxintong(sender, param):
     result = "something is error"
@@ -15,12 +15,12 @@ def process_ret_shangxintong(sender, param):
 
         
         if result[0] == '0':
-            db_controller.send_success(sender.__db, param, result)
+            sender.msg_controller.send_success(param, result)
         else:
-            db_controller.send_fail(sender.__db, param, result)
+            sender.msg_controller.send_fail(param, result)
             
     except:
         print_exc()
-        db_controller.send_fail(sender.__db, param, result)
+        sender.msg_controller.send_fail(param, result)
   
     return 1

@@ -14,3 +14,8 @@ class msg_status():
     F_CANCEL = 6
     F_FAIL = 7
     F_POST_COMMIT = 8
+    
+class channel_status():
+    S_OK = 0
+    S_ERROR = 1
+    S_STOP = 2

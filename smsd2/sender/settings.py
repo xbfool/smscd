@@ -13,7 +13,7 @@ from process_ret_maoming_ct import process_ret_maoming_ct
 from process_ret_scp_0591 import process_ret_scp_0591
 from process_ret_shangxintong import process_ret_shangxintong
 from process_req import *
-
+from datetime import datetime
 class sender_settings():
     def __init__(self):
         settings = {}
@@ -248,6 +248,6 @@ class sender_settings():
         settings['default'] = settings['hb_ct_01']
         
         self.settings = settings
-        for item in settings:
+        for item in settings.itervalues():
             item['timeout_count'] = 0
-            item['last_update'] = 0
+            item['last_update'] = datetime.now()

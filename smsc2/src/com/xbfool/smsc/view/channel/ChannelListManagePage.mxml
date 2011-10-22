@@ -178,7 +178,7 @@
 				<mx:FormItem label="移动1">
 					<s:DropDownList id="cm1" prompt="请选择通道"
 									dataProvider="{myDP}"
-									labelField="name"
+									labelField="desc"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm1)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									width="300"
@@ -187,7 +187,7 @@
 				<mx:FormItem label="移动2">
 					<s:DropDownList id="cm2" prompt="请选择通道"
 									dataProvider="{myDP}"
-									labelField="name"
+									labelField="desc"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm2)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									width="300"
@@ -196,7 +196,7 @@
 				<mx:FormItem label="移动3">
 					<s:DropDownList id="cm3" prompt="请选择通道"
 									dataProvider="{myDP}"
-									labelField="name"
+									labelField="desc"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm3)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									width="300"
@@ -207,7 +207,7 @@
 				<mx:FormItem label="联通1">
 					<s:DropDownList id="cu1" prompt="请选择通道"
 									dataProvider="{myDP}"
-									labelField="name"
+									labelField="desc"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu1)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									width="300"
@@ -216,7 +216,7 @@
 				<mx:FormItem label="联通2">
 					<s:DropDownList id="cu2" prompt="请选择通道"
 									dataProvider="{myDP}"
-									labelField="name"
+									labelField="desc"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu2)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									width="300"
@@ -225,7 +225,7 @@
 				<mx:FormItem label="联通3">
 					<s:DropDownList id="cu3" prompt="请选择通道"
 									dataProvider="{myDP}"
-									labelField="name"
+									labelField="desc"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu3)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									width="300"
@@ -236,7 +236,7 @@
 				<mx:FormItem label="电信1">
 					<s:DropDownList id="ct1" prompt="请选择通道"
 									dataProvider="{myDP}"
-									labelField="name"
+									labelField="desc"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct1)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									width="300"
@@ -245,7 +245,7 @@
 				<mx:FormItem label="电信2">
 					<s:DropDownList id="ct2" prompt="请选择通道"
 									dataProvider="{myDP}"
-									labelField="name"
+									labelField="desc"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct2)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									width="300"
@@ -254,7 +254,7 @@
 				<mx:FormItem label="电信3">
 					<s:DropDownList id="ct3" prompt="请选择通道"
 									dataProvider="{myDP}"
-									labelField="name"
+									labelField="desc"
 									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct3)}"
 									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
 									width="300"

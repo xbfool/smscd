@@ -6,11 +6,13 @@ Created on 2011-10-19
 from smsd2.database.db_engine import create_db
 from smsd2.config.config_reader import loadcfg
 from sqlalchemy import Table, select
-from msg_status import *
+from msg_status import msg_status, channel_status
 from sqlalchemy import MetaData
 from settings import sender_settings
 import phonenumber
 import time
+from traceback import print_exc
+
 class msg_send():
     def __init__(self):
         self.addr = []
@@ -73,21 +75,34 @@ class MsgController():
     def get_channel_list(self, msg):
         channel_list_id = self._get_user_channel_list_id(msg)
         l = self._get_user_channel_list(channel_list_id)
-        if not l:
-            l = self._get_old_channel_list(msg['user_uid'])
+
         
+        
+        if not l:
+            l = self._get_old_channel_list(msg['user_uid'], False)
+        else:
+            l_old = self._get_old_channel_list(msg['user_uid'], False)
+            l.cm.extend(l_old.cm)
+            l.cu.extend(l_old.cu)
+            l.ct.extend(l_old.ct)
+        ret_l = []
         try:
             pm = phonenumber.phonenumber()
             channel_type = pm.check_addr(msg['addr'][0])
             if channel_type == pm.S_CM:
-                return l.cm
+                ret_l = l.cm
             elif channel_type == pm.S_CU:
-                return l.cu
+                ret_l = l.cu
             elif channel_type == pm.S_CT:
-                return l.ct
+                ret_l = l.ct
         except:
-            return l.cu
+            ret_l = l.cu
         
+        checked = []
+        for e in ret_l:
+            if e not in checked:
+                checked.append(e)
+        return checked
     
     def _get_user_channel_list_id(self, msg):
         sel = select([self.user_t], self.user_t.c.uid == msg['user_uid'])
@@ -152,7 +167,7 @@ class MsgController():
         self.default_list = c
         return c
     
-    def _get_old_channel_list(self, user_uid):
+    def _get_old_channel_list(self, user_uid, add_default=False):
         sel = select([self.user_t], self.user_t.c.uid == user_uid)
         res = self.db.execute(sel)
         r = res.fetchone()
@@ -163,12 +178,13 @@ class MsgController():
         c.cm = [self._get_channe_item_by_name(r.channel_cm)]
         c.cu = [self._get_channe_item_by_name(r.channel_cu)]
         c.ct = [self._get_channe_item_by_name(r.channel_ct)]
-        default = self._get_default_channel_list()
-        if default:
-            c.cm.extend(default.cm)
-            c.cu.extend(default.cu)
-            c.ct.extend(default.ct)
-        
+
+        if add_default:
+            default = self._get_default_channel_list()
+            if default:
+                c.cm.extend(default.cm)
+                c.cu.extend(default.cu)
+                c.ct.extend(default.ct)
         return c
     def _get_channe_item_by_name(self, name):
         if self.channel_item_name_dict.get(name):
@@ -205,6 +221,55 @@ class MsgController():
         for i in range(len(list.cu)):
             self._print_channel_item('cu'+str(i+1), list.cu[i])
         for i in range(len(list.ct)):
-            self._print_channel_item('ct'+str(i+1), list.ct[i])   
+            self._print_channel_item('ct'+str(i+1), list.ct[i]) 
+              
+    def send_success(self, param, result):
+        try:
+            update_args = {}
+            update_args['status'] = msg_status.F_SEND
+            update_args['last_update'] = param['time']
+            update_args['fail_msg'] = result
+            update_args['sub_num'] = param['msg_num'] * param['percent'] / 100
+            up = self.msg_t.update().where(self.msg_t.c.uid == param['uid']).values(**update_args)
+            self.db.execute(up)
+        except:
+            print_exc()
             
+        try:
+            update_args = {}
+            update_args['msg_num'] = self.user_t.c.msg_num - param['msg_num']
+            up = self.user_t.update().where(self.user_t.c.uid == param['uid']).values(**update_args)
+            self.db.execute(up)
+            return True
+        except:
+            print_exc()
 
+      
+    def send_fail(self, param, result):
+        try:
+            update_args = {}
+            update_args['status'] = msg_status.F_FAIL
+            up = self.msg_t.update().where(self.msg_t.c.uid == param['uid']).values(**update_args)
+            self.db.execute(up)
+        except:
+            print_exc()
+      
+    def start_channel(self, item):
+        try:
+            update_args = {}
+            update_args['status'] = channel_status.S_OK
+            up = self.channel_item_t.update().where(self.channel_item_t.c.uid == item['uid']).values(**update_args)
+            self.db.execute(up)
+        except:
+            print_exc()
+        
+    
+    def stop_channel(self, item):
+        try:
+            update_args = {}
+            update_args['status'] = channel_status.S_ERROR
+            up = self.channel_item_t.update().where(self.channel_item_t.c.uid == item['uid']).values(**update_args)
+            self.db.execute(up)
+        except:
+            print_exc()
+        

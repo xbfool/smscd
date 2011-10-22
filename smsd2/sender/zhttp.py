@@ -131,8 +131,7 @@ class zhttp_pool():
                     print_exc()
                     current_connection.close()
                     current_connection.connect()
-                if self.__timeout_callback and i == self.__retry_list[-1]:
-                    self.__timeout_callback(param, ret)
+
 
 def __dummy_callback(queue, ret):
     # caution the callback must be thread safe

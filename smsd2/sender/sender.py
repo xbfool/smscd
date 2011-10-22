@@ -3,7 +3,7 @@
 
 from Queue import Queue, Empty
 from threading import Thread, Lock
-from datetime import datetime
+from datetime import datetime, timedelta
 from time import sleep
 
 
@@ -11,18 +11,39 @@ from zhttp import zhttp_pool
 import time
 from random import seed, shuffle
 from settings import sender_settings
-from ChannelController import ChannelController
+
 from msg_util import MsgController
-from traceback import print_exc
+from traceback import print_exc, format_exc
+import logging
+import logging.handlers
+from msg_status import channel_status
 class sms_sender(object):
     def __init__(self, chk_interval=3):
         self.__chk_interval = chk_interval
-        self.channel_controller = ChannelController()
+
         self.msg_controller = MsgController()
         self.settings = sender_settings().settings
-        for item in self.settings.itervalues():
-            item['timeout_count'] = 0
-            item['last_update'] = datetime.now()
+        self.timeout_dict = {}
+        LOG_FILENAME = 'smsd.sender.log'
+        
+        # Set up a specific logger with our desired output level
+        my_logger = logging.getLogger('smsd.sender')
+        my_logger.setLevel(logging.DEBUG)
+        # Add the log message handler to the logger
+        handler = logging.handlers.RotatingFileHandler(
+                      LOG_FILENAME, maxBytes=100000000, backupCount=5)
+        my_logger.addHandler(handler)
+        
+        handler.setLevel(logging.DEBUG)
+        
+        # create formatter
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        
+        # add formatter to ch
+        handler.setFormatter(formatter)
+
+
+        self.logger = my_logger
         
         self.__zhttp_pool = zhttp_pool(1, self.settings, self.__http_callback, timeout_callback=self.__timeout_callback)
         
@@ -100,12 +121,11 @@ class sms_sender(object):
                     param['time'] = now
                     param['ret'] = ret
                     self.__timeout_clean(param['setting'])
+                    self.logger.debug('processing ret : param:%s' %(param))
                     count = count + process(self, param)
             except:
                 pass
                 
-        if count > 0:
-            self.__db.raw_commit()
     
     def get_filtered_addr(self, addr, percent, my_seed, total_num=0):
         if(percent is not None and percent <= 100 and percent >= 50 and total_num >= 100):
@@ -124,20 +144,46 @@ class sms_sender(object):
         self.msg_controller.clean_dict()
         for msg in messages:
             if msg['uid'] in self.__pending:
-                print self.__pending
                 continue
-            self.__pending.append(msg['uid'])
-            
             msg['addr'] = msg['address'].split(';')
             channel_list = self.msg_controller.get_channel_list(msg)
-            print msg
-            for item in channel_list:
+            if len(channel_list) == 0:
+                continue
+            self.__pending.append(msg['uid'])
+            for index, item in enumerate(channel_list):
+                if item['status'] == channel_status.S_STOP:
+                    continue
+                elif (datetime.now() - item['setting']['last_update'] <= timedelta(hours=1) and
+                    item['status'] != channel_status.S_OK):
+                    continue
+                
                 try:
                     msg['channel'] = item['name']
+                    self.logger.debug('sending : msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg))
                     item['setting']['process_req'](self.__zhttp_pool, item['setting'], msg)
+                    self.logger.debug('sending ok: msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg))
+                    if self.timeout_dict.get(item['uid']):
+                        del self.timeout_dict[item['uid']]
+                    if item['status'] != channel_status.S_OK:
+                        self.msg_controller.start_channel(item)
+                        self.logger.debug('channel start: channel:%s' % (item))
                     break
                 except:
                     print_exc()
+                    if index == len(channel_list) - 1:
+                        self.__pending.remove(msg['uid'])
+                    self.logger.debug('sending error: msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg))
+                    self.logger.debug('sending exception: \n %s' % format_exc())
+                    if self.timeout_dict.get(item['uid']) and self.timeout_dict[item['uid']]['count'] >= 3:
+                        self.msg_controller.stop_channel(item)
+                        self.logger.debug('channel down: channel:%s' % (item))
+                    else:
+                        if not self.timeout_dict.get(item['uid']):
+                            self.timeout_dict[item['uid']] = {'count':0, 
+                                                              'last_update':datetime.now()}
+                                                        
+                        self.timeout_dict[item['uid']]['count'] += 1
+                        self.timeout_dict[item['uid']]['last_update'] = datetime.now()
                     continue
                 
             count += 1

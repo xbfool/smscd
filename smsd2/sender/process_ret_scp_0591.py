@@ -15,17 +15,17 @@ def process_ret_scp_0591(sender, param):
         rl = result.split(';')
 
         if rl[0].split('=')[1] == '0':
-            db_controller.send_success(sender.__db, param, result)
+            db_controller.send_success(param, result)
         else:
             if len(rl) == 2:
                 try:
                     result = rl[1].split('=')[1].decode('gbk').encode('utf8')
                 except:
                     pass
-            db_controller.send_fail(sender.__db, param, result)
+            sender.msg_controller.send_fail(param, result)
         
     except:
         print_exc()
-        db_controller.send_fail(sender.__db, param, result)
+        sender.msg_controller.send_fail(param, result)
   
     return 1
