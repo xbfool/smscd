@@ -389,8 +389,8 @@ class smsd(object):
                          'honglian_bjyh', 'honglian_jtyh',
                          'honglian_ty'):
             addr = []
-            for i in xrange(0, len(addr_list), 50):
-                addr.append(addr_list[i: min(i + 50, len(addr_list))])
+            for i in xrange(0, len(addr_list), 20):
+                addr.append(addr_list[i: min(i + 20, len(addr_list))])
             for item in addr:
                 new_message = message()        
                 new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel, len(addr_list), seed)
@@ -413,8 +413,8 @@ class smsd(object):
                 self.messages[new_message.uid] = new_message     
         else:
             addr = []
-            for i in xrange(0, len(addr_list), 50):
-                addr.append(addr_list[i: min(i + 50, len(addr_list))])
+            for i in xrange(0, len(addr_list), 20):
+                addr.append(addr_list[i: min(i + 20, len(addr_list))])
             for item in addr:
                 new_message = message()        
                 new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel, len(addr_list), seed)
