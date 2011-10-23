@@ -238,7 +238,7 @@ class MsgController():
         try:
             update_args = {}
             update_args['msg_num'] = self.user_t.c.msg_num - param['msg_num']
-            up = self.user_t.update().where(self.user_t.c.uid == param['uid']).values(**update_args)
+            up = self.user_t.update().where(self.user_t.c.uid == param['user_uid']).values(**update_args)
             self.db.execute(up)
             return True
         except:
