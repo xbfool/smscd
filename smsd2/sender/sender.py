@@ -24,6 +24,7 @@ class sms_sender(object):
         self.msg_controller = MsgController()
         self.settings = sender_settings().settings
         self.timeout_dict = {}
+        self.err_msg_dict = {}
         LOG_FILENAME = 'smsd.sender.log'
         
         # Set up a specific logger with our desired output level
@@ -101,7 +102,6 @@ class sms_sender(object):
     
 
     def __process_ret(self, now):
-        count = 0
         while True:
             try:
                 param, ret = self.__ret_queue.get(False)
@@ -122,9 +122,23 @@ class sms_sender(object):
                     param['ret'] = ret
                     self.__timeout_clean(param['setting'])
                     self.logger.debug('processing ret : param:%s' %(param))
-                    count = count + process(self, param)
+                    ret = process(self, param)
+                    if ret == 1:
+                        if self.err_msg_dict.get(param['uid']):
+                            del self.err_msg_dict[param['uid']]
+                    elif self.err_msg_dict.get(param['uid']):
+                        item = self.err_msg_dict.get(param['uid'])
+                        item[param['setting']['name']] = 1
+                        if len(item) >= 3:
+                            self.msg_controller.send_fail(param, 'this message send fail more than 3 times')
+                            del self.err_msg_dict[param['uid']]
+                    else:
+                        item = {}
+                        self.err_msg_dict[param['uid']] = item
+                        item[param['setting']['name']] = 1
             except:
                 pass
+        
                 
     
     def get_filtered_addr(self, addr, percent, my_seed, total_num=0):
@@ -153,8 +167,10 @@ class sms_sender(object):
             for index, item in enumerate(channel_list):
                 if item['status'] == channel_status.S_STOP:
                     continue
-                elif (datetime.now() - item['setting']['last_update'] <= timedelta(hours=1) and
+                elif (datetime.now() - item['setting']['last_update'] <= timedelta(minutes=3) and
                     item['status'] != channel_status.S_OK):
+                    continue
+                elif self.err_msg_dict.get(msg['uid']) and item['setting']['name'] in self.err_msg_dict[msg['uid']]:
                     continue
                 
                 try:

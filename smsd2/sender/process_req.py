@@ -69,7 +69,8 @@ def process_req_sd_ct(http_pool, setting, msg):
                       pwd=setting['pwd'])
 
 def process_req_honglian(http_pool, setting, msg):
-    http_pool.req(msg['channel'],
+    if not msg.get['ext']:
+        http_pool.req(msg['channel'],
                   {'user_uid':msg['user_uid'], 
                             'setting':setting, 
                             'uid':msg['uid'], 
@@ -79,9 +80,22 @@ def process_req_honglian(http_pool, setting, msg):
                   message=msg['content'].decode('utf8').encode('gbk'),
                   username=setting['username'],
                   password=setting['password'], 
-                  epid=setting['epid'],
-                  subcode=msg['ext'],
+                  epid=setting['epid']
             )
+    else:
+        http_pool.req(msg['channel'],
+                      {'user_uid':msg['user_uid'], 
+                                'setting':setting, 
+                                'uid':msg['uid'], 
+                                'msg_num':msg['msg_num'],
+                                 'percent':msg['percent']},
+                      phone=','.join(msg['addr']), 
+                      message=msg['content'].decode('utf8').encode('gbk'),
+                      username=setting['username'],
+                      password=setting['password'], 
+                      epid=setting['epid'],
+                      subcode=msg['ext'],
+                )
 
 def process_req_hlyd(http_pool, setting, msg):
     soap = \

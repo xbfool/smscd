@@ -19,7 +19,8 @@ def process_ret_honglian(sender, param):
         
     if result == success_str:
         sender.msg_controller.send_success(param, result)
+        return 1
     else:
-        sender.msg_controller.send_fail(param, result)
+        return 0
         
     return 1

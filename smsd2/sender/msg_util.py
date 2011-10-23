@@ -33,8 +33,8 @@ class MsgController():
         self.meta = MetaData()
         self.msg_t = Table('message', self.meta, autoload=True, autoload_with=self.db)
         self.user_t = Table('user', self.meta, autoload=True, autoload_with=self.db)
-        self.channel_list_t = Table('channellist', self.meta, autoload=True, autoload_with=self.db)
-        self.channel_item_t = Table('channelitem', self.meta, autoload=True, autoload_with=self.db)
+        self.channel_list_t = Table('ChannelList', self.meta, autoload=True, autoload_with=self.db)
+        self.channel_item_t = Table('ChannelItem', self.meta, autoload=True, autoload_with=self.db)
         self.channel_list_dict = {}
         self.channel_item_dict = {}
         self.channel_item_name_dict = {}
