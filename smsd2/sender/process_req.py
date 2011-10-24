@@ -184,7 +184,7 @@ def process_req_changshang_a(http_pool, setting, msg):
         sendmsg = tmpmsg.encode('gbk')
     except:
         pass
-    if msg['ext'] == None or msg['ext'] == '':  
+    if not msg.get('ext') or msg['ext'] == None or msg['ext'] == '':  
         http_pool.__zhttp_pool.req(msg['channel'],
                               {'user_uid':msg['user_uid'], 
                                'setting':setting, 

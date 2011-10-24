@@ -59,7 +59,6 @@ class MsgController():
             ret['content'] = ret['msg']
             ret['percent'] = self.get_user_percent(ret['user_uid'])
             yield ret
-            time.sleep(10)
     def get_user_percent(self, user_uid):
         if self.user_dict.get(user_uid):
             return self.user_dict[user_uid].percent
@@ -79,7 +78,7 @@ class MsgController():
         
         
         if not l:
-            l = self._get_old_channel_list(msg['user_uid'], False)
+            l = self._get_old_channel_list(msg['user_uid'], True)
         else:
             l_old = self._get_old_channel_list(msg['user_uid'], False)
             l.cm.extend(l_old.cm)

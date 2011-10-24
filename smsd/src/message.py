@@ -135,13 +135,16 @@ class message(dbobj):
             else:
                 d['last_update'] = self.create_time.strftime("%y-%m-%d %H:%M")
 
-            try:
-                d['fail_msg'] = self.fail_msg.decode('utf8').encode('utf8')
-            except:
+            if self.fail_msg == None:
+                d['fail_msg'] = 'no fail message'
+            else:
                 try:
-                    d['fail_msg'] = self.fail_msg.decode('gbk').encode('utf8')
+                    d['fail_msg'] = self.fail_msg.decode('utf8').encode('utf8')
                 except:
-                    d['fail_msg'] = 'unknown encoding'
+                    try:
+                        d['fail_msg'] = self.fail_msg.decode('gbk').encode('utf8')
+                    except:
+                        d['fail_msg'] = 'unknown encoding'
             d['total_num'] = self.total_num
             d['sub_num'] = self.sub_num
             d['seed'] = self.seed

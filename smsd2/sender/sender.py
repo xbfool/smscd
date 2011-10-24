@@ -167,7 +167,8 @@ class sms_sender(object):
             for index, item in enumerate(channel_list):
                 if item['status'] == channel_status.S_STOP:
                     continue
-                elif (datetime.now() - item['setting']['last_update'] <= timedelta(minutes=3) and
+                elif (self.timeout_dict.get(item['uid']) and 
+                      datetime.now() - self.timeout_dict[item['uid']]['last_update'] <= timedelta(minutes=5) and
                     item['status'] != channel_status.S_OK):
                     continue
                 elif self.err_msg_dict.get(msg['uid']) and item['setting']['name'] in self.err_msg_dict[msg['uid']]:
