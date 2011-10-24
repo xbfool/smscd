@@ -134,11 +134,11 @@ class MsgController():
             c.ct.append(self._get_user_channel_item(i))
         
         self.channel_list_dict[channel_list_id] = c
-        default = self._get_default_channel_list()
-        if default:
-            c.cm.extend(default.cm)
-            c.cu.extend(default.cu)
-            c.ct.extend(default.ct)
+#        default = self._get_default_channel_list()
+#        if default:
+#            c.cm.extend(default.cm)
+#            c.cu.extend(default.cu)
+#            c.ct.extend(default.ct)
         return c
     
     def _get_default_channel_list(self):
@@ -178,12 +178,12 @@ class MsgController():
         c.cu = [self._get_channe_item_by_name(r.channel_cu)]
         c.ct = [self._get_channe_item_by_name(r.channel_ct)]
 
-        if add_default:
-            default = self._get_default_channel_list()
-            if default:
-                c.cm.extend(default.cm)
-                c.cu.extend(default.cu)
-                c.ct.extend(default.ct)
+#        if add_default:
+#            default = self._get_default_channel_list()
+#            if default:
+#                c.cm.extend(default.cm)
+#                c.cu.extend(default.cu)
+#                c.ct.extend(default.ct)
         return c
     def _get_channe_item_by_name(self, name):
         if self.channel_item_name_dict.get(name):
