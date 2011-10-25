@@ -185,7 +185,7 @@ def process_req_changshang_a(http_pool, setting, msg):
     except:
         pass
     if not msg.get('ext') or msg['ext'] == None or msg['ext'] == '':  
-        http_pool.__zhttp_pool.req(msg['channel'],
+        http_pool.req(msg['channel'],
                               {'user_uid':msg['user_uid'], 
                                'setting':setting, 
                                'uid':msg['uid'], 
@@ -194,7 +194,7 @@ def process_req_changshang_a(http_pool, setting, msg):
                               corp_id=setting['corp_id'], 
                               corp_pwd=setting['corp_pwd'], 
                               corp_service=setting['corp_service'],
-                              mobile=';'.join(msg['addr']), 
+                              mobile=','.join(msg['addr']), 
                               msg_content=sendmsg)
     else:
         http_pool.req(msg['channel'], 
@@ -207,7 +207,7 @@ def process_req_changshang_a(http_pool, setting, msg):
                       corp_pwd=setting['corp_pwd'], 
                       corp_service=setting['corp_service'], 
                       ext=msg['ext'],
-                      mobile=msg['addr'], 
+                      mobile=','.join(msg['addr']), 
                       msg_content=sendmsg)
 
 def process_req_dongguan_0769(http_pool, setting, msg):

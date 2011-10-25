@@ -33,12 +33,12 @@
 		
 		<mx:FormItem label="账号">
 			<mx:TextInput id="usernameTxt"
-						  text="root"/>
+						  text=""/>
 		</mx:FormItem>
 		
 		<mx:FormItem label="密码">
 			<mx:TextInput id="passwordTxt"
-						  text="debug"
+						  text=""
 						  displayAsPassword="true"/>
 		</mx:FormItem>
 		

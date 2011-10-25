@@ -17,6 +17,7 @@ from traceback import print_exc, format_exc
 import logging
 import logging.handlers
 from msg_status import channel_status
+from os import makedirs
 class sms_sender(object):
     def __init__(self, chk_interval=3):
         self.__chk_interval = chk_interval
@@ -25,14 +26,17 @@ class sms_sender(object):
         self.settings = sender_settings().settings
         self.timeout_dict = {}
         self.err_msg_dict = {}
-        LOG_FILENAME = 'smsd.sender.log'
-        
+        LOG_FILENAME = './logs/smsd.sender.log'
+        try:
+            makedirs('./logs')
+        except:
+            pass
         # Set up a specific logger with our desired output level
         my_logger = logging.getLogger('smsd.sender')
         my_logger.setLevel(logging.DEBUG)
         # Add the log message handler to the logger
-        handler = logging.handlers.RotatingFileHandler(
-                      LOG_FILENAME, maxBytes=100000000, backupCount=5)
+        handler = logging.handlers.TimedRotatingFileHandler(
+                      LOG_FILENAME, when='D', interval=1)
         my_logger.addHandler(handler)
         
         handler.setLevel(logging.DEBUG)
@@ -163,27 +167,37 @@ class sms_sender(object):
             channel_list = self.msg_controller.get_channel_list(msg)
             if len(channel_list) == 0:
                 continue
-            self.__pending.append(msg['uid'])
+            
             for index, item in enumerate(channel_list):
                 if item['status'] == channel_status.S_STOP:
+                    self.logger.debug('channel error: this channel:%s is down' % (item['name'])) 
                     continue
+                elif (item['status'] == channel_status.S_OK and self.timeout_dict.get(item['uid']) and
+                      datetime.now() - self.timeout_dict[item['uid']]['last_update'] <= timedelta(seconds=self._getWaitTime(self.timeout_dict[item['uid']]['count']))):
+                   
+                    continue                                                               
                 elif (self.timeout_dict.get(item['uid']) and 
-                      datetime.now() - self.timeout_dict[item['uid']]['last_update'] <= timedelta(minutes=5) and
+                      datetime.now() - self.timeout_dict[item['uid']]['last_update'] <= timedelta(hours=1) and
                     item['status'] != channel_status.S_OK):
                     continue
                 elif self.err_msg_dict.get(msg['uid']) and item['setting']['name'] in self.err_msg_dict[msg['uid']]:
                     continue
+                self.__pending.append(msg['uid'])
                 
                 try:
                     msg['channel'] = item['name']
+
+                    if item['status'] != channel_status.S_OK:
+                        if self.timeout_dict.get(item['uid']):
+                            del self.timeout_dict[item['uid']]
+                        self.msg_controller.start_channel(item)
+                        self.logger.debug('channel start: channel:%s' % (item))
                     self.logger.debug('sending : msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg))
                     item['setting']['process_req'](self.__zhttp_pool, item['setting'], msg)
                     self.logger.debug('sending ok: msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg))
                     if self.timeout_dict.get(item['uid']):
-                        del self.timeout_dict[item['uid']]
-                    if item['status'] != channel_status.S_OK:
-                        self.msg_controller.start_channel(item)
-                        self.logger.debug('channel start: channel:%s' % (item))
+                            del self.timeout_dict[item['uid']]
+                    count += 1
                     break
                 except:
                     print_exc()
@@ -191,7 +205,8 @@ class sms_sender(object):
                         self.__pending.remove(msg['uid'])
                     self.logger.debug('sending error: msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg))
                     self.logger.debug('sending exception: \n %s' % format_exc())
-                    if self.timeout_dict.get(item['uid']) and self.timeout_dict[item['uid']]['count'] >= 3:
+                    
+                    if self.timeout_dict.get(item['uid']) and self.timeout_dict[item['uid']]['count'] >= 6:
                         self.msg_controller.stop_channel(item)
                         self.logger.debug('channel down: channel:%s' % (item))
                     else:
@@ -200,13 +215,30 @@ class sms_sender(object):
                                                               'last_update':datetime.now()}
                                                         
                         self.timeout_dict[item['uid']]['count'] += 1
+                        self.logger.debug('channel error: this channel:%s is the %d times down' % (item['name'], 
+                                                                                            self.timeout_dict[item['uid']]['count']))
                         self.timeout_dict[item['uid']]['last_update'] = datetime.now()
                     continue
                 
-            count += 1
         return count
 
-                    
+    def _getWaitTime(self, count):
+        if count <= 0:
+            return 0
+        elif count == 1:
+            return 5
+        elif count == 2:
+            return 10
+        elif count == 3:
+            return 20
+        elif count == 4:
+            return 30
+        elif count == 5:
+            return 60
+        elif count == 6:
+            return 120
+        else:
+            return 3600
 
 if __name__ == '__main__':
     sender = sms_sender()

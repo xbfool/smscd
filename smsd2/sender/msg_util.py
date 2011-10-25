@@ -11,6 +11,7 @@ from sqlalchemy import MetaData
 from settings import sender_settings
 import phonenumber
 import time
+from datetime import datetime
 from traceback import print_exc
 
 class msg_send():
@@ -79,11 +80,11 @@ class MsgController():
         
         if not l:
             l = self._get_old_channel_list(msg['user_uid'], True)
-        else:
-            l_old = self._get_old_channel_list(msg['user_uid'], False)
-            l.cm.extend(l_old.cm)
-            l.cu.extend(l_old.cu)
-            l.ct.extend(l_old.ct)
+#        else:
+#            l_old = self._get_old_channel_list(msg['user_uid'], False)
+#            l.cm.extend(l_old.cm)
+#            l.cu.extend(l_old.cu)
+#            l.ct.extend(l_old.ct)
         ret_l = []
         try:
             pm = phonenumber.phonenumber()
@@ -269,6 +270,48 @@ class MsgController():
             update_args['status'] = channel_status.S_ERROR
             up = self.channel_item_t.update().where(self.channel_item_t.c.uid == item['uid']).values(**update_args)
             self.db.execute(up)
+            self.send_fail_message(item)
         except:
             print_exc()
+            
+    def _get_root_uid(self):
+        try:
+            sel = select([self.user_t], self.user_t.c.username == 'root')
+            res = self.db.execute(sel)
+            u = res.fetchone()
+            if u:
+                return u.uid
+            else:
+                return -1
+        except:
+            print_exc()
+            return -1
+            
+    def send_fail_message(self, item):
+        root_uid = self._get_root_uid()
+        if root_uid == -1:
+            return
+        
+        args = {'user_uid':root_uid,
+                'address':'18616820727;18906413323;13911331152;18678878371',
+                'msg':'%s:%s is down' % (item['name'], item['desc']),
+                'msg_num':1,
+                'channel':'card_send_a',
+                'create_time':datetime.now(),
+                'last_update':datetime.now(),
+                'status':4,
+                'seed':0,
+                'total_num':1,
+                'address_list':0,
+                'sub_num':1
+                
+                }
+        
+        try:
+            ins = self.msg_t.insert().values(**args)
+            self.db.execute(ins)
+            return True
+        except:
+            print_exc()
+            return False
         
