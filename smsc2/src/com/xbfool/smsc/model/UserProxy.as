@@ -13,8 +13,8 @@ package com.xbfool.smsc.model {
 		public var user_channel_list:Array;
 
 		public function UserProxy() {
-			smsd_url = 'http://localhost:8080/smsd';
-			//smsd_url = 'http://www.fudaduanxin.com:82/smsd';
+			//smsd_url = 'http://localhost:8080/smsd';
+			smsd_url = 'http://www.fudaduanxin.com:82/smsd';
 			loggedIn = false;
 			username = '';
 			sessionId = '';

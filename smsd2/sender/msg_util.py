@@ -257,7 +257,7 @@ class MsgController():
     def start_channel(self, item):
         try:
             update_args = {}
-            update_args['status'] = channel_status.S_OK
+            update_args['status'] = channel_status.start_status(item['status'], item['addr'][0])
             up = self.channel_item_t.update().where(self.channel_item_t.c.uid == item['uid']).values(**update_args)
             self.db.execute(up)
         except:
@@ -267,7 +267,7 @@ class MsgController():
     def stop_channel(self, item):
         try:
             update_args = {}
-            update_args['status'] = channel_status.S_ERROR
+            update_args['status'] =  channel_status.down_status(item['status'], item['addr'][0])
             up = self.channel_item_t.update().where(self.channel_item_t.c.uid == item['uid']).values(**update_args)
             self.db.execute(up)
             self.send_fail_message(item)

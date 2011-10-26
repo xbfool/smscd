@@ -168,26 +168,27 @@ class sms_sender(object):
             if len(channel_list) == 0:
                 continue
             
-            for index, item in enumerate(channel_list):
-                if item['status'] == channel_status.S_STOP:
+            for item in channel_list:
+                if channel_status.is_channel_stop(item['status'], msg['addr'][0]):
                     self.logger.debug('channel error: this channel:%s is down' % (item['name'])) 
                     continue
-                elif (item['status'] == channel_status.S_OK and self.timeout_dict.get(item['uid']) and
+                elif (channel_status.is_channel_ok(item['status'], msg['addr'][0]) and self.timeout_dict.get(item['uid']) and
                       datetime.now() - self.timeout_dict[item['uid']]['last_update'] <= timedelta(seconds=self._getWaitTime(self.timeout_dict[item['uid']]['count']))):
                    
                     continue                                                               
                 elif (self.timeout_dict.get(item['uid']) and 
                       datetime.now() - self.timeout_dict[item['uid']]['last_update'] <= timedelta(hours=1) and
-                    item['status'] != channel_status.S_OK):
+                    not channel_status.is_channel_ok(item['status'], msg['addr'][0])):
                     continue
                 elif self.err_msg_dict.get(msg['uid']) and item['setting']['name'] in self.err_msg_dict[msg['uid']]:
                     continue
-                self.__pending.append(msg['uid'])
+                
                 
                 try:
+                    self.__pending.append(msg['uid'])
                     msg['channel'] = item['name']
 
-                    if item['status'] != channel_status.S_OK:
+                    if not channel_status.is_channel_ok(item['status'], msg['addr'][0]):
                         if self.timeout_dict.get(item['uid']):
                             del self.timeout_dict[item['uid']]
                         self.msg_controller.start_channel(item)
@@ -201,7 +202,7 @@ class sms_sender(object):
                     break
                 except:
                     print_exc()
-                    if index == len(channel_list) - 1:
+                    if msg['uid'] in self:
                         self.__pending.remove(msg['uid'])
                     self.logger.debug('sending error: msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg))
                     self.logger.debug('sending exception: \n %s' % format_exc())
