@@ -36,7 +36,7 @@ class sms_sender(object):
         my_logger.setLevel(logging.DEBUG)
         # Add the log message handler to the logger
         handler = logging.handlers.TimedRotatingFileHandler(
-                      LOG_FILENAME, when='D', interval=1)
+                      LOG_FILENAME, when='D')
         my_logger.addHandler(handler)
         
         handler.setLevel(logging.DEBUG)
@@ -118,7 +118,9 @@ class sms_sender(object):
             except:
                 print '%s: CAUTION, uid %d does NOT exist in __pending' \
                 % (self.__class__.__name__, param['uid'])
-                
+            if ret == None:
+                self.logger.debug('send error: this msg:%s connection error' % (param)) 
+                continue
             try:
                 if param['setting'] != None and param['setting'].get('process_ret'):
                     process = param['setting']['process_ret']
@@ -202,7 +204,7 @@ class sms_sender(object):
                     break
                 except:
                     print_exc()
-                    if msg['uid'] in self:
+                    if msg['uid'] in self.__pending:
                         self.__pending.remove(msg['uid'])
                     self.logger.debug('sending error: msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg))
                     self.logger.debug('sending exception: \n %s' % format_exc())
