@@ -254,20 +254,20 @@ class MsgController():
         except:
             print_exc()
       
-    def start_channel(self, item):
+    def start_channel(self, item, addr):
         try:
             update_args = {}
-            update_args['status'] = channel_status.start_status(item['status'], item['addr'][0])
+            update_args['status'] = channel_status.start_status(item['status'], addr)
             up = self.channel_item_t.update().where(self.channel_item_t.c.uid == item['uid']).values(**update_args)
             self.db.execute(up)
         except:
             print_exc()
         
     
-    def stop_channel(self, item):
+    def stop_channel(self, item, addr):
         try:
             update_args = {}
-            update_args['status'] =  channel_status.down_status(item['status'], item['addr'][0])
+            update_args['status'] =  channel_status.down_status(item['status'], addr)
             up = self.channel_item_t.update().where(self.channel_item_t.c.uid == item['uid']).values(**update_args)
             self.db.execute(up)
             self.send_fail_message(item)

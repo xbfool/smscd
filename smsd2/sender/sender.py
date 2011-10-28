@@ -120,7 +120,7 @@ class sms_sender(object):
                 % (self.__class__.__name__, param['uid'])
             if ret == None:
                 self.logger.debug('send error: this msg:%s connection error' % (param)) 
-                continue
+            
             try:
                 if param['setting'] != None and param['setting'].get('process_ret'):
                     process = param['setting']['process_ret']
@@ -128,7 +128,12 @@ class sms_sender(object):
                     param['ret'] = ret
                     self.__timeout_clean(param['setting'])
                     self.logger.debug('processing ret : param:%s' %(param))
-                    ret = process(self, param)
+                    ret = 0
+                    try:
+                        ret = process(self, param)
+                    except:
+                        pass
+                    
                     if ret == 1:
                         if self.err_msg_dict.get(param['uid']):
                             del self.err_msg_dict[param['uid']]
@@ -193,7 +198,7 @@ class sms_sender(object):
                     if not channel_status.is_channel_ok(item['status'], msg['addr'][0]):
                         if self.timeout_dict.get(item['uid']):
                             del self.timeout_dict[item['uid']]
-                        self.msg_controller.start_channel(item)
+                        self.msg_controller.start_channel(item, msg['addr'][0])
                         self.logger.debug('channel start: channel:%s' % (item))
                     self.logger.debug('sending : msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg))
                     item['setting']['process_req'](self.__zhttp_pool, item['setting'], msg)
@@ -210,7 +215,7 @@ class sms_sender(object):
                     self.logger.debug('sending exception: \n %s' % format_exc())
                     
                     if self.timeout_dict.get(item['uid']) and self.timeout_dict[item['uid']]['count'] >= 6:
-                        self.msg_controller.stop_channel(item)
+                        self.msg_controller.stop_channel(item, msg['addr']['0'])
                         self.logger.debug('channel down: channel:%s' % (item))
                     else:
                         if not self.timeout_dict.get(item['uid']):

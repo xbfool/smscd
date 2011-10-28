@@ -13,7 +13,7 @@ from Queue import Queue
 from traceback import print_exc
 
 class zhttp(object):
-    def __init__(self, host, path='/', mode='POST', port=80, timeout=30, **kargs):
+    def __init__(self, host, path='/', mode='POST', port=80, timeout=90, **kargs):
         self.host = host
         self.port = port
         self.timeout = timeout
@@ -131,7 +131,8 @@ class zhttp_pool():
                     print_exc()
                     current_connection.close()
                     current_connection.connect()
-            self.__callback(param, None)
+            else:
+                self.__callback(param, ret)
 
 def __dummy_callback(queue, ret):
     # caution the callback must be thread safe
