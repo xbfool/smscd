@@ -26,6 +26,7 @@ class sms_sender(object):
         self.settings = sender_settings().settings
         self.timeout_dict = {}
         self.err_msg_dict = {}
+        self.chanel_name_id_dict = {}
         LOG_FILENAME = './logs/smsd.sender.log'
         try:
             makedirs('./logs')
@@ -35,8 +36,9 @@ class sms_sender(object):
         my_logger = logging.getLogger('smsd.sender')
         my_logger.setLevel(logging.DEBUG)
         # Add the log message handler to the logger
-        handler = logging.handlers.TimedRotatingFileHandler(
-                      LOG_FILENAME, when='D')
+
+        handler = logging.handlers.RotatingFileHandler(
+              LOG_FILENAME, maxBytes=10000000, backupCount=100)
         my_logger.addHandler(handler)
         
         handler.setLevel(logging.DEBUG)
@@ -57,7 +59,6 @@ class sms_sender(object):
         
         self.__pending = []
         self.timeout_time = 1800
-        self.__timeout_lock = Lock()
         self.__worker_exit_lock = Lock()
         self.__worker_exit_lock.acquire()
         self.__worker_thread = Thread(None, self.__worker, '%s checker thread' % self.__class__.__name__)
@@ -68,31 +69,12 @@ class sms_sender(object):
         self.__worker_exit_lock.release()
         self.__worker_thread.join()
     
-    def __timeout_add(self, setting):
-        self.__timeout_lock.acquire()
-        setting['timeout_count'] += 1
-        setting['last_update'] = datetime.now()
-        self.__timeout_lock.release()
-        
-    def __check_channel_ok(self, setting):
-        if setting['timeout_count'] <= 3:
-            return True
-        elif (datetime.now() - setting['last_update']).total_seconds() > self.timeout_time:
-            self.__timeout_clean(setting)
-            return True
-        else:
-            return False
-    def __timeout_clean(self, setting):
-        self.__timeout_lock.acquire()
-        setting['timeout_count'] = 0
-        setting['last_update'] = datetime.now()
-        self.__timeout_lock.release()
-        
+       
     def __http_callback(self, param, ret):
         # CAUTION: must thread safe
         self.__ret_queue.put((param, ret))
     def __timeout_callback(self, param, ret):
-        self.__timeout_add(param['setting'])
+        pass
         
     def __worker(self):
         while not self.__worker_exit_lock.acquire(False):
@@ -114,20 +96,31 @@ class sms_sender(object):
                 break
             print '%d, %s' % (param['uid'], ret)
             if ret == None:
-                self.logger.debug('send error: this msg:%s connection error' % (param)) 
-  
-            try:
-                self.__pending.remove(param['uid'])
-            except:
-                print '%s: CAUTION, uid %d does NOT exist in __pending' \
-                % (self.__class__.__name__, param['uid'])
+                #here means the channel is down, nothing returned
+                try:
+                    self.logger.debug('connection error: this msg:%s connection error' % (param)) 
+                    item = self.chanel_name_id_dict[param['setting']['name']]
+                    if self.timeout_dict.get(item['uid']) and self.timeout_dict[item['uid']]['count'] >= 6:
+                        self.msg_controller.down_channel(item, param['msg']['address'][0:11])
+                        self.logger.debug('channel down: channel:%s' % (item))
+                    else:
+                        if not self.timeout_dict.get(item['uid']):
+                            self.timeout_dict[item['uid']] = {'count':0, 
+                                                              'last_update':datetime.now()}
+                                                        
+                        self.timeout_dict[item['uid']]['count'] += 1
+                        self.logger.debug('channel error: this channel:%s is the %d times down' % (item['name'], 
+                                                                                            self.timeout_dict[item['uid']]['count']))
+                        self.timeout_dict[item['uid']]['last_update'] = datetime.now()
+                except:
+                    print_exc()
+
               
             try:
                 if param['setting'] != None and param['setting'].get('process_ret'):
                     process = param['setting']['process_ret']
                     param['time'] = now
                     param['ret'] = ret
-                    self.__timeout_clean(param['setting'])
                     self.logger.debug('processing ret : param:%s' %(param))
                     ret = 0
                     try:
@@ -143,6 +136,7 @@ class sms_sender(object):
                         item[param['setting']['name']] = 1
                         if len(item) >= 3:
                             self.msg_controller.send_fail(param, 'this message send fail more than 3 times')
+                            self.logger.debug('msg error: this msg is error for some reason %s' % (param)) 
                             del self.err_msg_dict[param['uid']]
                     else:
                         item = {}
@@ -151,7 +145,11 @@ class sms_sender(object):
             except:
                 pass
         
-                
+            try:
+                self.__pending.remove(param['uid'])
+            except:
+                print '%s: CAUTION, uid %d does NOT exist in __pending' \
+                % (self.__class__.__name__, param['uid'])
     
     def get_filtered_addr(self, addr, percent, my_seed, total_num=0):
         if(percent is not None and percent <= 100 and percent >= 50 and total_num >= 100):
@@ -177,17 +175,29 @@ class sms_sender(object):
                 continue
             
             for item in channel_list:
+                #add for check process_ret, awlsome design
+                if item['name'] not in self.chanel_name_id_dict:
+                    self.chanel_name_id_dict[item['name']] = item
+                    
+                #if channel stop means there is some thing error in our system
+                #don't neet to try
                 if channel_status.is_channel_stop(item['status'], msg['addr'][0]):
                     self.logger.debug('channel error: this channel:%s is down' % (item['name'])) 
                     continue
+                
+                #channel ok but in timeout dict means cannot cannot connet for last try
+                #when last_update >= time interval than could have a try again
                 elif (channel_status.is_channel_ok(item['status'], msg['addr'][0]) and self.timeout_dict.get(item['uid']) and
                       datetime.now() - self.timeout_dict[item['uid']]['last_update'] <= timedelta(seconds=self._getWaitTime(self.timeout_dict[item['uid']]['count']))):
-                   
-                    continue                                                               
+                    continue
+                
+                #if tried a lot of times then the channel is down for some time
+                #retry it 2 hour later                                                               
                 elif (self.timeout_dict.get(item['uid']) and 
                       datetime.now() - self.timeout_dict[item['uid']]['last_update'] <= timedelta(hours=2) and
                     not channel_status.is_channel_ok(item['status'], msg['addr'][0])):
                     continue
+                #not a good message, no need to try
                 elif self.err_msg_dict.get(msg['uid']) and item['setting']['name'] in self.err_msg_dict[msg['uid']]:
                     continue
                 
@@ -205,31 +215,21 @@ class sms_sender(object):
                     self.logger.debug(sending_str)
                     print sending_str
                     item['setting']['process_req'](self.__zhttp_pool, item['setting'], msg)
-                    self.logger.debug('sending ok: msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg))
-                    if self.timeout_dict.get(item['uid']):
-                            del self.timeout_dict[item['uid']]
+                    #here just means our function not error, not means the channel not error
                     count += 1
                     break
                 except:
+                    if msg['uid'] in self.__pending:
+                        del self.__pending[msg['uid']]
+                    count += 1
                     print_exc()
-                    #if msg['uid'] in self.__pending:
-                        #self.__pending.remove(msg['uid'])
+                    #this means our process_req has some error
+                    #no need to try, stop the channel
                     self.logger.debug('sending error: msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg))
                     self.logger.debug('sending exception: \n %s' % format_exc())
                     
-                    if self.timeout_dict.get(item['uid']) and self.timeout_dict[item['uid']]['count'] >= 1:
-                        self.msg_controller.stop_channel(item, msg['addr'][0])
-                        self.logger.debug('channel down: channel:%s' % (item))
-                    else:
-                        if not self.timeout_dict.get(item['uid']):
-                            self.timeout_dict[item['uid']] = {'count':0, 
-                                                              'last_update':datetime.now()}
-                                                        
-                        self.timeout_dict[item['uid']]['count'] += 1
-                        self.logger.debug('channel error: this channel:%s is the %d times down' % (item['name'], 
-                                                                                            self.timeout_dict[item['uid']]['count']))
-                        self.timeout_dict[item['uid']]['last_update'] = datetime.now()
-                    continue
+                    self.msg_controller.stop_channel(item, msg['addr'][0])
+
                 
         return count
 

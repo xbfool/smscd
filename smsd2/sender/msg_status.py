@@ -92,3 +92,14 @@ class channel_status():
             return (cls.S_CU_MASK & status) | cls.S_CU_ERROR
         elif title in cls.ct:
             return (cls.S_CT_MASK & status) | cls.S_CT_ERROR
+        
+        
+    @classmethod
+    def stop_status(cls, status, addr):
+        title = addr[0:3]
+        if title in cls.cm:
+            return (cls.S_CM_MASK & status) | cls.S_CM_STOP
+        elif title in cls.cu:
+            return (cls.S_CU_MASK & status) | cls.S_CU_STOP
+        elif title in cls.ct:
+            return (cls.S_CT_MASK & status) | cls.S_CT_STOP
