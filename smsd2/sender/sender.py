@@ -220,7 +220,10 @@ class sms_sender(object):
                     break
                 except:
                     if msg['uid'] in self.__pending:
-                        del self.__pending[msg['uid']]
+                        try:
+                            self.__pending.remove(msg['uid'])
+                        except:
+                            print_exc()
                     count += 1
                     print_exc()
                     #this means our process_req has some error

@@ -4,7 +4,10 @@
 from traceback import print_exc
 from hashlib import sha1
 from datetime import datetime
+import logging
+import logging.handlers
 import sys
+from os import makedirs
 if __name__ != '__main__':
     smsd_path = '/home/jimmyz/smsd/src'
     #smsd_path = 'C:\\xampp\\htdocs\\smsd\\src'
@@ -28,7 +31,28 @@ class sendsms(object):
         self.num_req = 0
         self.cfg = loadcfg(conf)
         self.db = dbsql(**self.cfg.database.raw_dict)
-    
+        LOG_FILENAME = '/tmp/logs/smsd.receiver_honglian.log'
+        try:
+            makedirs('/tmp/logs')
+        except:
+            pass
+        my_logger = logging.getLogger('smsd.sender')
+        my_logger.setLevel(logging.DEBUG)
+        # Add the log message handler to the logger
+
+        handler = logging.handlers.RotatingFileHandler(
+              LOG_FILENAME, maxBytes=10000000, backupCount=100)
+        my_logger.addHandler(handler)
+        
+        handler.setLevel(logging.DEBUG)
+        
+        # create formatter
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        
+        # add formatter to ch
+        handler.setFormatter(formatter)
+
+        self.logger = my_logger
     def __del__(self):
         print '%s instance 0x%08x destroyed, %d request(s) processed' % \
             (self.__class__.__name__, id(self), self.num_req)
@@ -38,15 +62,16 @@ class sendsms(object):
         self.num_req += 1
         if env['REQUEST_METHOD'] != 'GET':
             return self.__ret(env, start_response, -99, 'invalid query, not GET')
-	print env        
-    	try:
+        print env
+        self.logger.debug('%s', env)
+        try:
             query = urldecode(env['QUERY_STRING'])
             phone = query.get('phone')
-            msgContent = query.get('msgContent').decode('gbk').encode('utf8')
+            msgContent = query.get('msgContent')
             spNumber = query.get('spNumber')
             if len(spNumber) > 17:
                 spNumber = spNumber[17:]
-    	    time = datetime.now()
+            time = datetime.now()
             self.db.raw_sql('INSERT INTO upload_msg(ext, number, content, time) VALUES(%s, %s, %s, %s)',
                     (spNumber, phone, msgContent, time))
         except:

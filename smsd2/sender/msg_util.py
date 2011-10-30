@@ -270,7 +270,7 @@ class MsgController():
             update_args['status'] =  channel_status.down_status(item['status'], addr)
             up = self.channel_item_t.update().where(self.channel_item_t.c.uid == item['uid']).values(**update_args)
             self.db.execute(up)
-            #self.send_fail_message(item)
+            self.send_fail_message(item)
         except:
             print_exc()
             
