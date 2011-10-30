@@ -174,7 +174,7 @@ class MsgController():
         c = channel_list() 
         c.name = 'old_list'
         c.desc = 'old_list'
-        print r.channel_cm,r.channel_cu, r.channel_ct
+#        print r.channel_cm,r.channel_cu, r.channel_ct
         c.cm = [self._get_channe_item_by_name(r.channel_cm)]
         c.cu = [self._get_channe_item_by_name(r.channel_cu)]
         c.ct = [self._get_channe_item_by_name(r.channel_ct)]
@@ -270,7 +270,7 @@ class MsgController():
             update_args['status'] =  channel_status.down_status(item['status'], addr)
             up = self.channel_item_t.update().where(self.channel_item_t.c.uid == item['uid']).values(**update_args)
             self.db.execute(up)
-            self.send_fail_message(item)
+            #self.send_fail_message(item)
         except:
             print_exc()
             
@@ -291,9 +291,23 @@ class MsgController():
         root_uid = self._get_root_uid()
         if root_uid == -1:
             return
-        
+        #18906413323;13911331152
         args = {'user_uid':root_uid,
-                'address':'18616820727;18906413323;13911331152;18678878371',
+                'address':'18616820727;18678878371',
+                'msg':'%s:%s is down' % (item['name'], item['desc']),
+                'msg_num':1,
+                'channel':'card_send_a',
+                'create_time':datetime.now(),
+                'last_update':datetime.now(),
+                'status':4,
+                'seed':0,
+                'total_num':1,
+                'address_list':0,
+                'sub_num':1
+                
+                }
+        args1 = {'user_uid':root_uid,
+                'address':'13911331152',
                 'msg':'%s:%s is down' % (item['name'], item['desc']),
                 'msg_num':1,
                 'channel':'card_send_a',
@@ -309,6 +323,8 @@ class MsgController():
         
         try:
             ins = self.msg_t.insert().values(**args)
+            self.db.execute(ins)
+            ins = self.msg_t.insert().values(**args1)
             self.db.execute(ins)
             return True
         except:
