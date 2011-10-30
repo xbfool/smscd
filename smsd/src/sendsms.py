@@ -4,6 +4,9 @@
 from traceback import print_exc
 from hashlib import sha1
 from datetime import datetime
+import phonenumber
+from random import *
+from time import time
 import sys
 if __name__ != '__main__':
     smsd_path = '/home/jimmyz/smsd/src'
@@ -121,17 +124,33 @@ class sendsms(object):
         return user_uid, msg_num - (pending or 0)
     
     def __send(self, u, recv, msg):
-        ret = -1
+        ret = 0
         try:
-            channel = self.__get_user_channel(u)
-            msg_num = ((len(msg.decode('utf8').encode('gbk')) - 1) / 140 + 1) * len(recv.split(';'))
-            self.db.raw_sql('INSERT INTO message(user_uid,address,msg,msg_num,status,create_time,channel) VALUES(%s,%s,%s,%s,%s,%s,%s)',
-                            (u, recv, msg, msg_num, message.F_ADMIT, datetime.now(), channel))
-#            self.__db.raw_sql_wo_commit('UPDATE user SET msg_num = msg_num - %s where uid = %s', (msg_num, u))
-            ret = msg_num
+            recv_list = self.__split_message(recv.split(';'))
+            for new_recv in recv_list:
+                channel = self.__get_user_channel(u)
+                msg_num = ((len(msg.decode('utf8').encode('gbk')) - 1) / 140 + 1) * len(new_recv)
+                self.db.raw_sql('INSERT INTO message(user_uid,address,msg,msg_num,status,create_time,channel) VALUES(%s,%s,%s,%s,%s,%s,%s)',
+                                (u, ';'.join(new_recv), msg, msg_num, message.F_ADMIT, datetime.now(), channel))
+
+                ret += msg_num
         except:
             pass
         return ret
+        
+    def __split_message(self, recv):
+        pm = phonenumber.phonenumber()
+        split_addr = pm.split_addr(recv)
+        recv_list = []
+        l = [pm.S_CM, pm.S_CU, pm.S_CT]
+        for item_index in l:
+            item = split_addr[item_index]
+            new_l =  [[item[i] for i in range(a, min(a+20, len(item)))] for a in range(0, len(item), 20)]
+            for k in new_l:
+                if k:
+                    recv_list.append(k)
+        
+        return recv_list
         
 
 def wsgiref_daemon():
