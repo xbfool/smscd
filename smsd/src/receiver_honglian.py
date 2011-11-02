@@ -68,6 +68,10 @@ class sendsms(object):
             query = urldecode(env['QUERY_STRING'])
             phone = query.get('phone')
             msgContent = query.get('msgContent')
+            try:
+                msgContent = msgContent.decode('utf8')
+            except:
+                pass
             spNumber = query.get('spNumber')
             if len(spNumber) > 17:
                 spNumber = spNumber[17:]
