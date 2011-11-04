@@ -59,6 +59,7 @@ class MsgController():
             ret = dict(r.items())
             ret['content'] = ret['msg']
             ret['percent'] = self.get_user_percent(ret['user_uid'])
+            ret['ext'] = self.get_user_ext(ret['user_uid'])
             yield ret
     def get_user_percent(self, user_uid):
         if self.user_dict.get(user_uid):
@@ -72,6 +73,20 @@ class MsgController():
             return r.percent
         else:
             return 100
+    
+    def get_user_ext(self, user_uid):
+        if self.user_dict.get(user_uid):
+            return self.user_dict[user_uid].ext
+        
+        sel = select([self.user_t], self.user_t.c.uid == user_uid)
+        res = self.db.execute(sel)
+        r = res.fetchone()
+        if r != None:
+            self.user_dict[user_uid] = r
+            return r.ext
+        else:
+            return ""
+        
     def get_channel_list(self, msg):
         channel_list_id = self._get_user_channel_list_id(msg)
         l = self._get_user_channel_list(channel_list_id)

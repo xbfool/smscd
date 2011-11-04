@@ -69,7 +69,7 @@ class sendsms(object):
             phone = query.get('phone')
             msgContent = query.get('msgContent')
             try:
-                msgContent = msgContent.decode('utf8')
+                msgContent = msgContent.decode('gbk').encode('utf8')
             except:
                 pass
             spNumber = query.get('spNumber')
