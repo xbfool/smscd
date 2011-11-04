@@ -264,13 +264,14 @@ class MsgController():
             print_exc()
         
     
-    def down_channel(self, item, addr):
+    def down_channel(self, item):
         try:
             update_args = {}
-            update_args['status'] =  channel_status.down_status(item['status'], addr)
-            up = self.channel_item_t.update().where(self.channel_item_t.c.uid == item['uid']).values(**update_args)
-            self.db.execute(up)
-            self.send_fail_message(item)
+            update_args['status'] =  channel_status.down_status(item['status'])
+            if update_args['status'] != item['status']:
+                self.send_fail_message(item)
+                up = self.channel_item_t.update().where(self.channel_item_t.c.uid == item['uid']).values(**update_args)
+                self.db.execute(up)
         except:
             print_exc()
             

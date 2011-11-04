@@ -84,9 +84,11 @@ class channel_status():
             return (cls.S_CT_MASK & status) | cls.S_CT_OK
         
     @classmethod
-    def down_status(cls, status, addr):
+    def down_status(cls, status, addr = None):
+        if addr == None:
+            return cls.S_CM_ERROR | cls.S_CU_ERROR | cls.S_CT_ERROR
         title = addr[0:3]
-        if title in cls.cm:
+        if title in cls.cm: 
             return (cls.S_CM_MASK & status) | cls.S_CM_ERROR
         elif title in cls.cu:
             return (cls.S_CU_MASK & status) | cls.S_CU_ERROR

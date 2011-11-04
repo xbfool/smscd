@@ -101,8 +101,12 @@ class sms_sender(object):
                     self.logger.debug('connection error: this msg:%s connection error' % (param)) 
                     item = self.chanel_name_id_dict[param['setting']['name']]
                     if self.timeout_dict.get(item['uid']) and self.timeout_dict[item['uid']]['count'] >= 6:
-                        self.msg_controller.down_channel(item, param['msg']['address'][0:11])
+                        if self.timeout_dict[item['uid']]['count'] == 6:
+                            self.msg_controller.down_channel(item)
+                        else:
+                            self.timeout_dict[item['uid']]['count'] += 1
                         self.logger.debug('channel down: channel:%s' % (item))
+                        
                     else:
                         if not self.timeout_dict.get(item['uid']):
                             self.timeout_dict[item['uid']] = {'count':0, 
@@ -197,9 +201,7 @@ class sms_sender(object):
                       datetime.now() - self.timeout_dict[item['uid']]['last_update'] <= timedelta(hours=2) and
                     not channel_status.is_channel_ok(item['status'], msg['addr'][0])):
                     continue
-                #not a good message, no need to try
-                elif self.err_msg_dict.get(msg['uid']) and item['setting']['name'] in self.err_msg_dict[msg['uid']]:
-                    continue
+
                 
                 
                 try:
@@ -214,7 +216,7 @@ class sms_sender(object):
                     sending_str = 'sending : msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg)
                     self.logger.debug(sending_str)
                     print sending_str
-                    item['setting']['process_req'](self.__zhttp_pool, item['setting'], msg)
+                    self.process_req(item, msg)
                     #here just means our function not error, not means the channel not error
                     count += 1
                     break
@@ -236,6 +238,13 @@ class sms_sender(object):
                 
         return count
 
+    def process_req(self, channel_item, msg):
+        if channel_item['setting']['sub_mode'] != 'card_send':
+            channel_item['setting']['process_req'](self.__zhttp_pool, channel_item['setting'], msg)
+        else:
+            index = channel_item['setting']['index']
+            channel_item['setting']['process_req'](self.__card_pool[index], channel_item['setting'], msg)
+        
     def _getWaitTime(self, count):
         if count <= 0:
             return 0
