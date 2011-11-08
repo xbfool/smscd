@@ -207,6 +207,8 @@ class MsgController():
         sel = select([self.channel_item_t], self.channel_item_t.c.name == name)
         res = self.db.execute(sel)
         r = res.fetchone()
+        if not r:
+            print name
         r_d = dict(r.items())
         self.channel_item_name_dict[name] = r_d
         r_d['setting'] = self.settings.get(name)
@@ -269,7 +271,7 @@ class MsgController():
         except:
             print_exc()
       
-    def start_channel(self, item, addr):
+    def start_channel(self, item, addr=None):
         try:
             update_args = {}
             update_args['status'] = channel_status.start_status(item['status'], addr)
@@ -284,7 +286,7 @@ class MsgController():
             update_args = {}
             update_args['status'] =  channel_status.down_status(item['status'])
             if update_args['status'] != item['status']:
-                self.send_fail_message(item)
+                #self.send_fail_message(item)
                 up = self.channel_item_t.update().where(self.channel_item_t.c.uid == item['uid']).values(**update_args)
                 self.db.execute(up)
         except:

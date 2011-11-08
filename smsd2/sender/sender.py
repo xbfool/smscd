@@ -94,7 +94,7 @@ class sms_sender(object):
             except Empty:
                 # print '%s: no response yet' % self.__class__.__name__
                 break
-            print '%d, %s' % (param['uid'], ret)
+            #print '%d, %s' % (param['uid'], ret)
             if ret == None:
                 #here means the channel is down, nothing returned
                 try:
@@ -130,12 +130,27 @@ class sms_sender(object):
                     ret = 0
                     try:
                         ret = process(self, param)
+                        print 'the ret is ', ret
                     except:
                         pass
                     
                     if ret == 1:
                         if self.err_msg_dict.get(param['uid']):
                             del self.err_msg_dict[param['uid']]
+                        item = self.chanel_name_id_dict[param['setting']['name']]
+                        if not channel_status.is_channel_ok(item['status']):
+                            if self.timeout_dict.get(item['uid']):
+                                del self.timeout_dict[item['uid']]
+                            self.msg_controller.start_channel(item)
+                    elif ret == -1:
+                        item = self.chanel_name_id_dict[param['setting']['name']]
+                        self.logger.debug('down channel :%s' %(item))
+                        self.msg_controller.down_channel(item)
+                        if not self.timeout_dict.get(item['uid']):
+                            self.timeout_dict[item['uid']] = {'count':0, 
+                                                              'last_update':datetime.now()}
+                    elif ret == -2:
+                        self.msg_controller.send_fail(param, 'this message error')
                     elif self.err_msg_dict.get(param['uid']):
                         item = self.err_msg_dict.get(param['uid'])
                         item[param['setting']['name']] = 1
@@ -148,6 +163,8 @@ class sms_sender(object):
                         self.err_msg_dict[param['uid']] = item
                         item[param['setting']['name']] = 1
             except:
+                print_exc()
+                time.sleep(10)
                 pass
         
             try:
@@ -203,7 +220,7 @@ class sms_sender(object):
                     not channel_status.is_channel_ok(item['status'], msg['addr'][0])):
                     continue
 
-                
+                print self.timeout_dict.get(item['uid']), datetime.now()
                 
                 try:
                     self.__pending.append(msg['uid'])
@@ -217,7 +234,7 @@ class sms_sender(object):
                         #self.logger.debug('channel start: channel:%s' % (item))
                     sending_str = 'sending : msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg)
                     self.logger.debug(sending_str)
-                    print sending_str
+                    #print sending_str
                     self.process_req(item, msg)
                     #here just means our function not error, not means the channel not error
                     count += 1

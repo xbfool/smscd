@@ -41,8 +41,9 @@ class channel_status():
     ct = set(["133", "153", "189"])
     
     @classmethod
-    def is_channel_ok(cls, status, addr):
-        
+    def is_channel_ok(cls, status, addr=None):
+        if addr == None:
+            return status == 0
         title = addr[0:3]
         if title in cls.cm:
             return (cls.S_CM_OK_MASK & status) == cls.S_CM_OK
@@ -74,7 +75,9 @@ class channel_status():
             return (cls.S_CT_STOP & status) == cls.S_CT_STOP   
 
     @classmethod
-    def start_status(cls, status, addr):
+    def start_status(cls, status, addr=None):
+        if addr == None:
+            return 0
         title = addr[0:3]
         if title in cls.cm:
             return (cls.S_CM_MASK & status) | cls.S_CM_OK

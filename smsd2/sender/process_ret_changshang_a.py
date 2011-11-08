@@ -10,12 +10,16 @@ def process_ret_changshang_a(sender, param):
     result = 'message send fail'
     try:
         result = param['ret'][2] 
+        print result, type(result), len(result)
         if result[0] == '0':
             sender.msg_controller.send_success(param, result)
             return 1
+        elif result == u'100' or result == u'101' or result == 100 or result == 101:
+            return -1 #channel error
+        elif result == u'102' or result == u'103' or result == 102 or result == 103:
+            return -2 #msg_error
         else:
             return 0
-        
     except:
         print_exc()
         sender.msg_controller.send_fail(param, result)

@@ -93,7 +93,7 @@ class sender_settings():
             'process_req' : process_req_hlyd
         }
         settings['changshang_a_01'] = {
-            'name': 'changshagn_a_01',
+            'name': 'changshang_a_01',
             'host': '123.196.114.68',
             'port': '8080',
             'path': '/sms_send2.do',
@@ -107,7 +107,7 @@ class sender_settings():
         }
         
         settings['changshang_a_02'] = {
-            'name': 'changshagn_a_02',
+            'name': 'changshang_a_02',
             'host': '123.196.114.68',
             'port': '8080',
             'path': '/sms_send2.do',
@@ -121,7 +121,7 @@ class sender_settings():
         }
         
         settings['changshang_a_03'] = {
-            'name': 'changshagn_a_03',
+            'name': 'changshang_a_03',
             'host': '123.196.114.68',
             'port': '8080',
             'path': '/sms_send2.do',
@@ -135,7 +135,7 @@ class sender_settings():
         }
         
         settings['changshang_a_04'] = {
-            'name': 'changshagn_a_04',
+            'name': 'changshang_a_04',
             'host': '123.196.114.68',
             'port': '8080',
             'path': '/sms_send2.do',
