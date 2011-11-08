@@ -1,9 +1,0 @@
-smsd:
-  session_expire : 3600
- 
-database:
-  user: root
-  password: 123455
-  db: smsd2
-  host: localhost
-  engine: mysqldb
