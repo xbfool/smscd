@@ -2,7 +2,7 @@
 # vim:fileencoding=utf-8
 
 from hashlib import sha1
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 import time
 from traceback import print_exc
 import json
@@ -70,7 +70,6 @@ class smsd(object):
         # get config/database, etc
         self.num_req = 0
         
-        from os import getcwd
         self.cfg = loadcfg(conf)
         
         self.db = dbsql(**self.cfg.database.raw_dict)
@@ -189,7 +188,6 @@ class smsd(object):
                 # invalid/expired session
                 self.__add_op_log(None, query, 2)
                 return self.__ret_json({'rtype':'err', 'errno':'2'}, start_response)
-            # TODO: user rights test
             try:
                 processor = self.__getattribute__('processor_' + q)
             except:
@@ -236,7 +234,7 @@ class smsd(object):
         if not user.web_auth(p):
             return False
         s = session(user, time.time())
-        # TODO: purge invalid sessions
+
         self.sessions[s.sid] = s
         return s
 
@@ -419,12 +417,9 @@ class smsd(object):
                 new_message = message()        
                 new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel, len(addr_list), seed)
                 self.messages[new_message.uid] = new_message
-         #   new_message = message()        
-         #   new_message.new(uid, ';'.join(addr_list), 0, msg, message.F_ADMIT, channel)
-         #   self.messages[new_message.uid] = new_message
      
     def processor_sendmessagelist(self, u, query): 
-        uid = u.uid
+
         lists = query['list']
         itemindex = 0
         totalnum = 0
@@ -496,11 +491,7 @@ class smsd(object):
         address = query['address']
         address_list = query['address_list']
         msg = query['msg']
-        if query.get('type'):
-            type = query['type']
-        else:
-            type = self.PHONE_NUMBER
-            
+           
         try:
             msgcontent = msg.decode('utf8')
         except:
@@ -589,11 +580,9 @@ class smsd(object):
         if u.is_admin() and u.username == 'root':
             for  value in self.user_ids.itervalues():
                 if value.parent_id == 0:
-                    all = value.to_json_all()
-                    l.append(all)
+                    l.append(value.to_json_all())
         else:
-            all = u.to_json_all()
-            l.append(all)
+            l.append( u.to_json_all())
         
         return 0, {'rtype':'listchildren', 'children': l, 'errno': 0}
 
@@ -664,12 +653,12 @@ class smsd(object):
         if 'id' not in query:
             return False
         
-        id = query['id']
+        msg_id = query['id']
         
-        if not self.messages.get(id):
+        if not self.messages.get(msg_id):
             return False
         
-        m = self.messages[id]
+        m = self.messages[msg_id]
         if m.uid != user.id:
             return False
         
@@ -720,8 +709,8 @@ class smsd(object):
           and pu.parent_id == u.uid)):
             return 0, {'rtype':'manageuser', 'errno': 1}
         
-	d = None
-	if (ext != None and ext != ''):
+        d = None
+        if (ext != None and ext != ''):
             d = self.db.raw_sql_query('SELECT uid FROM user WHERE ext = %s' % (ext))
 
         if u.is_admin():
@@ -789,8 +778,7 @@ class smsd(object):
         if u.uid == pu.parent_id:
             u.delete_child(pu)
         else:
-            id = pu.parent_id
-            pureally = self.user_ids[id]
+            pureally = self.user_ids[pu.parent_id]
             pureally.delete_child(pu)
         del self.users[pu.username]
         return 0, {'rtype':'deleteuser', 'errno': 0}
@@ -917,11 +905,10 @@ class smsd(object):
         else:
             messages = {}
             for k in self.messages.itervalues():
-                id = k.user_uid
-                if id not in messages:
+                if k.user_uid not in messages:
                     tmp = []
                 else:
-                    tmp = messages[id]
+                    tmp = messages[k.user_uid]
                 tmp.append(k)
                 messages[id] = tmp
             
@@ -1076,7 +1063,6 @@ class smsd(object):
         end = query['end'] / 1000.0
         pbegin = datetime.fromtimestamp(begin)
         pend = datetime.fromtimestamp(end) + timedelta(1)
-        pm = phonenumber.phonenumber()
         
         msg_dict = {}
         total = {'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0, 'sub_num':0}
@@ -1126,15 +1112,16 @@ class smsd(object):
     
         l = []
         index = 0
-        for uid, username, before_msg_num, add_msg_num, after_msg_num, type, create_time in q:
+        for uid, username, before_msg_num, add_msg_num, after_msg_num, msg_type, create_time in q:
             try:
                 if(u.username == "root" or (self.users.get(username) and
                                     (self.is_parent(u.uid, self.users[username].uid) or
                                      self.users[username].uid == u.uid))):
                     type_text = "直接充值"
-                    if type == 1:
+                    if msg_type == 1:
                         type_text = "返还"
                     index = index + 1
+                    uid = uid
                     l.append({'uid':index,
                               'username':username,
                               'before_msg_num':before_msg_num,
@@ -1198,8 +1185,8 @@ class smsd(object):
         phonebook.set_db(self.db, 'phonebook')
         phonebooks = phonebook.load('user_uid = %s', uid)        
         l = []
-        for list in phonebooks:
-            l.append(list.to_json())
+        for item in phonebooks:
+            l.append(item.to_json())
         return 0, {'rtype':'getphonebookinfo', 'list':l}
         
     def processor_addphonebook(self, user, query):
@@ -1223,10 +1210,10 @@ class smsd(object):
             return False      
         
         uid = user.uid
-        id = query['id']
+        phonebook_id = query['id']
         phonebook.set_db(self.db, "phonebook")
         phonebook_old = phonebook()
-        phonebook_old.loadByID(uid, id)
+        phonebook_old.loadByID(uid, phonebook_id)
         phonebook_old.name = query['name']
         phonebook_old.remark = query['remark']
         phonebook_old.save('name,remark')
@@ -1237,13 +1224,13 @@ class smsd(object):
             return False
         
         uid = user.uid
-        id = query['id']
+        phonebook_id = query['id']
         phonebook.set_db(self.db, 'phonebook')
         phonebook_old = phonebook()
         phone.set_db(self.db, 'phone')
         phone_old = phone()
-        phone_old.deleteByPhonebookUid(id)
-        phonebook_old.loadByID(uid, id)
+        phone_old.deleteByPhonebookUid(phonebook_id)
+        phonebook_old.loadByID(uid, phonebook_id)
         phonebook_old.delete()
     
         return 0, {'rtype':'deletephonebook', 'errno':0}
@@ -1253,8 +1240,8 @@ class smsd(object):
         addresslist.set_db(self.db, 'address')
         addresslists = addresslist.load('user_uid = %s', uid)        
         l = []
-        for list in addresslists:
-            l.append(list.to_json())
+        for item in addresslists:
+            l.append(item.to_json())
         return 0, {'rtype':'getaddresslistinfo', 'list':l}
     
     def processor_addaddresslist(self, user, query):
@@ -1303,13 +1290,12 @@ class smsd(object):
         if 'id' not in query:
             return False
         
-        uid = user.uid
         phone.set_db(self.db, 'phone')
         phonebook_uid = query['id']
         phones = phone.load('phonebook_uid = %s', phonebook_uid)   
         l = []
-        for list in phones:
-            l.append(list.to_json())
+        for item in phones:
+            l.append(item.to_json())
         return 0, {'rtype':'getphonelistdata', 'list':l}
     
     def processor_getallphoneinfo(self, user, query):
@@ -1318,8 +1304,8 @@ class smsd(object):
         phonebooks = phonebook.load('user_uid = %s', uid)        
         l = []
         phone.set_db(self.db, 'phone')
-        for list in phonebooks:
-            phonebook_uid = list.uid
+        for item in phonebooks:
+            phonebook_uid = item.uid
             phones = phone.load('phonebook_uid = %s', phonebook_uid)   
             for obj in phones:
                 l.append(obj.to_json())
@@ -1370,8 +1356,8 @@ class smsd(object):
         if ('phonelist' not in query):
             return False
         
-        list = query['phonelist']
-        for uid in list:
+        l = query['phonelist']
+        for uid in l:
             phone.set_db(self.db, 'phone')
             phone_old = phone()
             phone_old.uid = uid
@@ -1415,4 +1401,4 @@ if __name__ == '__main__':
     wsgiref_daemon()
 else:
     application = smsd(conf=smsd_path + '/smsd.ini')
-	
+
