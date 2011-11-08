@@ -119,6 +119,8 @@ class smsd(object):
         for u in users:
             self.user_ids[u.uid] = u
             
+
+    def reload_message(self):
         message.set_db(self.db, 'message')
         
         
@@ -137,12 +139,7 @@ class smsd(object):
                     m.msg.decode('gbk')
                 except:
                     print m.uid, 'cannot decode as gbk\n'
-            if m.status == message.F_COMMIT:
-                if self.user_ids.get(m.user_uid):
-                    self.user_ids[m.user_uid].commit_num += 1
-        
         print 'load message count: %d' % len(messages)
-        
     def __call__(self, env, start_response):
         # request handler hub
         self.num_req += 1
@@ -273,7 +270,7 @@ class smsd(object):
     
     def processor_changepwd(self, u, query):
         #{'q':'changepwd', 'sid':sid, 'user':username, 'oldp':oldpassword, 'newp':newpassword}
-       
+        #TODO
         username = query['user']
         
         newp = query['newp']
@@ -296,7 +293,7 @@ class smsd(object):
     def processor_adduser(self, u, query):
         #{'q':'adduser', 'sid': sid, 'user':username, 'name':desc, 'pass':password, 'flags':flags,
         #'can_weblogin':can_weblogin, 'can_post':can_post, 'need_check';need_check}
-        
+        #TODO
         
         username = query['user']
         p = query['pass']
@@ -333,7 +330,7 @@ class smsd(object):
 
     def processor_addmessage(self, u, query):
         #{'q':'addmessage, 'sid':sid, 'user':username, 'num':message_number}
-
+        #TODO
         username = query['user']
         num = query['num']
         
@@ -419,7 +416,7 @@ class smsd(object):
                 self.messages[new_message.uid] = new_message
      
     def processor_sendmessagelist(self, u, query): 
-
+        #TODO
         lists = query['list']
         itemindex = 0
         totalnum = 0
@@ -483,7 +480,7 @@ class smsd(object):
         pass          
     def processor_sendmessage(self, u, query):
         #{'q':'sendmessage, 'sid':sid, 'address':list of address, 'address_list' 'msg':message}
-        
+        #TODO
         if u.msg_num <= 0:
             return 0, {'rtype':'sendmessage', 'errno':-2} #not enough money 
   
@@ -568,13 +565,13 @@ class smsd(object):
     
     def processor_userinfo(self, user, query):
         #{'q':'userinfo', 'sid': sid}
-        
+        #TODO
         return 0, {'rtype':'userinfo', 'user':user.to_json(), 'errno': 0}
     
     def processor_listchildren(self, u, query):
         #{'q':'listchildren', 'sid':sid}
+        #TODO
         uid = u.uid
-        self.__reload_all()
         u = self.user_ids[uid]
         l = []
         if u.is_admin() and u.username == 'root':
@@ -608,7 +605,9 @@ class smsd(object):
 
     def processor_listmsg(self, u, query):
         #{'q':'listmsg', 'sid':sid, 'status':status}
-        self.__reload_all()
+        #TODO
+
+        self.reload_message()
         status = query['status']
         begin = query['begin'] / 1000.0
         end = query['end'] / 1000.0
@@ -634,7 +633,8 @@ class smsd(object):
     
     def processor_listcheckmsg(self, u, query):
         #{'q':'listcheckmsg', 'sid':sid, 'status':status}
-        
+        #TODO
+        self.reload_message()
         if not u.is_admin():
             return False
         
@@ -650,6 +650,8 @@ class smsd(object):
     
     def processor_msginfo(self, user, query):
         #{'q':'msginfo', 'sid':sid, 'id':msg_id}
+        #TODO
+        self.reload_message()
         if 'id' not in query:
             return False
         
@@ -666,7 +668,7 @@ class smsd(object):
     
     def processor_setuserstatus(self, u, query):
         #{'q':'setuserstatus', 'sid':sid, user:username 'status':0 for disable, 1 for enable}
-
+        #TODO
         status = query['status']
         username = query['user']
         
@@ -693,7 +695,7 @@ class smsd(object):
         #{'q':'manageuser, 'sid':sid, user:username, desc:description, pass:password, flags:flags
         # 'can_weblogin':can_weblogin, 'can_post':'can_post', 'need_check':need_check
         # 'cm':cm, 'cu':cu, 'ct':ct}
-        
+        #TODO
         pu = self.users[query['user']]
         desc = query['desc']
         flags = query['flags']
@@ -749,6 +751,7 @@ class smsd(object):
         return 0, {'rtype':'manageuser', 'errno': 0} 
     
     def processor_deleteuserlist(self, u, query):
+        #TODO
         userlist = query['userlist']
         for ui in userlist:
             pu = self.users[ui]
@@ -766,6 +769,7 @@ class smsd(object):
         return 0, {'rtype':'deleteuserlist', 'errno': 0}
 
     def processor_deleteuser(self, u, query):
+        #TODO
         username = query['user']
         pu = self.users[username]
         
@@ -788,7 +792,8 @@ class smsd(object):
         
     def processor_managemsg(self, u, query):
         #{'q':'managemsg', 'sid':sid, 'mlist':msg id array, 'status':status}
-        
+        #TODO
+        self.reload_message()
         mlist = query['mlist']
         status = query['status']
         
@@ -846,12 +851,13 @@ class smsd(object):
         return 0, {'rtype':'managemsg', 'errno': 0} 
             
     def processor_queryreport(self, u, query):
-        #{q:'queryreport',sid:this.session, user:username, degin:start.time, end:end.time, type:type} 
+        #{q:'queryreport',sid:this.session, user:username, degin:start.time, end:end.time, type:type}
+        #TODO 
+        self.reload_message()
         if('begin' not in query or 'end' not in query or
             'user' not in query):
             return False
 
-        #self.__reload_all()
         
         username = query['user']
         begin = query['begin'] / 1000.0
@@ -918,7 +924,7 @@ class smsd(object):
         return 0, {'rtype':'queryreport', 'msg':l, 'errno': 0} 
     
     def get_message(self, message, pid, pbegin, pend):
-        
+        #TODO
         pu = self.user_ids[pid]
         keys = pu.username
         msg_json = {'send_user':keys, 'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0,
@@ -964,6 +970,7 @@ class smsd(object):
         return msg_json
     
     def special_channel_upload(self, u, begin, end, l):
+        #TODO
         channels = [u.channel_cm, u.channel_cu, u.channel_ct]
         ext_numbers = special_channel(channels)
         for ext in ext_numbers:
@@ -982,6 +989,7 @@ class smsd(object):
         return l
     
     def processor_uploadreport(self, u, query):
+        #TODO
         if('begin' not in query or 'end' not in query or
             'user' not in query):
             return False
@@ -1055,7 +1063,9 @@ class smsd(object):
         return 0, {'rtype':'uploadreport', 'msg':l, 'errno': 0}     
 
     def processor_channelqueryreport(self, u, query):
-        #{q:'queryreport',sid:this.session, degin:start.time, end:end.time, type:type} 
+        #{q:'queryreport',sid:this.session, degin:start.time, end:end.time, type:type}
+        #TODO 
+        self.reload_message()
         if('begin' not in query or 'end' not in query):
             return False
        
@@ -1100,14 +1110,15 @@ class smsd(object):
         return 0, {'rtype':'channelqueryreport', 'result':result, 'errno': 0}     
     
     def processor_addmsglog(self, u, query):
-        #{q:'queryreport',sid:this.session, user:username, degin:start.time, end:end.time, type:type} 
+        #{q:'queryreport',sid:this.session, user:username, degin:start.time, end:end.time, type:type}
+        #TODO 
         if('begin' not in query or 'end' not in query):
             return False
         begin = query['begin'] / 1000.0
         end = query['end'] / 1000.0
         pbegin = datetime.fromtimestamp(begin)
         pend = datetime.fromtimestamp(end) + timedelta(1)
-        self.__reload_all()
+
         q = self.db.raw_sql_query('SELECT uid, username, before_msg_num, add_msg_num, after_msg_num, type, create_time FROM addmsglog WHERE create_time >= %s and create_time <= %s', (pbegin, pend))
     
         l = []
@@ -1136,7 +1147,7 @@ class smsd(object):
         
 
     def processor_listlog(self, user, query):
-        #todo later
+        #TODO
         if('begin_year' not in query or 'begin_month' not in query or
             'begin_day' not in query or 'end_year' not in query or
              'end_month' not in query or 'end_day' not in query or
@@ -1181,6 +1192,7 @@ class smsd(object):
         return 0, {'rtype':'listlog', 'l':l}
     
     def processor_getphonebookinfo(self, user, query):
+        #TODO
         uid = user.uid
         phonebook.set_db(self.db, 'phonebook')
         phonebooks = phonebook.load('user_uid = %s', uid)        
@@ -1191,6 +1203,7 @@ class smsd(object):
         
     def processor_addphonebook(self, user, query):
         #{'q':'addphonebook', 'sid': sid, 'name':name, 'remark':remark}  
+        #TODO
         if ('name' not in query or 'remark' not in query):
             return False      
         
@@ -1205,7 +1218,7 @@ class smsd(object):
 
     def processor_managephonebook(self, user, query):
         #{'q':'managephonebook', 'sid': sid, 'id':uid, 'name':name, 'remark':remark}  
-        
+        #TODO
         if ('id' not in query or 'name' not in query or 'remark' not in query):
             return False      
         
@@ -1220,6 +1233,7 @@ class smsd(object):
         return 0, {'rtype':'managephonebook', 'errno' : 0} #成功        
     
     def processor_deletephonebook(self, user, query):
+        #TODO
         if 'id' not in query:
             return False
         
@@ -1236,6 +1250,7 @@ class smsd(object):
         return 0, {'rtype':'deletephonebook', 'errno':0}
     
     def processor_getaddresslistinfo(self, user, query):
+        #TODO
         uid = user.uid
         addresslist.set_db(self.db, 'address')
         addresslists = addresslist.load('user_uid = %s', uid)        
@@ -1245,6 +1260,7 @@ class smsd(object):
         return 0, {'rtype':'getaddresslistinfo', 'list':l}
     
     def processor_addaddresslist(self, user, query):
+        #TODO
         if ('addresslist' not in query or 'name' not in query):
             return False
         
@@ -1262,6 +1278,7 @@ class smsd(object):
         return 0, {'rtype':'addaddresslist', 'errno':0}
     
     def processor_deleteaddresslist(self, user, query):
+        #TODO
         if 'addresslist' not in query:
             return False
         
@@ -1287,6 +1304,7 @@ class smsd(object):
         return 0, {'rtype':'deleteaddresslist', 'errno':0}
     
     def processor_getphonelistdata(self, user, query):
+        #TODO
         if 'id' not in query:
             return False
         
@@ -1299,6 +1317,7 @@ class smsd(object):
         return 0, {'rtype':'getphonelistdata', 'list':l}
     
     def processor_getallphoneinfo(self, user, query):
+        #TODO
         uid = user.uid
         phonebook.set_db(self.db, 'phonebook')
         phonebooks = phonebook.load('user_uid = %s', uid)        
@@ -1314,6 +1333,7 @@ class smsd(object):
     def processor_addphone(self, user, query):
         #{'q':'addphone', 'sid': sid, 'phonebook_id':phonebook_id, 
         # 'name':name, 'companyname':companyname, 'title':title, 'mobile':mobile}  
+        #TODO
         if ('phonebook_id' not in query or'name' not in query 
             or 'companyname' not in query or 'mobile' not in query 
             or 'title' not in query):
@@ -1334,6 +1354,7 @@ class smsd(object):
     def processor_managephone(self, user, query):
         #{'q':'addphone', 'sid': sid, 'id':phone_id, 'phonebook_id':phonebook_id, 
         # 'name':name, 'companyname':companyname, 'title':title, 'mobile':mobile} 
+        #TODO
         if ('id' not in query or 'phonebook_id' not in query or'name' not in query 
             or 'companyname' not in query or 'mobile' not in query 
             or 'title' not in query):
@@ -1353,6 +1374,7 @@ class smsd(object):
     
     def processor_deletephonelist(self, user, query):
         #{'q':'deletephonelist', 'sid':sid, 'phonelist':phonelist}
+        #TODO
         if ('phonelist' not in query):
             return False
         
@@ -1368,7 +1390,7 @@ class smsd(object):
         #{'q':'addphonelist', 'sid':sid, 'phonebook_name':phonebook_name, 'phonelist':addrs}
         if ('phonebook_name' not in query or 'phonelist' not in query):
             return False
-        
+        #TODO
         uid = user.uid
         phonebook.set_db(self.db, 'phonebook')
         phonebook_name = query['phonebook_name']
