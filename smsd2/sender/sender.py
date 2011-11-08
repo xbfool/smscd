@@ -103,9 +103,10 @@ class sms_sender(object):
                     if self.timeout_dict.get(item['uid']) and self.timeout_dict[item['uid']]['count'] >= 6:
                         if self.timeout_dict[item['uid']]['count'] == 6:
                             self.msg_controller.down_channel(item)
+                            self.logger.debug('channel down: channel:%s' % (item))
                         else:
                             self.timeout_dict[item['uid']]['count'] += 1
-                        self.logger.debug('channel down: channel:%s' % (item))
+                        
                         
                     else:
                         if not self.timeout_dict.get(item['uid']):
@@ -208,11 +209,12 @@ class sms_sender(object):
                     self.__pending.append(msg['uid'])
                     msg['channel'] = item['name']
 
-                    if not channel_status.is_channel_ok(item['status'], msg['addr'][0]):
-                        if self.timeout_dict.get(item['uid']):
-                            del self.timeout_dict[item['uid']]
-                        self.msg_controller.start_channel(item, msg['addr'][0])
-                        self.logger.debug('channel start: channel:%s' % (item))
+                    #TODO
+                    #if not channel_status.is_channel_ok(item['status'], msg['addr'][0]):
+                        #if self.timeout_dict.get(item['uid']):
+                            #del self.timeout_dict[item['uid']]
+                        #self.msg_controller.start_channel(item, msg['addr'][0])
+                        #self.logger.debug('channel start: channel:%s' % (item))
                     sending_str = 'sending : msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg)
                     self.logger.debug(sending_str)
                     print sending_str

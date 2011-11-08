@@ -69,7 +69,7 @@ def process_req_sd_ct(http_pool, setting, msg):
                       pwd=setting['pwd'])
 
 def process_req_honglian(http_pool, setting, msg):
-    if not msg.get('ext'):
+    if not msg.get('ext') or msg.get('ext') == None  or msg.get('ext') == "":
         http_pool.req(msg['channel'],
                   {'user_uid':msg['user_uid'], 
                             'setting':setting, 
