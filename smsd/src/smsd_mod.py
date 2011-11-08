@@ -94,7 +94,7 @@ class smsd(object):
     def __reload_all(self):
         
         user.set_db(self.db, 'user')
-        
+        message.set_db(self.db, 'message')
         users = user.load()
         
                 
@@ -119,9 +119,10 @@ class smsd(object):
         for u in users:
             self.user_ids[u.uid] = u
             
+            
 
     def reload_message(self):
-        message.set_db(self.db, 'message')
+        
         
         
         messages = message.load()
@@ -488,6 +489,11 @@ class smsd(object):
         address = query['address']
         address_list = query['address_list']
         msg = query['msg']
+        
+
+        phone_type = query.get('type' , self.PHONE_NUMBER)
+
+      
            
         try:
             msgcontent = msg.decode('utf8')
@@ -504,7 +510,7 @@ class smsd(object):
             return 0, {'rtype':'sendmessage', 'errno':-3} #zero message
         
         
-        if type == self.PHONE_NAME :
+        if phone_type == self.PHONE_NAME :
             numbers = []
             names = address.split(";")
             for name in names:
@@ -514,7 +520,7 @@ class smsd(object):
                 numbers.append(addresslistobj.number)
             number = ";".join(numbers)
             l = number.split(";")
-        elif type == self.PHONE_NUMBER:
+        elif phone_type == self.PHONE_NUMBER:
             l = address.split(";")
         else:
             return 0, {'rtype':'sendmessage', 'errno':-6} #error type
