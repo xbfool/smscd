@@ -121,11 +121,11 @@ class smsd(object):
             
             
 
-    def reload_message(self):
+    def reload_message(self, where = None):
         
         
         
-        messages = message.load()
+        messages = message.load(where)
                 #compute commit nums
         for m in messages:
             self.messages[m.uid] = m
@@ -613,13 +613,14 @@ class smsd(object):
         #{'q':'listmsg', 'sid':sid, 'status':status}
         #TODO
 
-        self.reload_message()
+        
         status = query['status']
         begin = query['begin'] / 1000.0
         end = query['end'] / 1000.0
         pbegin = datetime.fromtimestamp(begin)
         pend = datetime.fromtimestamp(end) + timedelta(1)
-        
+        where = 'create_time between %s and %s' % (pbegin.strftime('%Y%m%d'), pend.strftime('%Y%m%d'))
+        self.reload_message(where)
         l = []
         for k in self.messages.itervalues():
             if k.user_uid == u.uid or u.flags & user.F_CREATE_CHARGE:
@@ -859,7 +860,7 @@ class smsd(object):
     def processor_queryreport(self, u, query):
         #{q:'queryreport',sid:this.session, user:username, degin:start.time, end:end.time, type:type}
         #TODO 
-        self.reload_message()
+
         if('begin' not in query or 'end' not in query or
             'user' not in query):
             return False
@@ -870,6 +871,8 @@ class smsd(object):
         end = query['end'] / 1000.0
         pbegin = datetime.fromtimestamp(begin)
         pend = datetime.fromtimestamp(end) + timedelta(1)
+        where = 'create_time between %s and %s' % (pbegin.strftime('%Y%m%d'), pend.strftime('%Y%m%d'))
+        self.reload_message(where)
         pm = phonenumber.phonenumber()
         
         #send_user:send_num:success_num:fail_num:append_num
@@ -1071,7 +1074,7 @@ class smsd(object):
     def processor_channelqueryreport(self, u, query):
         #{q:'queryreport',sid:this.session, degin:start.time, end:end.time, type:type}
         #TODO 
-        self.reload_message()
+
         if('begin' not in query or 'end' not in query):
             return False
        
@@ -1079,7 +1082,9 @@ class smsd(object):
         end = query['end'] / 1000.0
         pbegin = datetime.fromtimestamp(begin)
         pend = datetime.fromtimestamp(end) + timedelta(1)
-        
+        where = 'create_time between %s and %s' % (pbegin.strftime('%Y%m%d'), pend.strftime('%Y%m%d'))
+        self.reload_message(where)
+ 
         msg_dict = {}
         total = {'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0, 'sub_num':0}
         for k in self.messages.itervalues():                    
