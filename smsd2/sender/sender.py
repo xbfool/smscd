@@ -257,7 +257,15 @@ class sms_sender(object):
                 
         return count
 
+    def common_message_num(self, msg):
+        l = len(msg.decode('utf8'))
+        if l <= 70:
+            return 1
+        else:
+            return (l - 1) / 64 + 1
+        
     def process_req(self, channel_item, msg):
+        msg['msg_num'] = self.common_message_num(msg['content']) * len(msg['addr'])
         if channel_item['setting']['sub_mode'] != 'card_send':
             channel_item['setting']['process_req'](self.__zhttp_pool, channel_item['setting'], msg)
         else:

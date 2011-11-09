@@ -18,6 +18,7 @@ def process_ret_honglian(sender, param):
         result = "something is error"
         
     if result == success_str:
+        print param
         sender.msg_controller.send_success(param, result)
         return 1
     elif param['ret'][2] == 'error:\xd3\xe0\xb6\xee\xb2\xbb\xd7\xe30': #no money

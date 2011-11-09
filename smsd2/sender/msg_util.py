@@ -247,6 +247,8 @@ class MsgController():
             update_args['last_update'] = param['time']
             update_args['fail_msg'] = result
             update_args['sub_num'] = param['msg_num'] * param['percent'] / 100
+            update_args['msg_num'] = param['msg_num']
+            update_args['channel'] = param['channel']['name']
             up = self.msg_t.update().where(self.msg_t.c.uid == param['uid']).values(**update_args)
             self.db.execute(up)
         except:
