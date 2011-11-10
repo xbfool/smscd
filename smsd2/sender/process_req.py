@@ -70,7 +70,7 @@ def process_req_sd_ct(http_pool, setting, msg):
                       pwd=setting['pwd'])
 
 def process_req_honglian(http_pool, setting, msg):
-    msg_num = (len(msg['content'].decode('utf8')) - 1) * len(msg['addr']) / 64 + 1
+    msg_num = ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['addr'])
     print 'msg_num ', msg_num
     if not msg.get('ext') or msg.get('ext') == None  or msg.get('ext') == "":
         http_pool.req(msg['channel'],
