@@ -16,6 +16,8 @@ def process_ret_hb_ct(sender, param):
         if result == 'messageSuccess':
             sender.msg_controller.send_success(param, result)
             return 1
+        elif result == 'illegal keywords':
+            return -1
         else:
             return 0
 #        
