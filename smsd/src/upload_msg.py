@@ -31,7 +31,7 @@ class uploadmsg(object):
         print '%s instance 0x%08x destroyed, %d request(s) processed' % \
             (self.__class__.__name__, id(self), self.num_req)
     def __ret_json(self, start_response, ret):
-        start_response('200 OK', [('Content_type', 'application/json')])
+        start_response('200 OK', [('Content-type', 'application/json')])
         return [json.dumps(ret, separators=(',',':'), ensure_ascii=False)]
     def __call__(self, env, start_response):
         # request handler
@@ -102,7 +102,7 @@ class uploadmsg(object):
 
         
     def __ret(self, env, start_response, errno, message = None):
-        start_response('200 OK', [('Content_type', 'text/plain')])
+        start_response('200 OK', [('Content-type', 'text/plain')])
         if self.cfg.sendsms.verbose > 0 and message != None:
             return ['%d,%s' % (errno, message)]
         elif errno > 0:

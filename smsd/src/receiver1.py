@@ -73,7 +73,7 @@ class sendsms(object):
 
         
     def __ret(self, env, start_response, errno, message = None):
-        start_response('200 OK', [('Content_type', 'text/plain')])
+        start_response('200 OK', [('Content-type', 'text/plain')])
         if self.cfg.sendsms.verbose > 0 and message != None:
             return ['%d,%s' % (errno, message)]
         elif errno > 0:
