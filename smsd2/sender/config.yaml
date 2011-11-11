@@ -2,8 +2,8 @@ smsd:
   session_expire : 3600
  
 database:
-  user: user
-  password: 123456
+  user: root
+  password: ftp3*8*ing
   db: smsd
   host: localhost
   engine: mysql+mysqldb

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # vim:fileencoding=utf-8
 
+import sys
+print sys.path
 from hashlib import sha1
 from datetime import datetime, timedelta
 import time
