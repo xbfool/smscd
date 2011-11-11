@@ -6,12 +6,13 @@ from smsd2.engine.WsgiEngine import WsgiEngine
 from smsd2.command.SmsdCommand import SmsdCommand
 from smsd2.context.context import Context
 from smsd2.database.create_table import create_table
-
-
+import os
+smsd_path = os.path.dirname(__file__) + 'config.yaml'
 class Smsd2(WsgiEngine):
     def __init__(self, env=None, start_response=None):
         WsgiEngine.__init__(self, env, start_response)
-        self.c = Context('config.yaml')
+       
+        self.c = Context(smsd_path)
         create_table(self.c.db)
         self.add_command(SmsdCommand(self.c), '/smsd', 'json')
         
