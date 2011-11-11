@@ -8,8 +8,9 @@ import phonenumber
 from random import *
 from time import time
 import sys
+import os
 if __name__ != '__main__':
-    smsd_path = '/home/jimmyz/smsd/src'
+    smsd_path = os.path.dirname(__file__)
     #smsd_path = 'C:\\xampp\\htdocs\\smsd\\src'
     sys.path.append(smsd_path)
 

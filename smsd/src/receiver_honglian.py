@@ -7,9 +7,10 @@ from datetime import datetime
 import logging
 import logging.handlers
 import sys
+import os
 from os import makedirs
 if __name__ != '__main__':
-    smsd_path = '/home/jimmyz/smsd/src'
+    smsd_path = os.path.dirname(__file__)
     #smsd_path = 'C:\\xampp\\htdocs\\smsd\\src'
     sys.path.append(smsd_path)
 
