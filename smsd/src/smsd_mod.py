@@ -21,9 +21,11 @@ from addresslist import addresslist
 from special_channel import *
 from random import randint, seed
 import sys
+import os
+
+
 if __name__ != '__main__':
-    smsd_path = '/home/jimmyz/smsd/src'
-    #smsd_path = 'C:\\xampp\\htdocs\\smsd\\src'
+    smsd_path = os.path.dirname(__file__)
     sys.path.append(smsd_path)
 
         
