@@ -927,7 +927,7 @@ class smsd(object):
                 else:
                     tmp = messages[k.user_uid]
                 tmp.append(k)
-                messages[id] = tmp
+                messages[k.user_uid] = tmp
             
             pid = u.uid
             msg_json = self.get_message(messages, pid, pbegin, pend)
