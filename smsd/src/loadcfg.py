@@ -38,5 +38,5 @@ class csvcfg():
             
 if __name__ == '__main__':
     from os import getcwd
-    c = loadcfg(getcwd() + '/config.ini')
+    c = loadcfg(getcwd() + '/smsd.ini')
     pass

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # vim:fileencoding=utf-8
 
+import sys
+print sys.path
 from hashlib import sha1
 from datetime import datetime, timedelta
 import time
@@ -209,11 +211,11 @@ class smsd(object):
             return self.__not_found(env, start_response)
     
     def __not_found(self, env, start_response):
-        start_response('404 NOT FOUND', [('Content_type', 'text/plain')])
+        start_response('404 NOT FOUND', [('Content-type', 'text/plain')])
         return ['Not Found']
     
     def __ret_json(self, ret, start_response):
-        start_response('200 OK', [('Content_type', 'application/json')])
+        start_response('200 OK', [('Content-type', 'application/json')])
         return [json.dumps(ret, separators=(',', ':'))]
     
     def __add_user(self, u):
