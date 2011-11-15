@@ -276,7 +276,8 @@
 							</s:HGroup>
 							<s:VGroup>
 								<mx:Label text="物流发送"/>
-								<mx:Label text="{special_msg_num}"/>	
+								<mx:Label text="以70字一条计算的总条数: {special_msg_num_70}"/>
+								<mx:Label text="以64字一条计算的总条数: {special_msg_num_64}"/>
 								<s:HGroup>
 									<mx:Button label="导入" click="{import_from_logistics_csv_template_1()}"/>
 									<mx:Button label="下载模板" click="{download_logistics_csv_template_1()}"/>
