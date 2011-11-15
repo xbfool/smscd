@@ -451,7 +451,7 @@ class smsd(object):
                 else:
                     return 0, {'rtype':'sendmessagelist', 'errno':-4} #zero message
                  
-                num = len(address) * p
+                num = p
                 
                 if num == 0:
                     return 0, {'rtype':'sendmessagelist', 'errno':-3} #zero message

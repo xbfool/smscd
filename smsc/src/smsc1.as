@@ -41,7 +41,8 @@ private var selected_username:String = '';
 [Bindable] private var user_create_time:String = null; //create_time
 [Bindable] private var user_last_login:String =  null; //last_login
 [Bindable] private var user_commit_msg_num:int = 0;
-[Bindable] private var special_msg_num:int = 0;
+[Bindable] private var special_msg_num_70:int = 0;
+[Bindable] private var special_msg_num_64:int = 0;
 private var ready_commit_msg_num:int = 0;
 
 private var address_file:FileReference = new FileReference();
@@ -1472,13 +1473,11 @@ private function change_view_stack(view:String):void{
 private function check_char_count(text:TextArea, count:Label, address:String):void{
 	
 	var i:int = text.text.length;
-	var p:int = 0;
-	if(i == 0)
-		p = 0;
-	else if(i <= 70)
-		p = 1;
-	else 
-		p = (i - 1) / 65 + 1;
+	var p_64:int = 0;
+	var p_70:int = 0;
+	
+	p_64 = check_64(text.text);
+	p_70 = check_70(text.text);
 	
 	var dp:Array = message_phone_number.source;
 	
@@ -1489,12 +1488,14 @@ private function check_char_count(text:TextArea, count:Label, address:String):vo
 		n += dp[j].count;
 	}
 	
-	var num:int = p * n;
+	var num:int = p_64 * n;
 	ready_commit_msg_num = num;
 	count.text = "短信字数:" + (i as int).toString() + 
-		" 拆分条数: " + (p as int).toString() + 
+		" 拆分条数(64字一条): " + (p_64 as int).toString() + 
+		" 拆分条数(70字一条): " + (p_70 as int).toString() + 
 		" 联系人数: " + (n as int).toString() + 
-		" 总条数: " + (num as int).toString();
+		" 总条数(64): " + (num as int).toString() + 
+		" 总条数(67): " + (p_70 * n as int).toString();
 }
 
 private function compute_msg_count(msg:String):int{
@@ -2219,7 +2220,21 @@ private function import_from_logistics_csv_template_1():void{
 	address_file.addEventListener(Event.COMPLETE, completeLogisticsHandler);
 
 }
+private function check_70(s:String):int{
+	var l:int = s.length;
+	if(l == 0)
+		return 0;
+	if(l <= 70)
+		return 1;
+	else
+		return (s.length - 1) / 64 + 1;
+}
 
+private function check_64(s:String):int{
+	if(s.length == 0)
+		return 0;
+	return (s.length - 1) / 64 + 1;
+}
 private function completeLogisticsHandler(event:Event):void {
 	
 	var adds:ByteArray = address_file.data;
@@ -2229,10 +2244,23 @@ private function completeLogisticsHandler(event:Event):void {
 
 	logistics_send_data = new Array;
 	logistics_data.removeAll();
+	special_msg_num_70 = 0;
+	special_msg_num_64 = 0;
+	
 	for ( var i:int = 1; i < rows.length; i++) {
 		var row:String = rows[i];
 		var col:Array = row.split(",");
-		if ( col.length != 10 ) continue;
+		if(String(col[2]).length != 11){
+			Alert.show("第"+ String(i-1)+"条手机号码格式有问题，请检查");
+			return;
+		}
+	}
+	
+	for ( var i:int = 1; i < rows.length; i++) {
+		var row:String = rows[i];
+		var col:Array = row.split(",");
+		if ( col.length != 10 ) 
+			continue;
 		var o:Object = {date:col[0],
 			name:col[1],
 			phone:col[2],
@@ -2246,7 +2274,11 @@ private function completeLogisticsHandler(event:Event):void {
 		
 		logistics_data.addItem(o);
 		var send_string:String = makeLogistics1String(o);
-		logistics_send_data.push([col[2],send_string]);
+		if(String(col[2]).length == 11){
+			logistics_send_data.push([col[2],send_string]);
+			special_msg_num_70 += check_70(send_string);
+			special_msg_num_64 += check_64(send_string);
+		}
 	}
 	logistics_send_data_length = logistics_send_data.length
 	logistics_data.refresh();
