@@ -38,7 +38,7 @@ class sms_sender(object):
         # Add the log message handler to the logger
 
         handler = logging.handlers.RotatingFileHandler(
-              LOG_FILENAME, maxBytes=10000000, backupCount=100)
+              LOG_FILENAME, maxBytes=10000000, backupCount=10)
         my_logger.addHandler(handler)
         
         handler.setLevel(logging.DEBUG)
