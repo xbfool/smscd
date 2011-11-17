@@ -18,12 +18,14 @@ def process_ret_hb_ct(sender, param):
             return 1
         elif result == 'illegal keywords':
             return -1
+        elif result == 'not enugh money!':
+            return -1
         else:
-            return 0
+            return -1
 #        
     except:
         print_exc()
-        return 0
+        return -1
   
     return 1  
 

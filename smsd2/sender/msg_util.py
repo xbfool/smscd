@@ -268,6 +268,7 @@ class MsgController():
         try:
             update_args = {}
             update_args['status'] = msg_status.F_FAIL
+            update_args['channel'] = param['setting']['name']
             up = self.msg_t.update().where(self.msg_t.c.uid == param['uid']).values(**update_args)
             self.db.execute(up)
         except:
