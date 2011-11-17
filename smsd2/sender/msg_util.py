@@ -60,7 +60,9 @@ class MsgController():
             ret['content'] = ret['msg']
             ret['percent'] = self.get_user_percent(ret['user_uid'])
             ret['ext'] = self.get_user_ext(ret['user_uid'])
-            yield ret
+            msg_num = self.get_user_msg_num(ret['user_uid'])
+            if msg_num >= max(ret['msg_num'], 1):
+                yield ret
     def get_user_percent(self, user_uid):
         if self.user_dict.get(user_uid):
             return self.user_dict[user_uid].percent
@@ -73,7 +75,14 @@ class MsgController():
             return r.percent
         else:
             return 100
-    
+    def get_user_msg_num(self, user_uid):
+        sel = select([self.user_t], self.user_t.c.uid == user_uid)
+        res = self.db.execute(sel)
+        r = res.fetchone()
+        if r != None:
+            return r.msg_num
+        else:
+            return -1
     def get_user_ext(self, user_uid):
         if self.user_dict.get(user_uid):
             return self.user_dict[user_uid].ext
@@ -246,7 +255,10 @@ class MsgController():
             update_args['status'] = msg_status.F_SEND
             update_args['last_update'] = param['time']
             update_args['fail_msg'] = result
-            update_args['sub_num'] = param['msg_num'] * param['percent'] / 100
+            if param.get('total_num', 0) >= 100:
+                update_args['sub_num'] = param['msg_num'] * param['percent'] / 100
+            else:
+                update_args['sub_num'] = param['msg_num']
             update_args['msg_num'] = param['msg_num']
             update_args['channel'] = param['setting']['name']
             up = self.msg_t.update().where(self.msg_t.c.uid == param['uid']).values(**update_args)
