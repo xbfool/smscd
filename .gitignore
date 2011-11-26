@@ -6,3 +6,4 @@ smsc2/html-template
 smsd/.*
 .project
 .pydevproject
+.settings/
