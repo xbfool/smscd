@@ -2206,8 +2206,11 @@ private function download_import_template(): void{
 private function download_logistics_csv_template_1(): void{	
 	
 	var file:ByteArray = new ByteArray;
-	file.writeMultiByte("日期,姓名,手机号,线路名称,货物品名,件数,单据号,金额,物流公司名,联系电话\r\n", "utf8");
-	file.writeMultiByte("2011年08月26日,张三,18612345678,青岛,书本,2,1234567,999.99,和泰汇达,15666677797\r\n", "utf8");
+	file.writeByte(0xEF);
+	file.writeByte(0xBB);
+	file.writeByte(0xBF);
+	file.writeMultiByte("日期,姓名,手机号,线路名称,货物品名,件数,单据号,金额,物流公司名,联系电话\r\n", "utf-8");
+	file.writeMultiByte("2011年08月26日,张三,18612345678,青岛,书本,2,1234567,999.99,和泰汇达,15666677797\r\n", "utf-8");
 	var fr:FileReference = new FileReference();  
 	fr.save(file,"物流发送模板1.csv"); 
 }
@@ -2238,7 +2241,7 @@ private function check_64(s:String):int{
 private function completeLogisticsHandler(event:Event):void {
 	
 	var adds:ByteArray = address_file.data;
-	var contents:String = adds.readMultiByte(adds.length, "utf8");
+	var contents:String = adds.readMultiByte(adds.length, "utf-8");
 	var rows:Array = contents.split("\r\n");
 	trace(rows.length);
 
@@ -2250,8 +2253,8 @@ private function completeLogisticsHandler(event:Event):void {
 	for ( var i:int = 1; i < rows.length; i++) {
 		var row:String = rows[i];
 		var col:Array = row.split(",");
-		if(String(col[2]).length != 11){
-			Alert.show("第"+ String(i-1)+"条手机号码格式有问题，请检查");
+		if(row.length >= 0 && col[2] != null && String(col[2]).length != 11 && String(col[2]).length != 0){
+			Alert.show("第"+ String(i)+"条手机号码格式有问题，请检查");
 			return;
 		}
 	}
