@@ -2250,7 +2250,7 @@ private function completeLogisticsHandler(event:Event):void {
 	for ( var i:int = 1; i < rows.length; i++) {
 		var row:String = rows[i];
 		var col:Array = row.split(",");
-		if(row.length >= 0 && col.length == 10 && String(col[2]).length != 11 && String(col[2]).length != 0){
+		if(row.length >= 0 && col != null && col.length == 10 && String(col[2]).length != 11 && String(col[2]).length != 0){
 			Alert.show("第"+ String(i)+"条手机号码格式有问题，请检查");
 			return;
 		}
