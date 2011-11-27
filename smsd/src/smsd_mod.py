@@ -565,7 +565,10 @@ class smsd(object):
             if p == 1 or channel in ['shangxintong_01', 'honglian_01',
                                      'honglian_bjyh',
                                      'honglian_jtyh',
-                                     'honglian_ty']:
+                                     'honglian_ty',
+                                     'changshang_a_01',
+                                     'changshang_a_02',
+                                     'changshang_a_04']:
                 if len(split_addr[addr]) > 0:
                     self.__split_message(u.uid, split_addr[addr], msg, message.F_ADMIT, channel, my_seed)
             else:
