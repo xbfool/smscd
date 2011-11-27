@@ -180,7 +180,13 @@ def process_req_shangxintong(http_pool, setting, msg):
                   port=8081)   
     
 def process_req_changshang_a(http_pool, setting, msg):
-                      
+    msg_str_len = msg['content'].decode('utf8')
+    msg_num = 0
+    if msg_str_len <= 70:
+        msg_num =  len(msg['addr'])
+    else:
+        msg_num = ((msg_str_len - 1) / 67 + 1) * len(msg['addr'])
+                  
     tmpmsg = unicode(msg['content'], 'utf-8')
     sendmsg = msg['content']
     try:
@@ -192,7 +198,7 @@ def process_req_changshang_a(http_pool, setting, msg):
                               {'user_uid':msg['user_uid'], 
                                'setting':setting, 
                                'uid':msg['uid'], 
-                               'msg_num':msg['msg_num'], 
+                               'msg_num':msg_num, 
                                'percent':msg['percent']},
                               corp_id=setting['corp_id'], 
                               corp_pwd=setting['corp_pwd'], 
@@ -204,7 +210,7 @@ def process_req_changshang_a(http_pool, setting, msg):
                       {'user_uid':msg['user_uid'], 
                        'setting':setting, 
                        'uid':msg['uid'], 
-                       'msg_num':msg['msg_num'], 
+                       'msg_num':msg_num, 
                        'percent':msg['percent']},
                       corp_id=setting['corp_id'], 
                       corp_pwd=setting['corp_pwd'], 
