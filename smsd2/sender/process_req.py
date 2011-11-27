@@ -180,7 +180,7 @@ def process_req_shangxintong(http_pool, setting, msg):
                   port=8081)   
     
 def process_req_changshang_a(http_pool, setting, msg):
-    msg_str_len = msg['content'].decode('utf8')
+    msg_str_len = len(msg['content'].decode('utf8'))
     msg_num = 0
     if msg_str_len <= 70:
         msg_num =  len(msg['addr'])
