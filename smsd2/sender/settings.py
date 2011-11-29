@@ -47,10 +47,10 @@ class sender_settings():
             'path': '/swdx/services/APService',
             'mode': 'soap',
             'sub_mode':'hb_ct',
-            'entid': 'szsccp',
-            'uid': 'sccp02',
-            'apid': 'apszsccp02',
-            'appwd': '7878779',
+            'entid': 'hbtmbckj',
+            'uid': 'hbtmbckj3',
+            'apid': 'hbtmbckj3',
+            'appwd': '31Zup3FA',
             'process_ret' : process_ret_hb_ct,
             'process_req' : process_req_hb_ct
         }
