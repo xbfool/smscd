@@ -280,7 +280,37 @@ class card_sender(object):
         self.cardpool.add_number_by_string('13376442524')
         self.cardpool.add_number_by_string('13376442384')
 
-    
+        self.cardpool.add_number_by_string('15314106299')
+        self.cardpool.add_number_by_string('15314106359')
+        self.cardpool.add_number_by_string('15314105939')
+        self.cardpool.add_number_by_string('15314105609')
+        self.cardpool.add_number_by_string('15314106577')
+        self.cardpool.add_number_by_string('15314105129')
+        self.cardpool.add_number_by_string('15314103059')
+        self.cardpool.add_number_by_string('15314107089')
+        self.cardpool.add_number_by_string('15314108056')
+        self.cardpool.add_number_by_string('15314106706')
+        self.cardpool.add_number_by_string('15314106455')
+        self.cardpool.add_number_by_string('15314106559')
+        self.cardpool.add_number_by_string('15314106899')
+        self.cardpool.add_number_by_string('15314103329')
+        self.cardpool.add_number_by_string('15314106259')
+        self.cardpool.add_number_by_string('15314109128')
+        self.cardpool.add_number_by_string('15314106808')
+        self.cardpool.add_number_by_string('15314105799')
+        self.cardpool.add_number_by_string('15306413319')
+        self.cardpool.add_number_by_string('15306416966')
+        self.cardpool.add_number_by_string('15306415019')
+        self.cardpool.add_number_by_string('15306413066')
+        self.cardpool.add_number_by_string('15306413266')
+        self.cardpool.add_number_by_string('15306411788')
+        self.cardpool.add_number_by_string('15306415259')
+        self.cardpool.add_number_by_string('15306416606')
+        self.cardpool.add_number_by_string('15306416106')
+        self.cardpool.add_number_by_string('15306415806')
+        self.cardpool.add_number_by_string('15306413578')
+        self.cardpool.add_number_by_string('15306415633')
+ 
     def init_logger(self):
         import glob
         import logging
