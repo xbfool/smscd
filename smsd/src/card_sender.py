@@ -226,23 +226,10 @@ class card_sender(object):
         self.message_pool[item.uid] = item
         for addr in item.address_list:
             seq = self.genseqnum()
-            self.linear_send(seq, addr, item.msg)
-            self.seq_pool[seq] = item.uid
             item.address_pool[seq] = addr
-                
-#    def send_message(self, seq, addr, msg):
-#        self.__card_sender_lock.acquire()
-#        send_msg = msg
-#        try:
-#            send_msg = msg.decode('utf-8').encode('gbk')
-#        except:
-#            pass
-#        card_number = self.get_send_card_number()
-#        sumbit_sms(self.card_socket, seq, card_number, addr, send_msg)
-#        self.__sender_semaphone.release()
-#        self.logger.debug('time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
+            self.linear_send(item.uid, seq, addr, item.msg)
 
-    def linear_send(self, seq, addr, msg):
+    def linear_send(self, uid, seq, addr, msg):
         send_msg = msg
         try:
             send_msg = msg.decode('utf-8').encode('gbk')
@@ -251,27 +238,24 @@ class card_sender(object):
         try:
             card_number = self.get_send_card_number()
             sumbit_sms(self.card_socket, seq, card_number, addr, send_msg)
-            #self.__sender_semaphone.release()
+
             self.logger.debug('submit:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
         except:
             print_exc()
         try:
             print 'receiving resp'
             seq1 = recv_resp(self.card_socket)
-            if(seq1 == seq and self.seq_pool.get(seq1)):
-                uid = self.seq_pool[seq1]
+            if(seq1 == seq):
                 m = self.message_pool[uid]
                 m.success_pool.add(seq)
                 self.check_and_update_message(m)
                 self.logger.debug('succeed:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
             else:
-                uid = self.seq_pool[seq]
                 m = self.message_pool[uid]
                 self.set_message_fail(m)
                 self.logger.debug('fail  :time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
         except:
             print_exc()
-            uid = self.seq_pool[seq]
             m = self.message_pool[uid]
             self.set_message_fail(m)
             self.logger.debug('fail  :time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
