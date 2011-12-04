@@ -294,7 +294,7 @@ class card_sender(object):
         
         # Add the log message handler to the logger
         handler = logging.handlers.RotatingFileHandler(
-                      LOG_FILENAME)
+                      LOG_FILENAME, maxBytes=1000000000, backupCount=10)
         
         my_logger.addHandler(handler)
         
