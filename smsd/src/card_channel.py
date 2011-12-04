@@ -80,7 +80,6 @@ def conn_socket():
         return None
     
 def sumbit_sms(clisock, seq_number, card_number, address, msg):
-    print 'submit msg:', seq_number, card_number, address, msg
     send_msg = pack_sm_msg(seq_number, card_number, address, msg)
     clisock.send(send_msg)
 

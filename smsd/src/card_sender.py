@@ -89,7 +89,7 @@ class card_sender(object):
         
     def __worker(self):
         while not self.__worker_exit_lock.acquire(False) and not self.kill_received:
-            print 'checking queue: ', datetime.now()
+            #print 'checking queue: ', datetime.now()
             try:
                 if self.__process_queue() == 0:
                     sleep(self.__chk_interval)
@@ -102,6 +102,7 @@ class card_sender(object):
                 time.sleep(1)
                 continue
             try:
+                print 'receiving resp'
                 seq = recv_resp(self.card_socket)
                 if(self.seq_pool.get(seq)):
                     uid = self.seq_pool[seq]
@@ -110,6 +111,8 @@ class card_sender(object):
                     m.success_pool.add(seq)
                     last_update = datetime.now()
                     self.check_and_update_message(m)
+                else:
+                    print 'no seq: %d' % seq
             except:
                 print_exc()
                 self.card_socket = conn_socket() 
