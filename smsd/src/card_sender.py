@@ -237,11 +237,15 @@ class card_sender(object):
             pass
         try:
             card_number = self.get_send_card_number()
-            sumbit_sms(self.card_socket, seq, card_number, addr, send_msg)
-
+            try:
+                sumbit_sms(self.card_socket, seq, card_number, addr, send_msg)
+            except:
+                self.card_socket = conn_socket()
+                sumbit_sms(self.card_socket, seq, card_number, addr, send_msg)
             self.logger.debug('submit:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
         except:
             print_exc()
+            
         try:
             print 'receiving resp'
             seq1 = recv_resp(self.card_socket)

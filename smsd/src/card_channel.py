@@ -81,7 +81,7 @@ def conn_socket():
     
 def sumbit_sms(clisock, seq_number, card_number, address, msg):
     send_msg = pack_sm_msg(seq_number, card_number, address, msg)
-    clisock.send(send_msg)
+    clisock.sendall(send_msg)
 
 
 def recv_resp(clisock):
