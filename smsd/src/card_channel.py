@@ -86,15 +86,17 @@ def sumbit_sms(clisock, seq_number, card_number, address, msg):
 
 def recv_resp(clisock):
     try:
+        clisock.settimeout(5)  
         resp_buffer = clisock.recv(1024)
         if(len(resp_buffer) > 0):
             bind_resp = unpack_resp(resp_buffer)
+            print "bind_resp: ", bind_resp
             if(bind_resp != ""):
                 sequnce_id = bind_resp[3]
                 if(sequnce_id > 0):
-                    print "bind_resp: ", bind_resp
                     print "recv seq id: " , sequnce_id
                     return sequnce_id
-
-    except:
         return 0
+    except:
+        print 'recv_timeout'
+        return -1

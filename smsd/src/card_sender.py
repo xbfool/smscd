@@ -250,6 +250,8 @@ class card_sender(object):
                 m.success_pool.add(seq)
                 self.check_and_update_message(m)
                 self.logger.debug('succeed:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
+            elif seq1 == -1:
+                self.card_socket = conn_socket() 
             else:
                 m = self.message_pool[uid]
                 self.set_message_fail(m)
