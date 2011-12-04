@@ -13,6 +13,7 @@ import phonenumber
 import time
 from datetime import datetime
 from traceback import print_exc
+from sqlalchemy.sql import and_, or_, not_
 
 class msg_send():
     def __init__(self):
@@ -52,7 +53,7 @@ class MsgController():
         self.default_list = None
         
     def get_messages(self):
-        sel =  select([self.msg_t], self.msg_t.c.status == msg_status.F_ADMIT)
+        sel =  select([self.msg_t], and_(self.msg_t.c.status == msg_status.F_ADMIT, self.msg_t.c.channel != 'card_send_a'))
         res = self.db.execute(sel)
         
         for r in res:
