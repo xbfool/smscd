@@ -226,7 +226,7 @@ class card_sender(object):
         self.message_pool[item.uid] = item
         for addr in item.address_list:
             seq = self.genseqnum()
-            self.send_message(seq, addr, item.msg)
+            self.linear_send(seq, addr, item.msg)
             self.seq_pool[seq] = item.uid
             item.address_pool[seq] = addr
                 
@@ -248,11 +248,13 @@ class card_sender(object):
             send_msg = msg.decode('utf-8').encode('gbk')
         except:
             pass
-        card_number = self.get_send_card_number()
-        sumbit_sms(self.card_socket, seq, card_number, addr, send_msg)
-        #self.__sender_semaphone.release()
-        self.logger.debug('submit:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
- 
+        try:
+            card_number = self.get_send_card_number()
+            sumbit_sms(self.card_socket, seq, card_number, addr, send_msg)
+            #self.__sender_semaphone.release()
+            self.logger.debug('submit:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
+        except:
+            print_exc()
         try:
             print 'receiving resp'
             seq1 = recv_resp(self.card_socket)
