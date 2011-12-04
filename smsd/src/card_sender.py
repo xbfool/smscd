@@ -61,7 +61,7 @@ class card_sender(object):
         self.__worker_exit_lock = Lock()
         self.__worker_exit_lock.acquire()
         self.__card_sender_lock = Lock()
-        self.__sender_semaphone = threading.BoundedSemaphore(0)
+        self.__sender_semaphone = threading.BoundedSemaphore(1)
         self.__worker_thread = Thread(None, self.__worker, '%s checker thread' % self.__class__.__name__)   
         self.__worker_thread.start() 
         
@@ -229,8 +229,13 @@ class card_sender(object):
                 
     def send_message(self, seq, addr, msg):
         self.__card_sender_lock.acquire()
+        send_msg = msg
+        try:
+            send_msg = msg.decode('utf-8').encode('gbk')
+        except:
+            pass
         card_number = self.get_send_card_number()
-        sumbit_sms(self.card_socket, seq, card_number, addr, msg)
+        sumbit_sms(self.card_socket, seq, card_number, addr, send_msg)
         self.__sender_semaphone.release()
         self.logger.debug('time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
     
