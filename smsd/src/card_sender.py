@@ -60,8 +60,8 @@ class card_sender(object):
             raise Exception()
         self.__worker_exit_lock = Lock()
         self.__worker_exit_lock.acquire()
-        self.__card_sender_lock = Lock()
-        self.__sender_semaphone = threading.BoundedSemaphore(1)
+        #self.__card_sender_lock = Lock()
+        #self.__sender_semaphone = threading.BoundedSemaphore(1)
         self.__worker_thread = Thread(None, self.__worker, '%s checker thread' % self.__class__.__name__)   
         self.__worker_thread.start() 
         
@@ -69,8 +69,8 @@ class card_sender(object):
         self.message_pool = {}
         self.seq_pool = {}
         self.__pending = []
-        self.__resp_thread = Thread(None, self.__resp_worker, '%s resp thread' % self.__class__.__name__)   
-        self.__resp_thread.start()     
+        #self.__resp_thread = Thread(None, self.__resp_worker, '%s resp thread' % self.__class__.__name__)   
+        #self.__resp_thread.start()     
 
 
     def __process_queue(self):
@@ -96,29 +96,29 @@ class card_sender(object):
             except:
                 print_exc()
         print 'exit send worker'    
-    def __resp_worker(self):
-        while not self.kill_received:
-            if not self.__sender_semaphone.acquire(False):
-                time.sleep(1)
-                continue
-            try:
-                print 'receiving resp'
-                seq = recv_resp(self.card_socket)
-                if(self.seq_pool.get(seq)):
-                    uid = self.seq_pool[seq]
-                    m = self.message_pool[uid]
-                    address = m.address_pool[seq]
-                    m.success_pool.add(seq)
-                    last_update = datetime.now()
-                    self.check_and_update_message(m)
-                else:
-                    print 'no seq: %d' % seq
-            except:
-                print_exc()
-                self.card_socket = conn_socket() 
-            if self.__card_sender_lock.locked(): 
-                self.__card_sender_lock.release()
-        print 'exit resp worker'
+#    def __resp_worker(self):
+#        while not self.kill_received:
+#            if not self.__sender_semaphone.acquire(False):
+#                time.sleep(1)
+#                continue
+#            try:
+#                print 'receiving resp'
+#                seq = recv_resp(self.card_socket)
+#                if(self.seq_pool.get(seq)):
+#                    uid = self.seq_pool[seq]
+#                    m = self.message_pool[uid]
+#                    address = m.address_pool[seq]
+#                    m.success_pool.add(seq)
+#                    last_update = datetime.now()
+#                    self.check_and_update_message(m)
+#                else:
+#                    print 'no seq: %d' % seq
+#            except:
+#                print_exc()
+#                self.card_socket = conn_socket() 
+#            if self.__card_sender_lock.locked(): 
+#                self.__card_sender_lock.release()
+#        print 'exit resp worker'
     def check_and_update_message(self, m):
         print 'in check_and_update_message'
         print len(m.success_pool), len(m.address_list)
@@ -230,8 +230,19 @@ class card_sender(object):
             self.seq_pool[seq] = item.uid
             item.address_pool[seq] = addr
                 
-    def send_message(self, seq, addr, msg):
-        self.__card_sender_lock.acquire()
+#    def send_message(self, seq, addr, msg):
+#        self.__card_sender_lock.acquire()
+#        send_msg = msg
+#        try:
+#            send_msg = msg.decode('utf-8').encode('gbk')
+#        except:
+#            pass
+#        card_number = self.get_send_card_number()
+#        sumbit_sms(self.card_socket, seq, card_number, addr, send_msg)
+#        self.__sender_semaphone.release()
+#        self.logger.debug('time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
+
+    def linear_send(self, seq, addr, msg):
         send_msg = msg
         try:
             send_msg = msg.decode('utf-8').encode('gbk')
@@ -239,9 +250,31 @@ class card_sender(object):
             pass
         card_number = self.get_send_card_number()
         sumbit_sms(self.card_socket, seq, card_number, addr, send_msg)
-        self.__sender_semaphone.release()
-        self.logger.debug('time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
-    
+        #self.__sender_semaphone.release()
+        self.logger.debug('submit:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
+ 
+        try:
+            print 'receiving resp'
+            seq1 = recv_resp(self.card_socket)
+            if(seq1 == seq and self.seq_pool.get(seq1)):
+                uid = self.seq_pool[seq1]
+                m = self.message_pool[uid]
+                m.success_pool.add(seq)
+                self.check_and_update_message(m)
+                self.logger.debug('succeed:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
+            else:
+                uid = self.seq_pool[seq]
+                m = self.message_pool[uid]
+                self.set_message_fail(m)
+                self.logger.debug('fail  :time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
+        except:
+            print_exc()
+            uid = self.seq_pool[seq]
+            m = self.message_pool[uid]
+            self.set_message_fail(m)
+            self.logger.debug('fail  :time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
+            self.card_socket = conn_socket() 
+
     def genseqnum(self):
         if self.seqnum >= 1000000:
             self.seqnum = 1
