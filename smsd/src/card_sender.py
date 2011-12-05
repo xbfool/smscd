@@ -28,6 +28,18 @@ from cardpool import *
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 from sqlalchemy.sql import and_, or_, not_
 from sqlalchemy.sql import select
+
+def safe_utf8_2_gbk(s):
+    d = ''
+    tmp = s.decode('utf8')
+    
+    for i in tmp:
+        try:
+            d += str(i.encode('gbk'))
+        except:
+            d += '.'
+    return d  
+
 def get_filtered_addr(addr, percent, my_seed):
     addr.sort()
     seed(my_seed)
@@ -96,29 +108,7 @@ class card_sender(object):
             except:
                 print_exc()
         print 'exit send worker'    
-#    def __resp_worker(self):
-#        while not self.kill_received:
-#            if not self.__sender_semaphone.acquire(False):
-#                time.sleep(1)
-#                continue
-#            try:
-#                print 'receiving resp'
-#                seq = recv_resp(self.card_socket)
-#                if(self.seq_pool.get(seq)):
-#                    uid = self.seq_pool[seq]
-#                    m = self.message_pool[uid]
-#                    address = m.address_pool[seq]
-#                    m.success_pool.add(seq)
-#                    last_update = datetime.now()
-#                    self.check_and_update_message(m)
-#                else:
-#                    print 'no seq: %d' % seq
-#            except:
-#                print_exc()
-#                self.card_socket = conn_socket() 
-#            if self.__card_sender_lock.locked(): 
-#                self.__card_sender_lock.release()
-#        print 'exit resp worker'
+
     def check_and_update_message(self, m):
         print 'in check_and_update_message'
         print len(m.success_pool), len(m.address_list)
@@ -230,43 +220,37 @@ class card_sender(object):
             self.linear_send(item.uid, seq, addr, item.msg)
 
     def linear_send(self, uid, seq, addr, msg):
-        send_msg = msg
-        try:
-            send_msg = msg.decode('utf-8').encode('gbk')
-        except:
-            pass
-        try:
-            card_number = self.get_send_card_number()
+        send_msg = safe_utf8_2_gbk(msg)
+  
+        for try_time in range(3):
+            print 'trying times for %d time' % try_time
             try:
-                sumbit_sms(self.card_socket, seq, card_number, addr, send_msg)
-            except:
-                self.card_socket = conn_socket()
-                sumbit_sms(self.card_socket, seq, card_number, addr, send_msg)
-            self.logger.debug('submit:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
-        except:
-            print_exc()
-            
-        try:
-            print 'receiving resp'
-            seq1 = recv_resp(self.card_socket)
-            if(seq1 == seq):
-                m = self.message_pool[uid]
-                m.success_pool.add(seq)
-                self.check_and_update_message(m)
-                self.logger.debug('succeed:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
-            elif seq1 == -1:
-                self.card_socket = conn_socket() 
-            else:
-                m = self.message_pool[uid]
-                self.set_message_fail(m)
-                self.logger.debug('fail  :time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
-        except:
-            print_exc()
-            m = self.message_pool[uid]
-            self.set_message_fail(m)
-            self.logger.debug('fail  :time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
-            self.card_socket = conn_socket() 
+                card_number = self.get_send_card_number()
 
+                sumbit_sms(self.card_socket, seq, card_number, addr, send_msg)
+                self.logger.debug('submit:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
+      
+                
+                seq1 = recv_resp(self.card_socket)
+                
+                if(seq1 == seq):
+                    m = self.message_pool[uid]
+                    m.success_pool.add(seq)
+                    self.check_and_update_message(m)
+                    self.logger.debug('succeed:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
+                    return
+                else:
+                    sleep(1)
+                    self.card_socket = conn_socket()
+                    continue
+            except:
+                print_exc()
+                sleep(1)
+                self.card_socket = conn_socket() 
+        m = self.message_pool[uid]
+        self.set_message_fail(m)
+        self.logger.debug('failed:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
+        
     def genseqnum(self):
         if self.seqnum >= 1000000:
             self.seqnum = 1
