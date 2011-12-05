@@ -20,6 +20,7 @@ from dbsql import dbsql
 
 from message import message
 import logging
+import logging.handlers
 class sendsms(object):
     def __init__(self, conf = 'smsd.ini', using_wsgiref = False):
         if not using_wsgiref:
