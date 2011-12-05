@@ -72,6 +72,11 @@ def process_req_sd_ct(http_pool, setting, msg):
 def process_req_honglian(http_pool, setting, msg):
     msg_num = ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['addr'])
     print 'msg_num ', msg_num
+    send_msg = msg['content']
+    try:
+        send_msg = msg['content'].decode('utf8').encode('gbk')
+    except:
+        pass
     if not msg.get('ext') or msg.get('ext') == None  or msg.get('ext') == "":
         http_pool.req(msg['channel'],
                   {'user_uid':msg['user_uid'], 
@@ -80,7 +85,7 @@ def process_req_honglian(http_pool, setting, msg):
                             'msg_num':msg_num,
                              'percent':msg['percent']},
                   phone=','.join(msg['addr']), 
-                  message=msg['content'].decode('utf8').encode('gbk'),
+                  message=send_msg,
                   username=setting['username'],
                   password=setting['password'], 
                   epid=setting['epid']
@@ -93,7 +98,7 @@ def process_req_honglian(http_pool, setting, msg):
                                 'msg_num':msg_num,
                                  'percent':msg['percent']},
                       phone=','.join(msg['addr']), 
-                      message=msg['content'].decode('utf8').encode('gbk'),
+                      message=send_msg,
                       username=setting['username'],
                       password=setting['password'], 
                       epid=setting['epid'],

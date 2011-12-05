@@ -145,9 +145,9 @@ class CardPool(object):
         '''
         self.null_number = CardNumber('00000000000')
         self.numbers = {}
-        self.hour_max = 300
-        self.day_max = 1000
-        self.month_max = 30000
+        self.hour_max = 19
+        self.day_max = 19
+        self.month_max = 400
         self.avail_list = deque()
         self.max_size = max_size
     
