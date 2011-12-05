@@ -6,7 +6,16 @@ Created on 2011-10-19
 from base64 import b64encode
 from zlib import compress
 
-
+def safe_utf8_2_gbk(s):
+    d = ''
+    tmp = s.decode('utf8')
+    
+    for i in tmp:
+        try:
+            d += str(i.encode('gbk'))
+        except:
+            d += '.'
+    return d  
 
 def process_req_hb_ct(http_pool, setting, msg):
     soap = \
@@ -72,11 +81,8 @@ def process_req_sd_ct(http_pool, setting, msg):
 def process_req_honglian(http_pool, setting, msg):
     msg_num = ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['addr'])
     print 'msg_num ', msg_num
-    send_msg = msg['content']
-    try:
-        send_msg = msg['content'].decode('utf8').encode('gbk')
-    except:
-        pass
+    send_msg = safe_utf8_2_gbk(msg['content'])
+
     if not msg.get('ext') or msg.get('ext') == None  or msg.get('ext') == "":
         http_pool.req(msg['channel'],
                   {'user_uid':msg['user_uid'], 
@@ -183,7 +189,9 @@ def process_req_shangxintong(http_pool, setting, msg):
                   soapaction='sendSMS',
                   soap=soap, 
                   port=8081)   
-    
+
+ 
+        
 def process_req_changshang_a(http_pool, setting, msg):
     msg_str_len = len(msg['content'].decode('utf8'))
     msg_num = 0
@@ -192,12 +200,9 @@ def process_req_changshang_a(http_pool, setting, msg):
     else:
         msg_num = ((msg_str_len - 1) / 67 + 1) * len(msg['addr'])
                   
-    tmpmsg = unicode(msg['content'], 'utf-8')
-    sendmsg = msg['content']
-    try:
-        sendmsg = tmpmsg.encode('gbk')
-    except:
-        pass
+
+    sendmsg = safe_utf8_2_gbk(msg['content'])
+
     if not msg.get('ext') or msg['ext'] == None or msg['ext'] == '':  
         http_pool.req(msg['channel'],
                               {'user_uid':msg['user_uid'], 
@@ -267,7 +272,8 @@ def process_req_dongguan_0769(http_pool, setting, msg):
                   soap=soap)  
 
 def process_req_maoming_ct(http_pool, setting, msg):
-    tmpmsg = unicode(msg['content'], 'utf-8')
+    tmpmsg = safe_utf8_2_gbk(msg['content'])
+    
     http_pool.req(msg['channel'], 
                   {'user_uid':msg['user_uid'], 
                    'setting':setting, 
@@ -277,11 +283,11 @@ def process_req_maoming_ct(http_pool, setting, msg):
                   srcmobile=setting['srcmobile'], 
                   password=setting['password'],
                   objmobiles=','.join(msg['addr']), 
-                  smstext=tmpmsg.encode('gbk'), rstype='text')
+                  smstext=tmpmsg, rstype='text')
     
 def process_req_scp_0591(http_pool, setting, msg):
     address_shu = '|'.join(msg['addr'])
-    tmpmsg = unicode(msg['content'], 'utf-8')
+    tmpmsg = safe_utf8_2_gbk(msg['content'])
     http_pool.req(msg['channel'], 
                   {'user_uid':msg['user_uid'], 
                    'setting':setting, 
@@ -289,5 +295,5 @@ def process_req_scp_0591(http_pool, setting, msg):
                    'msg_num':msg['msg_num'], 
                    'percent':msg['percent']},
                   Mobile=address_shu, 
-                  MsgContent=tmpmsg.encode('gbk'))
+                  MsgContent=tmpmsg)
     
