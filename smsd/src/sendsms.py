@@ -19,7 +19,7 @@ from loadcfg import loadcfg
 from dbsql import dbsql
 
 from message import message
-
+import logging
 class sendsms(object):
     def __init__(self, conf = 'smsd.ini', using_wsgiref = False):
         if not using_wsgiref:
@@ -28,13 +28,35 @@ class sendsms(object):
         self.num_req = 0
         self.cfg = loadcfg(conf)
         self.db = dbsql(**self.cfg.database.raw_dict)
-    
+        LOG_FILENAME = '/var/log/smscd/sendsms.log'
+               
+        my_logger = logging.getLogger('smsd.sendsms')
+        my_logger.setLevel(logging.DEBUG)
+        # Add the log message handler to the logger
+
+        handler = logging.handlers.RotatingFileHandler(
+              LOG_FILENAME, maxBytes=10000000, backupCount=2)
+        my_logger.addHandler(handler)
+        
+        handler.setLevel(logging.DEBUG)
+        
+        # create formatter
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        
+        # add formatter to ch
+        handler.setFormatter(formatter)
+
+
+        self.logger = my_logger
+        
+
     def __del__(self):
         print '%s instance 0x%08x destroyed, %d request(s) processed' % \
             (self.__class__.__name__, id(self), self.num_req)
         
     def __call__(self, env, start_response):
         # request handler
+        self.logger.debug('request: %s' % env)
         self.num_req += 1
         if env['REQUEST_METHOD'] != 'POST' or 'CONTENT_LENGTH' not in env:
             return self.__ret(env, start_response, -99, 'invalid query, not POST or invalid POST length')
@@ -83,7 +105,7 @@ class sendsms(object):
             passtype = 'normal'
         user_uid, remain = self.__check_user(username, password, passtype)
         if user_uid == None:
-            return self.__ret(env, start_response, -1, 'user not exist or wrong pass')
+            return self.__ret(env, start_response, -1, 'user not exist or wrong pass; your input user id:\'%s\', pass :\'%s\'' % (username, password))
         elif remain < 1:
             return self.__ret(env, start_response, -2, 'not enough credit')
         else:
@@ -97,6 +119,7 @@ class sendsms(object):
 
         
     def __ret(self, env, start_response, errno, message = None):
+        self.logger.debug('return: %d, %s' % (errno, message))
         start_response('200 OK', [('Content-type', 'text/plain')])
         if self.cfg.sendsms.verbose > 0 and message != None:
             return ['%d,%s' % (errno, message)]
