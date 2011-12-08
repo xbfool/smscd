@@ -18,3 +18,9 @@ def sender3():
     put('sender3.py', '/tmp/')
     run('python2.7 /tmp/sender3.py')
     run('rm /tmp/sender3.py')
+    
+    
+def sender4():
+    put('sender4.py', '/tmp/')
+    run('python2.7 /tmp/sender4.py')
+    run('rm /tmp/sender4.py')

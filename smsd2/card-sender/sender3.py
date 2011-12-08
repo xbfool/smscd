@@ -41,14 +41,10 @@ class CardProtocol(Protocol):
         print 'haha'
         
     def dataReceived(self, line):
-
         print len(line)
         s = unpack_resp(line)
         print s
         
-
-        
-
 class CardFactory(ReconnectingClientFactory):
     protocol = CardProtocol
     def buildProtocol(self, addr):
@@ -59,8 +55,4 @@ def gotProtocol(p):
     p.sendMessage()
 
 reactor.connectTCP('219.146.6.136', 5208, CardFactory())
-#point = TCP4ClientEndpoint(reactor, 'www.google.com', 80)
-#point = TCP4ClientEndpoint(reactor, )
-#d = point.connect(CardFactory())
-#d.addCallback(gotProtocol)
 reactor.run()
