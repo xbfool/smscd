@@ -2,7 +2,9 @@ from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory, Protocol, Factory, ReconnectingClientFactory
 from twisted.internet.endpoints import TCP4ClientEndpoint
 from twisted.protocols.basic import LineReceiver
+import logging
 
+import logging.handlers
 import struct
 
 LOG_FILENAME = '/var/log/smscd/card_sender.log'
