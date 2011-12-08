@@ -24,3 +24,8 @@ def sender4():
     put('sender4.py', '/tmp/')
     run('python2.7 /tmp/sender4.py')
     run('rm /tmp/sender4.py')
+    
+def sender(n):
+    put('sender%s.py' % n, '/tmp/')
+    run('python2.7 /tmp/sender%s.py' % n)
+    run('rm /tmp/sender%s.py' % n)
