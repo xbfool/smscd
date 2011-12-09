@@ -134,6 +134,7 @@ class CardProtocol(Protocol):
                             print '444'
                             self.web_callback(sequnce_id, self.recv_dict.get(sequnce_id))
                             return
+            self.transport.loseConnection()
             self.web_callback(0, 'something is error')
     def sendsms(self, seq, card, to, msg):
         s = 'sending sms: seqid %d, from %s, to %s, msg: %s' % (seq, card, to, msg)
