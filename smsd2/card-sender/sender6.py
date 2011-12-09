@@ -1,5 +1,5 @@
 from twisted.internet import reactor
-from twisted.internet.protocol import ClientFactory, Protocol, Factory, ReconnectingClientFactory
+from twisted.internet.protocol import ClientFactory, Protocol, Factory, ReconnectingClientFactory, ClientCreator
 from twisted.internet.endpoints import TCP4ClientEndpoint
 from twisted.protocols.basic import LineReceiver
 import logging
@@ -105,10 +105,12 @@ class CardProtocol(Protocol):
         self.web_callback = False
     def login(self):
         print 'in login'
+        self.is_login = False
         bind_msg = bind_transmitter_msg('chen', 'chen', '')
         self.transport.write(bind_msg)
         
-        
+    def connectionLost(self, reason):
+        print 'connection Lost %s' % reason
     def dataReceived(self, line):
         if not self.is_login:
             s = unpack_resp(line)
@@ -133,6 +135,8 @@ class CardProtocol(Protocol):
                         if self.web_callback:
                             print '444'
                             self.web_callback(sequnce_id, self.recv_dict.get(sequnce_id))
+                            self.transport.loseConnection()
+                            self.is_login = False
                             return
             self.transport.loseConnection()
             self.is_login = False
@@ -146,15 +150,12 @@ class CardProtocol(Protocol):
         to_send = pack_sm_msg(seq, card, to, msg)
         self.transport.write(to_send)
         
-class CardFactory(ReconnectingClientFactory):
+class CardFactory(ClientFactory):
     protocol = CardProtocol
     def buildProtocol(self, addr):
         self.resetDelay()
         return self.protocol()
         
-    def clientConnectionLost(self, connector, unused_reason):
-        print 'sender connection lost'
-        connector.connect()
 
 from twisted.web import server, resource
 from twisted.internet import reactor
@@ -169,6 +170,7 @@ class HelloResource(resource.Resource):
     numberRequests = 10
     smssender = None
     dic = {}
+    f = ClientCreator(reactor, CardProtocol)
     def delayedRender(self, seq, resp):
         print 'delay ok'
         request = self.dic[seq]
@@ -200,8 +202,17 @@ class HelloResource(resource.Resource):
         if password == 'jinanqianfoshan' and len(card) == 11 and len(to) == 11 and len(msg) != 0:
             self.numberRequests += 1
             self.dic[self.numberRequests] = request
-            if self.smssender:
-                self.smssender.sendsms(self.numberRequests, card, to, msg)
+            
+
+            
+            def gotProtocol(p):
+                print 'gotprotocol'
+                p.web_callback = self.delayedRender 
+                p.sendsms(self.numberRequests, card, to, msg)
+                
+            #point = TCP4ClientEndpoint(reactor, '219.146.6.136', 5208)
+            d = self.f.connectTCP('219.146.6.136', 5208)
+            d.addCallback(gotProtocol)
             request.setHeader("content-type", "text/plain")
             #return "I am request #" + str(self.numberRequests) + "\n"
             return NOT_DONE_YET
@@ -215,14 +226,14 @@ class HelloResource(resource.Resource):
 factory = HelloResource()
 
 
-def gotProtocol(p):
-    factory.smssender = p
-    p.web_callback = factory.delayedRender
+#def gotProtocol(p):
+#    factory.smssender = p
+#    p.web_callback = factory.delayedRender
     
 
-point = TCP4ClientEndpoint(reactor, '219.146.6.136', 5208)
-d = point.connect(CardFactory())
-d.addCallback(gotProtocol)
+#point = TCP4ClientEndpoint(reactor, '219.146.6.136', 5208)
+#d = point.connect(CardFactory())
+#d.addCallback(gotProtocol)
 
 reactor.listenTCP(8888, server.Site(factory))
 reactor.run()
