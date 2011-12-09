@@ -135,6 +135,7 @@ class CardProtocol(Protocol):
                             self.web_callback(sequnce_id, self.recv_dict.get(sequnce_id))
                             return
             self.transport.loseConnection()
+            self.is_login = False
             self.web_callback(0, 'something is error')
     def sendsms(self, seq, card, to, msg):
         s = 'sending sms: seqid %d, from %s, to %s, msg: %s' % (seq, card, to, msg)
@@ -150,6 +151,10 @@ class CardFactory(ReconnectingClientFactory):
     def buildProtocol(self, addr):
         self.resetDelay()
         return self.protocol()
+        
+    def clientConnectionLost(self, connector, unused_reason):
+        print 'sender connection lost'
+        connector.connect()
 
 from twisted.web import server, resource
 from twisted.internet import reactor
