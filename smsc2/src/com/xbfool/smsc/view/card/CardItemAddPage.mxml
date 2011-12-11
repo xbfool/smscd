@@ -4,7 +4,7 @@
 		   xmlns:s="library://ns.adobe.com/flex/spark"
 		   xmlns:mx="library://ns.adobe.com/flex/mx"
 		   width="100%" height="100%" backgroundAlpha="0.9" backgroundColor="#000000"
-		   >	
+		   creationComplete="init()">	
 	<fx:Script>
 		<![CDATA[
 
@@ -40,7 +40,7 @@
 				var validatorErrorArray:Array = Validator.validateAll(validatorArr);;
 				var isValidForm:Boolean = validatorErrorArray.length == 0;
 				if (isValidForm) {
-					dispatchEvent(new CardPageEvent(CardPageEvent.CARD_ITEM_ADD_PAGE));
+					dispatchEvent(new CardPageEvent(CardPageEvent.CARD_ITEM_ADD_ITEM));
 					closeAndRemove()
 				} else {
 					var err:ValidationResultEvent;

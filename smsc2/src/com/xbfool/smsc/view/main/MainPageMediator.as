@@ -7,19 +7,20 @@ package com.xbfool.smsc.view.main
 	import com.xbfool.smsc.model.*;
 	import com.xbfool.smsc.services.*;
 	import com.xbfool.smsc.view.*;
-	
-	import org.robotlegs.mvcs.Mediator;
+	import com.xbfool.smsc.view.card.CardItemManagePage;
 	import com.xbfool.smsc.view.channel.ChannelItemManagePage;
 	import com.xbfool.smsc.view.channel.ChannelListManagePage;
+	import com.xbfool.smsc.view.channel.ChannelLogPage;
 	import com.xbfool.smsc.view.channel.UserChannelManagePage;
 	import com.xbfool.smsc.view.message.ManageAddressPage;
 	import com.xbfool.smsc.view.message.ManageUserPage;
 	import com.xbfool.smsc.view.message.MessageChartPage;
 	import com.xbfool.smsc.view.message.MessageLogPage;
 	import com.xbfool.smsc.view.message.MessageSendPage;
-	import com.xbfool.smsc.view.channel.ChannelLogPage;
-	import com.xbfool.smsc.view.message.UploadMessagePage;
 	import com.xbfool.smsc.view.message.SpecialSendPage;
+	import com.xbfool.smsc.view.message.UploadMessagePage;
+	
+	import org.robotlegs.mvcs.Mediator;
 	
 	public class MainPageMediator extends Mediator
 	{
@@ -39,6 +40,7 @@ package com.xbfool.smsc.view.main
 		[Inject] public var channelItemManagePage:ChannelItemManagePage;
 		[Inject] public var channelListManagePage:ChannelListManagePage;
 		[Inject] public var userChannelManagePage:UserChannelManagePage;
+		[Inject] public var cardItemManagePage:CardItemManagePage;
 		public function MainPageMediator()
 		{
 		}
@@ -60,6 +62,7 @@ package com.xbfool.smsc.view.main
 			eventMap.mapListener(mainPage, MainPageEvent.CHANNEL_ITEM_MANAGE_VIEW, changeToChannelItemManageView);
 			eventMap.mapListener(mainPage, MainPageEvent.CHANNEL_LIST_MANAGE_VIEW, changeToChannelListManageView);
 			eventMap.mapListener(mainPage, MainPageEvent.USER_CHANNEL_MANAGE_VIEW, changeToUserChannelManageView);
+			eventMap.mapListener(mainPage, MainPageEvent.CARD_ITEM_MANAGE_VIEW, changeToCardItemManageView);
 		}
 		
 		private function whenUserLoggedOut(e:MainPageEvent):void 
@@ -77,6 +80,12 @@ package com.xbfool.smsc.view.main
 		{
 			clearCurrentView();
 			mainPage.content_panel.addElement(channelItemManagePage);
+		}
+		
+		private function changeToCardItemManageView(e:MainPageEvent):void
+		{
+			clearCurrentView();
+			mainPage.content_panel.addElement(cardItemManagePage);
 		}
 		
 		private function changeToChannelListManageView(e:MainPageEvent):void

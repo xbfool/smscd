@@ -19,6 +19,8 @@ package com.xbfool.smsc.view.card
 		[Inject]
 		public var cardItemAddPage:CardItemAddPage;
 		[Inject]
+		public var cardItemManagePage:CardItemManagePage;
+		[Inject]
 		public var requestObj:IRequestService;
 		[Inject]
 		public var user:UserProxy;
@@ -32,7 +34,8 @@ package com.xbfool.smsc.view.card
 		{
 			// view listeners
 			
-			eventMap.mapListener(cardItemAddPage, CardPageEvent.CARD_ITEM_ADD_PAGE, onAddItem);
+			eventMap.mapListener(cardItemManagePage, CardPageEvent.CARD_ITEM_ADD_PAGE, onAddPage);
+			eventMap.mapListener(cardItemAddPage, CardPageEvent.CARD_ITEM_ADD_ITEM, onAddItem);
 			eventMap.mapListener(eventDispatcher, CompRetEvent.COMP_RET, onQueryBack);
 			card_item_list.source = user.channel_item_list;
 		}

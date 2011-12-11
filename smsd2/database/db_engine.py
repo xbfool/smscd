@@ -16,7 +16,7 @@ def create_db(cfg):
                                        cfg.database.user,
                                        cfg.database.password,
                                        cfg.database.host,
-                                       cfg.database.db))
+                                       cfg.database.db), echo='debug')
     elif(cfg.database.engine == 'sqlitememory'):
         db = create_engine('sqlite://')
     return db

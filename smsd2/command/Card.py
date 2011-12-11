@@ -32,11 +32,14 @@ class CardItem(Base):
         total_max = 0,
         total = 0,
         month_max = 0,
+        month = 0,
         day_max = 0,
         day = 0,
         hour_max = 0,
+        hour = 0,
         minute_max = 0,
         minute = 0,
+        due_time = datetime.now(),
         last_send = datetime.now()):
         self.number = number
         self.type = type
@@ -45,9 +48,13 @@ class CardItem(Base):
         self.total_max = total_max
         self.total = total
         self.month_max = month_max
+        self.month = month
         self.day_max = day_max
         self.day = day
         self.hour_max = hour_max
+        self.hour = hour
         self.minute_max = minute_max
         self.minute = minute
         self.last_send = last_send
+        self.due_time = due_time
+        

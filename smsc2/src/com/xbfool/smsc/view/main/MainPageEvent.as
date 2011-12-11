@@ -20,7 +20,7 @@ package com.xbfool.smsc.view.main
 		public static const CHANNEL_ITEM_MANAGE_VIEW:String = 'channel_item_manage_view';
 		public static const CHANNEL_LIST_MANAGE_VIEW:String = 'channel_list_manage_view';
 		public static const USER_CHANNEL_MANAGE_VIEW:String = 'user_channel_manage_view';
-		
+		public static const CARD_ITEM_MANAGE_VIEW:String = 'card_item_manage_view';
 		public function MainPageEvent(type:String)
 		{
 			super(type, true);
