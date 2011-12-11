@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Canvas xmlns:fx="http://ns.adobe.com/mxml/2009"
+		   xmlns:s="library://ns.adobe.com/flex/spark"
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   width="100%" height="100%" backgroundAlpha="0.9" backgroundColor="#000000"
+		   >	
+	<fx:Script>
+		<![CDATA[
+
+			
+			public function closeAndRemove():void
+			{
+				parent.removeChild(this);
+			}
+			
+			
+			
+			import mx.validators.Validator;
+			import mx.events.ValidationResultEvent;
+			import mx.validators.ZipCodeValidatorDomainType;
+			import mx.controls.Alert;
+		    import com.xbfool.smsc.view.card.CardPageEvent;
+			[Bindable]
+			private var validatorArr:Array;
+			
+			private function init():void {
+				validatorArr = new Array();
+				validatorArr.push(phone_validator);
+				validatorArr.push(type_validator);
+				validatorArr.push(provider_validator);
+				validatorArr.push(total_validator);
+				validatorArr.push(month_validator);
+				validatorArr.push(day_validator);
+				validatorArr.push(hour_validator);
+				validatorArr.push(minute_validator);
+			}
+			
+			private function validateForm(evt:MouseEvent):void {
+				var validatorErrorArray:Array = Validator.validateAll(validatorArr);;
+				var isValidForm:Boolean = validatorErrorArray.length == 0;
+				if (isValidForm) {
+					dispatchEvent(new CardPageEvent(CardPageEvent.CARD_ITEM_ADD_PAGE));
+					closeAndRemove()
+				} else {
+					var err:ValidationResultEvent;
+					var errorMessageArray:Array = [];
+					for each (err in validatorErrorArray) {
+						var errField:String = FormItem(err.currentTarget.source.parent).label
+						errorMessageArray.push(errField + ": " + err.message);
+					}
+					Alert.show(errorMessageArray.join("\n\n"), "Invalid form...", Alert.OK);
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<mx:StringValidator id="phone_validator" maxLength="11" minLength="11" property="text" source="{number}"
+							tooLongError="手机号不对" tooShortError="手机号不对" trigger="{number}"
+							triggerEvent="change"/>	
+		<mx:StringValidator id="type_validator" maxLength="20" minLength="2" property="text" source="{type}"
+							tooLongError="字符数超出限制" tooShortError="请输入至少2个字" trigger="{type}"
+							triggerEvent="change"/>	
+		<mx:StringValidator id="provider_validator" maxLength="20" minLength="2" property="text" source="{provider}"
+							tooLongError="字符数超出限制" tooShortError="请输入至少2个字" trigger="{provider}"
+							triggerEvent="change"/>	
+
+		<mx:NumberValidator id="total_validator" source="{total_max}" property="text" integerError="Enter Integer value"
+							minValue="0" maxValue="100000" domain="int" 
+							trigger="{total_max}" triggerEvent="change"/>
+		<mx:NumberValidator id="month_validator" source="{month_max}" property="text" integerError="Enter Integer value"
+							minValue="0" maxValue="100000" domain="int" 
+							trigger="{month_max}" triggerEvent="change"/>
+		<mx:NumberValidator id="day_validator" source="{day_max}" property="text" integerError="Enter Integer value"
+							minValue="0" maxValue="100000" domain="int" 
+							trigger="{day_max}" triggerEvent="change"/>
+		<mx:NumberValidator id="hour_validator" source="{hour_max}" property="text" integerError="Enter Integer value"
+							minValue="0" maxValue="100000" domain="int" 
+							trigger="{hour_max}" triggerEvent="change"/>
+		<mx:NumberValidator id="minute_validator" source="{minute_max}" property="text" integerError="Enter Integer value"
+							minValue="0" maxValue="100000" domain="int" 
+							trigger="{minute_max}" triggerEvent="change"/>
+	</fx:Declarations>
+	<mx:Form backgroundAlpha="1.0" backgroundColor="#FFFFFF" cornerRadius="16"
+			 defaultButton="{okButton}" horizontalCenter="0" verticalCenter="0">
+		
+		<mx:FormHeading label="增加新通道"/>
+		
+		<mx:FormItem label="手机号">
+			<s:TextInput id="number" width="200"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="类型">
+			<s:TextInput id="type" width="200"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="运营商">
+			<s:TextInput id="provider" width="200"/>
+		</mx:FormItem>
+		
+		
+		
+		<mx:FormItem label="到期时间">
+			<mx:DateField id="due_time" 
+						  formatString="YYYY-MM-DD"
+						  selectedDate="{new Date()}"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="可发总数">
+			<s:TextInput id="total_max" width="200"/>
+		</mx:FormItem>
+		
+		
+		<mx:FormItem label="每月可发数">
+			<s:TextInput id="month_max" width="200"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="每日可发数">
+			<s:TextInput id="day_max" width="200"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="每小时可发数">
+			<s:TextInput id="hour_max" width="200"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="每分钟可发数">
+			<s:TextInput id="minute_max" width="200"/>
+		</mx:FormItem>
+		
+		<mx:FormItem width="100%">
+			
+			<mx:HBox width="100%">
+				<s:Button id="okButton" label="确定"
+						  click="validateForm(event)"/>
+				<s:Button label="取消" click="closeAndRemove()"/>		
+			</mx:HBox>			
+		</mx:FormItem>		
+	</mx:Form>
+</mx:Canvas>
+

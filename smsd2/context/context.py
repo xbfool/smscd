@@ -19,7 +19,7 @@ class Context:
     def __init_db(self):
         self.db = create_db(self.cfg)
         from sqlalchemy.orm import sessionmaker
-        Session = sessionmaker(bind=engine)
+        Session = sessionmaker(bind=self.db)
         self.session = Session()
         
     def __init_meta(self):

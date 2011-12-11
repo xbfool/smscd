@@ -17,7 +17,7 @@ def card_item_add(context, **args):
     for key, value in args.iteritems():
         if key in ('number', 'type', 'provider', 'group_id', 'total_max', 'total',
                     'month_max', 'day_max', 'day', 'hour_max', 'hour',
-                    'minute_max', 'minute', 'last_send')
+                    'minute_max', 'minute', 'last_send'):
             new_arg[key] = value
     try:        
         c = CardItem(**new_arg)

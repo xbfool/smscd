@@ -7,7 +7,7 @@ package com.xbfool.smsc {
 	import com.xbfool.smsc.view.channel.*;
 	import com.xbfool.smsc.view.main.*;
 	import com.xbfool.smsc.view.message.*;
-	
+	import com.xbfool.smsc.view.card.*
 	import mx.logging.Log;
 	import mx.messaging.Channel;
 	
@@ -17,6 +17,7 @@ package com.xbfool.smsc {
 		public var mainPage:MainPage;
 		public var processingBarPage:ProcessingBarPage;
 		public var channelItemManagePage:ChannelItemManagePage;
+		public var cardItemManagePage:CardItemManagePage;
 		public var channelListManagePage:ChannelListManagePage;
 		public var userChannelManagePage:UserChannelManagePage;
 		public function SmscContext() {
@@ -28,6 +29,7 @@ package com.xbfool.smsc {
 			this.processingBarPage = new ProcessingBarPage();
 			this.channelItemManagePage = new ChannelItemManagePage();
 			this.channelListManagePage = new ChannelListManagePage();
+			this.cardItemManagePage = new CardItemManagePage();
 			this.init_command();
 			this.init_injector();
 			this.init_map_view();
@@ -43,6 +45,7 @@ package com.xbfool.smsc {
 			commandMap.mapEvent(AuthRetEvent.AUTH_RET, AuthRetCommand, AuthRetEvent);
 			commandMap.mapEvent(LogoutEvent.LOGOUT, LogoutCommand, LogoutEvent);
 			commandMap.mapEvent(ChannelItemEvent.CHANNEL_ITEM_ADD, ChannelItemAddCommand, ChannelItemEvent);
+			//commandMap.mapEvent(ChannelItemEvent.CHANNEL_ITEM_ADD, ChannelItemAddCommand, ChannelItemEvent);
 			commandMap.mapEvent(ProcessingEvent.PROCESSING_BEGIN, ProcessingCommand, ProcessingEvent);
 			commandMap.mapEvent(ChannelItemEvent.CHANNEL_ITEM_QUERY_REQ, ChannelItemQueryReqCommand, ChannelItemEvent);
 			commandMap.mapEvent(CompReqEvent.CompReq, CompReqCommand, CompReqEvent);
@@ -64,10 +67,12 @@ package com.xbfool.smsc {
 			injector.mapSingleton(UploadMessagePage);
 			injector.mapValue(ChannelItemManagePage, this.channelItemManagePage);
 			injector.mapValue(ChannelListManagePage, this.channelListManagePage);
+			injector.mapValue(CardItemManagePage, this.cardItemManagePage);
 			injector.mapValue(UserChannelManagePage, this.userChannelManagePage);
 			injector.mapSingleton(UserChannelManagePage);
 			injector.mapSingleton(ChannelItemAddPage);
 			injector.mapSingleton(ChannelListAddPage);
+			injector.mapSingleton(CardItemAddPage);
 			injector.mapValue(ProcessingBarPage, this.processingBarPage);
 			injector.mapValue(MainPage, this.mainPage);
 		}
@@ -77,6 +82,7 @@ package com.xbfool.smsc {
 			mediatorMap.mapView(ChannelItemManagePage, ChannelItemManagePageMediator);
 			mediatorMap.mapView(ChannelListManagePage, ChannelListManagePageMediator);
 			mediatorMap.mapView(UserChannelManagePage, UserChannelManagePageMediator);
+			mediatorMap.mapView(CardItemManagePage, CardItemPageMediator);
 			mediatorMap.mapView(MainPage, MainPageMediator);
 			mediatorMap.mapView(MessageSendPage, MessageSendPageMediator);
 			mediatorMap.mapView(ProcessingBarPage, ProcessingBarPageMediator);

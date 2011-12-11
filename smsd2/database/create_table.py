@@ -1,6 +1,6 @@
 from sqlalchemy import MetaData, Table, Column, Integer, String, DefaultClause
 from sqlalchemy.types import DateTime
-from Card import *
+from smsd2.command.Card import Base
 def create_table(db):
     meta = MetaData()
     c = Table('ChannelItem', meta,
@@ -28,6 +28,6 @@ def create_table(db):
         )
     
 
-    tablelist = [c, l, card_item]
+    tablelist = [c, l]
     meta.create_all(tables = tablelist, bind=db)
     Base.metadata.create_all(db)
