@@ -53,6 +53,7 @@ package com.xbfool.smsc.command
 						if(item.errno == 0){
 							user.card_item_list = item.ret;
 						}
+						break;
 					}
 				}
 			}

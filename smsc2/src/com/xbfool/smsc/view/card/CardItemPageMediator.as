@@ -40,7 +40,7 @@ package com.xbfool.smsc.view.card
 			eventMap.mapListener(cardItemManagePage, CardPageEvent.CARD_ITEM_UPDATE, onUpdate);
 			eventMap.mapListener(cardItemManagePage, CardPageEvent.CARD_ITEM_QUERY, onQuery);
 			eventMap.mapListener(eventDispatcher, CompRetEvent.COMP_RET, onQueryBack);
-			card_item_list.source = user.channel_item_list;
+			card_item_list.source = user.card_item_list;
 		}
 		
 		private function onAddPage(e:CardPageEvent):void
