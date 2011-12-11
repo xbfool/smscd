@@ -266,6 +266,7 @@ class sms_sender(object):
         
     def process_req(self, channel_item, msg):
         msg['msg_num'] = self.common_message_num(msg['content']) * len(msg['addr'])
+        msg['total_addr'] = list(msg['addr'])
         msg['addr'] = self.get_filtered_addr(msg['addr'], msg.get('percent', 100), msg.get('seed', 0), msg.get('total_num', msg['msg_num']))
         if channel_item['setting']['sub_mode'] != 'card_send':
             channel_item['setting']['process_req'](self.__zhttp_pool, channel_item['setting'], msg)

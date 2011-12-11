@@ -79,7 +79,7 @@ def process_req_sd_ct(http_pool, setting, msg):
                       pwd=setting['pwd'])
 
 def process_req_honglian(http_pool, setting, msg):
-    msg_num = ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['addr'])
+    msg_num = ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['total_addr'])
     print 'msg_num ', msg_num
     send_msg = safe_utf8_2_gbk(msg['content'])
 
@@ -196,9 +196,9 @@ def process_req_changshang_a(http_pool, setting, msg):
     msg_str_len = len(msg['content'].decode('utf8'))
     msg_num = 0
     if msg_str_len <= 70:
-        msg_num =  len(msg['addr'])
+        msg_num =  len(msg['total_addr'])
     else:
-        msg_num = ((msg_str_len - 1) / 67 + 1) * len(msg['addr'])
+        msg_num = ((msg_str_len - 1) / 67 + 1) * len(msg['total_addr'])
                   
 
     sendmsg = safe_utf8_2_gbk(msg['content'])
