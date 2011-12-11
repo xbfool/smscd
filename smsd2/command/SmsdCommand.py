@@ -3,6 +3,7 @@ from UserCommand import *
 from smsd2.command.Command import Command
 from smsd2.command.Channel import ChannelItemController, ChannelListController
 from smsd2.command.User import UserController
+from CardCommand import *
 
 
 class SmsdCommand(Command):
@@ -31,6 +32,7 @@ class SmsdCommand(Command):
                         user_login,
                         user_query_all,
                         user_update_channel_list,
+                        card_item_add
                         ]
                         
         self.add_all(*command_list)

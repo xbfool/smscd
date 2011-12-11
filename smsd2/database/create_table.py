@@ -1,5 +1,6 @@
 from sqlalchemy import MetaData, Table, Column, Integer, String, DefaultClause
 from sqlalchemy.types import DateTime
+from Card import *
 def create_table(db):
     meta = MetaData()
     c = Table('ChannelItem', meta,
@@ -25,5 +26,8 @@ def create_table(db):
         Column('ct2', Integer, DefaultClause("-1")),
         Column('ct3', Integer, DefaultClause("-1")),
         )
-    tablelist = [c, l]
+    
+
+    tablelist = [c, l, card_item]
     meta.create_all(tables = tablelist, bind=db)
+    Base.metadata.create_all(db)

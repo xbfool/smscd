@@ -18,7 +18,10 @@ class Context:
     
     def __init_db(self):
         self.db = create_db(self.cfg)
-    
+        from sqlalchemy.orm import sessionmaker
+        Session = sessionmaker(bind=engine)
+        self.session = Session()
+        
     def __init_meta(self):
         self.meta = create_meta() 
     
