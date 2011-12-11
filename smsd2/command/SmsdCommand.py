@@ -32,7 +32,10 @@ class SmsdCommand(Command):
                         user_login,
                         user_query_all,
                         user_update_channel_list,
-                        card_item_add
+                        card_item_add,
+                        card_item_delete,
+                        card_item_query,
+                        card_item_update
                         ]
                         
         self.add_all(*command_list)
