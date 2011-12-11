@@ -34,6 +34,7 @@
 				validatorArr.push(day_validator);
 				validatorArr.push(hour_validator);
 				validatorArr.push(minute_validator);
+				okButton.setFocus();
 			}
 			
 			private function validateForm(evt:MouseEvent):void {

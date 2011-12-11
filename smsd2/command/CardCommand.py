@@ -31,38 +31,41 @@ def card_item_add(context, **args):
         
 def card_item_delete(context, **args):
     try:
-        a = context.session.query(CardItem).filter_by(number=args.get('number')).first()
+        a = context.session.query(CardItem).filter_by(uid=args.get('uid')).first()
         if a:
             context.session.delete(a)
             context.session.commit()
             return ret_util(True)
         else:
-            return ret_util(False, -1, 'the number %s is not exist' % args.get('number'))
+            return ret_util(False, -1, 'the uid %s is not exist' % args.get('uid'))
     except:
         return ret_util(False)
 
 def card_item_update(context, **args):
     try:
-        a = context.session.query(CardItem).filter_by(number=args.get('number')).first()
+        a = context.session.query(CardItem).filter_by(uid=args.get('uid')).first()
         if not a:
-            return ret_util(False, -1, 'the number %s is not exist' % args.get('number'))
+            return ret_util(False, -1, 'the uid %s is not exist' % args.get('uid'))
         new_arg = {}
-        if key in ('type', 'provider', 'group_id', 'total_max', 'total',
-                    'month_max', 'day_max', 'day', 'hour_max', 'hour',
-                    'minute_max', 'minute', 'last_send','due_time'):
-            new_arg[key] = value
+        for key, value in args.iteritems():
+            if key in ('type', 'provider', 'group_id', 'total_max', 'total',
+                        'month_max', 'day_max', 'day', 'hour_max', 'hour',
+                        'minute_max', 'minute', 'last_send','due_time'):
+                new_arg[key] = value
         a.update(new_arg)
         a.commit()
         return ret_util(True)
-    return 
+    except: 
         return ret_util(False)
         
 def card_item_query(context, **args):
     try:
         a = context.session.query(CardItem).all()
-        l = []
-        for i in a:
-            l.append(dict(i.items())
-        return ret_util(l)
+        l = list([])
+        if a != None:
+            for i in a:
+                l.append(dict(i.to_dict()))
+        return ret_util(l, 0)
     except:
         return ret_util(False)
+        

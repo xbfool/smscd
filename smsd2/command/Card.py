@@ -7,27 +7,27 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
     
 class CardItem(Base):
-     __tablename__ = 'card_item'
-     uid = Column(Integer, primary_key=True)
-     number = Column(String(50))
-     type = Column(String(50))
-     provider = Column(String(50))
-     group_id = Column(Integer)
-     total_max = Column(Integer)
-     total = Column(Integer)
-     month_max = Column(Integer)
-     month = Column(Integer)
-     day_max = Column(Integer)
-     day = Column(Integer)
-     hour_max = Column(Integer)
-     hour = Column(Integer)
-     minute_max = Column(Integer)
-     minute = Column(Integer)
-     last_send = Column(DateTime)
-     due_time = Column(DateTime)
-     status = Column(String(50))
+    __tablename__ = 'card_item'
+    uid = Column(Integer, primary_key=True)
+    number = Column(String(50))
+    type = Column(String(50))
+    provider = Column(String(50))
+    group_id = Column(Integer)
+    total_max = Column(Integer)
+    total = Column(Integer)
+    month_max = Column(Integer)
+    month = Column(Integer)
+    day_max = Column(Integer)
+    day = Column(Integer)
+    hour_max = Column(Integer)
+    hour = Column(Integer)
+    minute_max = Column(Integer)
+    minute = Column(Integer)
+    last_send = Column(DateTime)
+    due_time = Column(DateTime)
+    status = Column(String(50))
      
-     def __init__(self, number, type='default', provider='default',
+    def __init__(self, number, type='default', provider='default',
         group_id = 0,
         total_max = 0,
         total = 0,
@@ -58,3 +58,23 @@ class CardItem(Base):
         self.last_send = last_send
         self.due_time = due_time
         
+    def to_dict(self):
+        d = {}
+        d['uid'] = self.uid
+        d['number'] = self.number
+        d['type'] = self.type
+        d['provider'] = self.provider
+        d['group_id'] = self.group_id
+        d['total_max'] = self.total_max
+        d['total'] = self.total
+        d['month_max'] = self.month_max
+        d['month'] = self.month
+        d['day_max'] = self.day_max
+        d['day'] = self.day
+        d['hour_max'] = self.hour_max
+        d['hour'] = self.hour
+        d['minute_max'] = self.minute_max
+        d['minute'] = self.minute
+        d['due_time'] = self.due_time.strftime("%y-%m-%d %H:%M")
+        d['last_send'] = self.last_send.strftime("%y-%m-%d %H:%M")
+        return d

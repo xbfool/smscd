@@ -49,6 +49,11 @@ package com.xbfool.smsc.command
 						}
 						break;
 					}
+					case 'card_item_query':{
+						if(item.errno == 0){
+							user.card_item_list = item.ret;
+						}
+					}
 				}
 			}
 			dispatch(new CompRetEvent(CompRetEvent.COMP_RET));

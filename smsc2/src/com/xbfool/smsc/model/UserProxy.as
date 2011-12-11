@@ -11,6 +11,7 @@ package com.xbfool.smsc.model {
 		public var channel_item_list:Array;
 		public var channel_list_list:Array;
 		public var user_channel_list:Array;
+		public var card_item_list:Array;
 
 		public function UserProxy() {
 			//smsd_url = 'http://localhost:8080/smsd';
