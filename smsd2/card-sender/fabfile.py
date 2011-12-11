@@ -1,4 +1,4 @@
-from fabric.api import run, env
+from fabric.api import run, env, local
 from fabric.colors import green
 env.hosts = ['sms.xbfool.com']
 from fabric.operations import put
@@ -29,3 +29,18 @@ def sender(n):
     put('sender%s.py' % n, '/tmp/')
     run('python2.7 /tmp/sender%s.py' % n)
     run('rm /tmp/sender%s.py' % n)
+    
+def r(n, pidfile='twistd.pid'):
+    put('sender_service%s.tac' % n, '/tmp/')
+    try:
+        run('kill `cat %s`' % pidfile)
+    except:
+        run('twistd --pidfile=%s -y /tmp/sender_service%s.tac' % (pidfile, n))
+    #run('rm /tmp/sender%s.py' % n)
+    
+def l(n, pidfile='twistd.pid'):
+    try:
+        local('kill `cat %s`' % pidfile)
+    except:
+        pass
+    local('twistd --pidfile=%s -y sender_service%s.tac' % (pidfile, n))
