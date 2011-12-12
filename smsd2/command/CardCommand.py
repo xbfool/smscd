@@ -11,6 +11,7 @@ Created on 2011-10-5
 from CommandUtil import *
 from datetime import datetime
 from Card import CardItem
+from traceback import print_exc
 
 def card_item_add(context, **args):
     new_arg = {}
@@ -43,19 +44,22 @@ def card_item_delete(context, **args):
 
 def card_item_update(context, **args):
     try:
-        a = context.session.query(CardItem).filter_by(uid=args.get('uid')).first()
-        if not a:
-            return ret_util(False, -1, 'the uid %s is not exist' % args.get('uid'))
+
         new_arg = {}
         for key, value in args.iteritems():
             if key in ('type', 'provider', 'group_id', 'total_max', 'total',
                         'month_max', 'day_max', 'day', 'hour_max', 'hour',
                         'minute_max', 'minute', 'last_send','due_time'):
                 new_arg[key] = value
-        a.update(new_arg)
-        a.commit()
+                
+        a = context.session.query(CardItem).filter_by(uid=args.get('uid')).update(new_arg)
+        if not a:
+            return ret_util(False, -1, 'the uid %s is not exist' % args.get('uid'))
+
+        context.session.commit()
         return ret_util(True)
     except: 
+        print_exc()
         return ret_util(False)
         
 def card_item_query(context, **args):

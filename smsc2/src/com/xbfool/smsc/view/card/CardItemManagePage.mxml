@@ -34,7 +34,7 @@
 				var isValidForm:Boolean = validatorErrorArray.length == 0;
 				if (isValidForm) {
 					dispatchEvent(new CardPageEvent(CardPageEvent.CARD_ITEM_UPDATE));
-					closeAndRemove();
+					
 				} else {
 					var err:ValidationResultEvent;
 					var errorMessageArray:Array = [];
