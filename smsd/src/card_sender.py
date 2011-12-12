@@ -63,7 +63,7 @@ class card_sender(object):
         self.seqnum = 0
         self.init_db()
 
-        self.init_card_pool()
+        #self.init_card_pool()
         self.init_logger()
         self.kill_received = False
         
@@ -237,6 +237,15 @@ class card_sender(object):
                     m = self.message_pool[uid]
                     m.success_pool.add(seq)
                     self.check_and_update_message(m)
+                    sql = '''
+                        update `card_item` set total = total + 1, 
+                        month = (SELECT IF(MONTH(last_send) = MONTH(NOW()), month + 1, 0)), 
+                        day = (SELECT IF(DAY(last_send) = DAY(NOW()), day + 1, 0)), 
+                        hour = (SELECT IF(HOUR(last_send) = HOUR(NOW()), hour + 1, 0)), 
+                        minute = (SELECT IF(MINUTE(last_send) = MINUTE(NOW()), minute + 1, 0)), 
+                        last_send = NOW()  where number = \'%s\'
+                        '''  % card_number
+                    self.mysql_db.execute(sql)
                     self.logger.debug('succeed:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
                     return
                 else:
@@ -258,71 +267,19 @@ class card_sender(object):
             self.seqnum += 1
         return self.seqnum
     
+    
     def get_send_card_number(self):
-        while True:
-            n = self.cardpool.get_next_number()
-            if n is None:
-                time.sleep(10)
-            else:
-                self.session.commit()
-                return n 
-    def init_card_pool(self):
-        self.cardpool = CardPool()
-        self.cardpool.add_number_by_string('13376442584')
-        self.cardpool.add_number_by_string('13376440784')
-        self.cardpool.add_number_by_string('13376442504')
-        self.cardpool.add_number_by_string('13376442714')
-        self.cardpool.add_number_by_string('13376440764')
-        
-        self.cardpool.add_number_by_string('13376440934')
-        self.cardpool.add_number_by_string('13376440914')
-        self.cardpool.add_number_by_string('13376442374')
-        self.cardpool.add_number_by_string('13376442704')
-        self.cardpool.add_number_by_string('13376440694')
+        p = None
+        while not p:
+            sql = '''
+            select * from `card_item` where card_item.total_max > card_item.total and card_item.due_time > NOW() and (card_item.month_max > card_item.month or MONTH(card_item.last_send) < MONTH(NOW()))  and (card_item.day_max > card_item.day or DAY(card_item.last_send) < DAY(NOW())) and (card_item.hour_max > card_item.hour or HOUR(card_item.last_send) < HOUR(NOW())) and (card_item.minute_max > card_item.minute or MINUTE(card_item.last_send) < MINUTE(NOW())) limit 1;
+            '''
+            p = self.mysql_db.execute(sql).first()
+            if not p:
+                sleep(60)
+        return p.number
+    
 
-        self.cardpool.add_number_by_string('13376442394')
-        self.cardpool.add_number_by_string('13376442344')
-        self.cardpool.add_number_by_string('13376440804')
-        self.cardpool.add_number_by_string('13376440554')
-        self.cardpool.add_number_by_string('13376440924')
-
-        self.cardpool.add_number_by_string('13376442674')
-        self.cardpool.add_number_by_string('13376442894')
-        self.cardpool.add_number_by_string('13376442094')
-        self.cardpool.add_number_by_string('13376442524')
-        self.cardpool.add_number_by_string('13376442384')
-
-        self.cardpool.add_number_by_string('15314106299')
-        self.cardpool.add_number_by_string('15314106359')
-        self.cardpool.add_number_by_string('15314105939')
-        self.cardpool.add_number_by_string('15314105609')
-        self.cardpool.add_number_by_string('15314106577')
-        self.cardpool.add_number_by_string('15314105129')
-        self.cardpool.add_number_by_string('15314103059')
-        self.cardpool.add_number_by_string('15314107089')
-        self.cardpool.add_number_by_string('15314108056')
-        self.cardpool.add_number_by_string('15314106706')
-        self.cardpool.add_number_by_string('15314106455')
-        self.cardpool.add_number_by_string('15314106559')
-        self.cardpool.add_number_by_string('15314106899')
-        self.cardpool.add_number_by_string('15314103329')
-        self.cardpool.add_number_by_string('15314106259')
-        self.cardpool.add_number_by_string('15314109128')
-        self.cardpool.add_number_by_string('15314106808')
-        self.cardpool.add_number_by_string('15314105799')
-        self.cardpool.add_number_by_string('15306413319')
-        self.cardpool.add_number_by_string('15306416966')
-        self.cardpool.add_number_by_string('15306415019')
-        self.cardpool.add_number_by_string('15306413066')
-        self.cardpool.add_number_by_string('15306413266')
-        self.cardpool.add_number_by_string('15306411788')
-        self.cardpool.add_number_by_string('15306415259')
-        self.cardpool.add_number_by_string('15306416606')
-        self.cardpool.add_number_by_string('15306416106')
-        self.cardpool.add_number_by_string('15306415806')
-        self.cardpool.add_number_by_string('15306413578')
-        self.cardpool.add_number_by_string('15306415633')
- 
     def init_logger(self):
         import glob
         import logging
@@ -345,13 +302,15 @@ class card_sender(object):
         self.mysql_db = create_engine('mysql+mysqldb://%s:%s@localhost/%s' % 
                                       (self.cfg.database.user,
                                        self.cfg.database.passwd,
-                                       self.cfg.database.db))
+                                       self.cfg.database.db),
+                                       echo='debug')
         
         from sqlalchemy.orm import sessionmaker
         self.meta = MetaData()
         try:
             self.msg_table = Table('message', self.meta, autoload=True, autoload_with=self.mysql_db)
             self.user_table = Table('user', self.meta, autoload=True, autoload_with=self.mysql_db)
+            self.card_table = Table('card_item', self.meta, autoload=True, autoload_with=self.mysql_db)
         except:
             print_exc()
         Base.metadata.create_all(self.mysql_db) 
