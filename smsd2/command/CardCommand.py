@@ -61,7 +61,36 @@ def card_item_update(context, **args):
     except: 
         print_exc()
         return ret_util(False)
-        
+
+def card_item_add_list(context, **args):
+    print 'in card_item_add_list'
+    l = args['list']
+    lo = []
+    if not l:
+        return ret_util(False)
+    for i in l:
+        try:
+            new_arg = {}
+            for key, value in i.iteritems():     
+                if key in ('number', 'type', 'provider', 'group_id', 'total_max', 'total',
+                    'month_max', 'day_max', 'day', 'hour_max', 'hour',
+                    'minute_max', 'minute', 'last_send','due_time'):
+                    new_arg[key] = value
+            if context.session.query(CardItem).filter_by(number=i.get('number')).count() > 0:
+                return ret_util(False, -1, 'the number %s is duplicated' % i.get('number'))
+            c = CardItem(**new_arg)
+            lo.append(c)
+        except:
+            print_exc()
+            return ret_util(False, -2, 'something is error')
+            
+    if len(lo) > 0:
+        try:
+            context.session.add_all(lo)
+            context.session.commit()
+            return ret_util(True, 0, 'add %d numbers' % len(lo))
+        except:
+            print_exc(False, -3, 'something is error')
 def card_item_query(context, **args):
     try:
         a = context.session.query(CardItem).all()

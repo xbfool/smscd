@@ -10,7 +10,7 @@ package com.xbfool.smsc.command
 	import com.xbfool.smsc.services.*;
 	
 	import org.robotlegs.mvcs.Command;
-	
+	import mx.controls.Alert;
 	public class RetCommand extends Command
 	{
 		[Inject]
@@ -55,7 +55,17 @@ package com.xbfool.smsc.command
 						}
 						break;
 					}
+					
+					default:{
+						if(item.errno != 0) {
+							Alert.show(item.command +':failed, ' + item.errtext);
+						}else{
+							Alert.show('提交请求成功');
+						}
+					}
 				}
+				
+
 			}
 			dispatch(new CompRetEvent(CompRetEvent.COMP_RET));
 		}

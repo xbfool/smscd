@@ -35,7 +35,8 @@ class SmsdCommand(Command):
                         card_item_add,
                         card_item_delete,
                         card_item_query,
-                        card_item_update
+                        card_item_update,
+                        card_item_add_list
                         ]
                         
         self.add_all(*command_list)

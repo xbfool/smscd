@@ -6,11 +6,12 @@
 		 creationComplete="init()">
 	<fx:Script>
 		<![CDATA[
-			import mx.validators.Validator;
-			import mx.events.ValidationResultEvent;
-			import mx.validators.ZipCodeValidatorDomainType;
-			import mx.controls.Alert;
 			import com.xbfool.smsc.view.card.*;
+			
+			import mx.controls.Alert;
+			import mx.events.ValidationResultEvent;
+			import mx.validators.Validator;
+			import mx.validators.ZipCodeValidatorDomainType;
 			[Bindable]
 			private var validatorArr:Array;
 			
@@ -28,6 +29,10 @@
 			public function closeAndRemove():void
 			{
 				parent.removeChild(this);
+			}
+			
+			public function onCommitList():void {
+				dispatchEvent(new CardPageEvent(CardPageEvent.CARD_ITEM_ADD_LIST_COMMIT));
 			}
 			private function validateForm(evt:MouseEvent):void {
 				var validatorErrorArray:Array = Validator.validateAll(validatorArr);;
@@ -75,6 +80,10 @@
 		<s:HGroup >
 			<s:Button label="增加新手机号" 
 					  click="dispatchEvent(new CardPageEvent(CardPageEvent.CARD_ITEM_ADD_PAGE))"/>
+			<s:Button label="批量导入新手机号" 
+					  click="dispatchEvent(new CardPageEvent(CardPageEvent.CARD_ITEM_ADD_LIST))"/>
+			<s:Button label="下载导入模版"
+					  click="dispatchEvent(new CardPageEvent(CardPageEvent.CARD_ITEM_DOWNLOAD_TEMPLATE))"/>
 			<s:Button label="刷新" click="dispatchEvent(new CardPageEvent(CardPageEvent.CARD_ITEM_QUERY))"/>			
 		</s:HGroup>
 		
