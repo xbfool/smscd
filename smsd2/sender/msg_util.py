@@ -51,7 +51,20 @@ class MsgController():
         self.channel_item_name_dict = {}
         self.settings = sender_settings().settings
         self.default_list = None
+    
+    def get_messages_card():
+        sel =  select([self.msg_t], and_(self.msg_t.c.status == msg_status.F_ADMIT, self.msg_t.c.channel == 'card_send_a'))
+        res = self.db.execute(sel)
         
+        for r in res:
+            ret = dict(r.items())
+            ret['content'] = ret['msg']
+            ret['percent'] = self.get_user_percent(ret['user_uid'])
+            ret['ext'] = self.get_user_ext(ret['user_uid'])
+            msg_num = self.get_user_msg_num(ret['user_uid'])
+            if msg_num >= max(ret['msg_num'], 1):
+                yield ret
+                
     def get_messages(self):
         sel =  select([self.msg_t], and_(self.msg_t.c.status == msg_status.F_ADMIT, self.msg_t.c.channel != 'card_send_a'))
         res = self.db.execute(sel)
@@ -256,10 +269,8 @@ class MsgController():
             update_args['status'] = msg_status.F_SEND
             update_args['last_update'] = param['time']
             update_args['fail_msg'] = result
-            if param.get('total_num', 0) >= 100:
-                update_args['sub_num'] = param['msg_num'] * param['percent'] / 100
-            else:
-                update_args['sub_num'] = param['msg_num']
+
+            update_args['sub_num'] = param['sub_num']
             update_args['msg_num'] = param['msg_num']
             update_args['channel'] = param['setting']['name']
             up = self.msg_t.update().where(self.msg_t.c.uid == param['uid']).values(**update_args)
