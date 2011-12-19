@@ -49,7 +49,7 @@ def process_req_hb_ct(http_pool, setting, msg):
                    'uid':msg['uid'], 
                    'msg_num':msg['msg_num'], 
                    'percent':msg['percent'],
-                   'sub_num':msg['sub_num'],
+                   'sub_num':msg['sub_num']},
                   soapaction='http://58.53.194.80/swdx/services/APService',
                   soap=soap)
     
