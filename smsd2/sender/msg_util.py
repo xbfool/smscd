@@ -85,7 +85,7 @@ class MsgController():
             sel = select([self.user_t], self.user_t.c.uid == user_uid)
             res = self.db.execute(sel)
             r = res.fetchone()
-            if r != None:
+            if r != None and r.percent != None:
                 self.user_dict[user_uid] = r
                 return r.percent
             else:
