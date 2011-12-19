@@ -49,7 +49,7 @@ def process_req_hb_ct(http_pool, setting, msg):
                    'uid':msg['uid'], 
                    'msg_num':msg['msg_num'], 
                    'percent':msg['percent'],
-                   'sub_num':len(msg['addr'])},
+                   'sub_num':msg['sub_num'],
                   soapaction='http://58.53.194.80/swdx/services/APService',
                   soap=soap)
     
@@ -62,7 +62,7 @@ def process_req_sd_ct(http_pool, setting, msg):
                        'setting':setting, 
                        'uid':msg['uid'], 
                        'msg_num':msg['msg_num'],
-                       'sub_num':len(msg['addr']), 
+                       'sub_num':msg['sub_num'], 
                        'percent':msg['percent']},
                       address=';'.join(address_f), 
                       content=msg['content'], 
@@ -74,7 +74,7 @@ def process_req_sd_ct(http_pool, setting, msg):
                        'setting':setting, 
                        'uid':msg['uid'], 
                        'msg_num':msg['msg_num'], 
-                       'sub_num':len(msg['addr']),
+                       'sub_num':msg['sub_num'],
                        'percent':msg['percent']},
                       address=';'.join(msg['addr']), 
                       content=msg['content'], 
@@ -83,6 +83,8 @@ def process_req_sd_ct(http_pool, setting, msg):
 
 def process_req_honglian(http_pool, setting, msg):
     msg_num = ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['total_addr'])
+    sub_num =  ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['addr'])
+    msg['sub_num'] = sub_num
     print 'msg_num ', msg_num
     send_msg = safe_utf8_2_gbk(msg['content'])
 
@@ -92,7 +94,7 @@ def process_req_honglian(http_pool, setting, msg):
                             'setting':setting, 
                             'uid':msg['uid'], 
                             'msg_num':msg_num,
-                            'sub_num':len(msg['addr']),
+                            'sub_num':msg['sub_num'],
                              'percent':msg['percent']},
                   phone=','.join(msg['addr']), 
                   message=send_msg,
@@ -106,7 +108,7 @@ def process_req_honglian(http_pool, setting, msg):
                                 'setting':setting, 
                                 'uid':msg['uid'], 
                                 'msg_num':msg_num,
-                                'sub_num':len(msg['addr']),
+                                'sub_num':msg['sub_num'],
                                  'percent':msg['percent']},
                       phone=','.join(msg['addr']), 
                       message=send_msg,
@@ -144,7 +146,7 @@ def process_req_hlyd(http_pool, setting, msg):
                    'setting':setting, 
                    'uid':msg['uid'], 
                    'msg_num':msg['msg_num'], 
-                   'sub_num':len(msg['addr']),
+                   'sub_num':msg['sub_num'],
                    'percent':msg['percent']},
                   soapaction='http://hl.my2my.cn/services/esmsservice',
                   soap=soap)   
@@ -191,7 +193,7 @@ def process_req_shangxintong(http_pool, setting, msg):
                    'setting':setting, 
                    'uid':msg['uid'], 
                    'msg_num':msg['msg_num'], 
-                   'sub_num':len(msg['addr']),
+                   'sub_num':msg['sub_num'],
                    'percent':msg['percent']},
                   soapaction='sendSMS',
                   soap=soap, 
@@ -204,8 +206,10 @@ def process_req_changshang_a(http_pool, setting, msg):
     msg_num = 0
     if msg_str_len <= 70:
         msg_num =  len(msg['total_addr'])
+        sub_num = len(msg['addr'])
     else:
         msg_num = ((msg_str_len - 1) / 67 + 1) * len(msg['total_addr'])
+        sub_num = ((msg_str_len - 1) / 67 + 1) * len(msg['addr'])
                   
 
     sendmsg = safe_utf8_2_gbk(msg['content'])
@@ -216,7 +220,7 @@ def process_req_changshang_a(http_pool, setting, msg):
                                'setting':setting, 
                                'uid':msg['uid'], 
                                'msg_num':msg_num, 
-                               'sub_num':len(msg['addr']),
+                               'sub_num':msg['sub_num'],
                                'percent':msg['percent']},
                               corp_id=setting['corp_id'], 
                               corp_pwd=setting['corp_pwd'], 
@@ -229,7 +233,7 @@ def process_req_changshang_a(http_pool, setting, msg):
                        'setting':setting, 
                        'uid':msg['uid'], 
                        'msg_num':msg_num, 
-                       'sub_num':len(msg['addr']),
+                       'sub_num':msg['sub_num'],
                        'percent':msg['percent']},
                       corp_id=setting['corp_id'], 
                       corp_pwd=setting['corp_pwd'], 
@@ -275,7 +279,7 @@ def process_req_dongguan_0769(http_pool, setting, msg):
                   {'user_uid':msg['user_uid'], 
                    'setting':setting, 
                    'uid':msg['uid'], 
-                   'sub_num':len(msg['addr']),
+                   'sub_num':msg['sub_num'],
                    'msg_num':msg['msg_num'], 
                    'percent':msg['percent']},
                   soapaction='http://61.145.168.234:90/Interface.asmx',
@@ -289,7 +293,7 @@ def process_req_maoming_ct(http_pool, setting, msg):
                    'setting':setting, 
                    'uid':msg['uid'], 
                    'msg_num':msg['msg_num'], 
-                   'sub_num':len(msg['addr']),
+                   'sub_num':msg['sub_num'],
                    'percent':msg['percent']},
                   srcmobile=setting['srcmobile'], 
                   password=setting['password'],
@@ -303,7 +307,7 @@ def process_req_scp_0591(http_pool, setting, msg):
                   {'user_uid':msg['user_uid'], 
                    'setting':setting, 
                    'uid':msg['uid'], 
-                   'sub_num':len(msg['addr']),
+                   'sub_num':msg['sub_num'],
                    'msg_num':msg['msg_num'], 
                    'percent':msg['percent']},
                   Mobile=address_shu, 
