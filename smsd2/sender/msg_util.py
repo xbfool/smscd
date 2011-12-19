@@ -78,16 +78,19 @@ class MsgController():
             if msg_num >= max(ret['msg_num'], 1):
                 yield ret
     def get_user_percent(self, user_uid):
-        if self.user_dict.get(user_uid):
-            return self.user_dict[user_uid].percent
+        try:
+            if self.user_dict.get(user_uid):
+                return self.user_dict[user_uid].percent
         
-        sel = select([self.user_t], self.user_t.c.uid == user_uid)
-        res = self.db.execute(sel)
-        r = res.fetchone()
-        if r != None:
-            self.user_dict[user_uid] = r
-            return r.percent
-        else:
+            sel = select([self.user_t], self.user_t.c.uid == user_uid)
+            res = self.db.execute(sel)
+            r = res.fetchone()
+            if r != None:
+                self.user_dict[user_uid] = r
+                return r.percent
+            else:
+                return 100
+        except:
             return 100
     def get_user_msg_num(self, user_uid):
         sel = select([self.user_t], self.user_t.c.uid == user_uid)
