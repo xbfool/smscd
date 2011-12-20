@@ -203,13 +203,13 @@ def process_req_shangxintong(http_pool, setting, msg):
         
 def process_req_changshang_a(http_pool, setting, msg):
     msg_str_len = len(msg['content'].decode('utf8'))
-    msg_num = 0
+
     if msg_str_len <= 70:
         msg_num =  len(msg['total_addr'])
-        sub_num = len(msg['addr'])
+        msg['sub_num'] = len(msg['addr'])
     else:
         msg_num = ((msg_str_len - 1) / 67 + 1) * len(msg['total_addr'])
-        sub_num = ((msg_str_len - 1) / 67 + 1) * len(msg['addr'])
+        msg['sub_num'] = ((msg_str_len - 1) / 67 + 1) * len(msg['addr'])
                   
 
     sendmsg = safe_utf8_2_gbk(msg['content'])
