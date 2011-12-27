@@ -1922,6 +1922,8 @@ private function phone_list_back():void{
 	phone_list_back_btn.visible=false;	
 }
 
+private var GET_PHONE_BOOK_INFO_OK:String = "get_phone_book_info_ok";
+
 private function get_phone_book_info():void{
 	this.request({q:'getphonebookinfo', sid:this.session});
 }
@@ -1936,6 +1938,7 @@ private function processor_getphonebookinfo(param:Object): void {
 		phonebook_list.addItem({label:co.name, data:co.uid});
 	}
 	phonebook_data.source = dp;
+	this.dispatchEvent(new Event(GET_PHONE_BOOK_INFO_OK));
 }
 
 private function request_delete_phonelist(): void {
@@ -2091,6 +2094,10 @@ private var allphoneinfos:Array = new Array();
 private function select_phone_number_from_phonebook():void{
 	ViewStack_select_phone.selectedChild = viewpage_select_phone;
 	get_phone_book_info();
+	this.addEventListener(GET_PHONE_BOOK_INFO_OK, get_phone_book_info_result);
+}
+
+private function get_phone_book_info_result(e:Event):void{
 	get_all_phone_info();
 }
 
