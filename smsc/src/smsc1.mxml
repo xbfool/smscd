@@ -2,11 +2,12 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
 				minWidth="955" minHeight="600" applicationComplete="init();"
 				backgroundColor="#FFFFFF" layout="absolute" xmlns:s="library://ns.adobe.com/flex/spark">
+	<mx:Style source="style.css"/>
 
 	<mx:Script source="smsc1.as"/>
 	
 	<mx:Canvas id="view_login" visible="{stage_id == 0}" width="370" height="200"
-			   borderColor="0x000000" borderStyle="solid" horizontalCenter="0" verticalCenter="0">
+			   borderColor="0x000000" borderStyle="solid" horizontalCenter="0" verticalCenter="-100">
 		<mx:Label horizontalCenter="0" text="短信群发管理登陆" verticalCenter="-50"/>
 		<mx:Label x="71" y="86" text="用户名"/>
 		<mx:Label x="71" y="116" text="密码"/>
@@ -42,36 +43,26 @@
 						<!-- Define each panel using a VBox container. -->
 						<mx:VBox width="100%" label="短信中心" horizontalAlign="center"
 								 textAlign="center" verticalAlign="middle">
-							<mx:LinkButton label="短信发送" click="{change_view_stack('message_send');}"
-										   color="0x3380DD"/>
-							<mx:LinkButton label="特殊发送" click="{change_view_stack('message_special_send');}"
-										   color="0x3380DD"/>
-							<mx:LinkButton label="发送纪录"
-										   click="{change_view_stack('message_send_log')}"
-										   color="0x3380DD"/>
-							<mx:LinkButton label="统计汇总" click="{change_view_stack('message_report')}"
-										   color="0x3380DD"/>
-							<mx:LinkButton label="充值记录" click="{change_view_stack('addmsglog')}"
-										   color="0x3380DD"/>
-							<mx:LinkButton label="通讯录管理"
-										   click="{change_view_stack('manage_phonenumber')}"
-										   color="0x3380DD"/>
-							<mx:LinkButton label="上行查询" click="{change_view_stack('upload_report')}"
-										   color="0x3380DD"/>
-							<mx:LinkButton visible="{user_name == 'root'}" label="通道发送统计"
-										   click="{change_view_stack('channel_report')}"
-										   color="0x3380DD"/>
+							<mx:LinkButton width="100%" label="短信发送"
+										   click="{change_view_stack('message_send');}"/>
+							<mx:LinkButton width="100%" label="特殊发送" click="{change_view_stack('message_special_send');}"/>
+							<mx:LinkButton width="100%" label="发送纪录"
+										   click="{change_view_stack('message_send_log')}"/>
+							<mx:LinkButton width="100%" label="统计汇总" click="{change_view_stack('message_report')}"/>
+							<mx:LinkButton width="100%" label="充值记录" click="{change_view_stack('addmsglog')}"/>
+							<mx:LinkButton width="100%" label="通讯录管理" click="{change_view_stack('manage_phonenumber')}"/>
+							<mx:LinkButton width="100%" label="上行查询" click="{change_view_stack('upload_report')}"/>
+							<mx:LinkButton width="100%" visible="{user_name == 'root'}" label="通道发送统计"
+										   click="{change_view_stack('channel_report')}"/>
 						</mx:VBox>
 						<mx:VBox width="100%" label="用户管理" horizontalAlign="center"
 								 verticalAlign="middle">
-							<mx:LinkButton label="用户设置" click="{change_view_stack('usermanage')}"
-										   color="0x3380DD"/>
-							<mx:LinkButton label="密码修改"
-										   click="{ViewStack_main.selectedChild=viewpage_change_password}"
-										   color="0x3380DD"/>
+							<mx:LinkButton width="100%" label="用户设置" click="{change_view_stack('usermanage')}"/>
+							<mx:LinkButton width="100%" label="密码修改"
+										   click="{ViewStack_main.selectedChild=viewpage_change_password}"/>
 						</mx:VBox>
 					</mx:Accordion>
-					<mx:Button width="100%" label="注销登录" click="{logout();}"/>
+					<mx:Button width="100%" height="30" label="注销登录" click="{logout();}"/>
 				</mx:Panel>
 				<mx:Panel id="view_content" width="100%" height="100%" paddingBottom="10"
 						  paddingLeft="10" paddingRight="10" paddingTop="10">
@@ -81,7 +72,7 @@
 						</mx:VBox>
 						<mx:VBox id="viewpage_message_send">
 							<s:HGroup color="#FF0000" textAlign="left">
-								<mx:Label text="当前余额"/>
+								<mx:Label text="剩余短信"/>
 								<mx:Label text="{user_msg_num}"/>
 							</s:HGroup>
 							<mx:VBox backgroundColor="#EDF9FE" borderStyle="solid" paddingBottom="10"
@@ -101,7 +92,7 @@
 										
 									</mx:HBox>
 									<mx:Label id="message_content_count" width="100%"
-											  text="总字数: 0  拆分条数: 0  联系人数: 0  总条数: 0"
+											  text="短信字数: 0 拆分条数(64字一条): 0 拆分条数(70字一条): 0 联系人数: 0 总条数(64): 0 总条数(67): 0"
 											  textAlign="center"/>
 									<mx:HBox width="100%">
 										<mx:Label width="100" text="输入接收手机号" textAlign="center"/>
@@ -113,7 +104,7 @@
 													   click="{select_phone_number_from_phonebook()}"/>
 																				<mx:Button label="导入文件"
 																						   click="{import_phone_number_from_file()}"/>
-											<mx:Label text="号码文件为txt格式的文件"/>
+											<mx:Label text="txt文件，一行一个号码"/>
 										</mx:HBox>
 									</mx:HBox >
 									<mx:HBox width="100%" horizontalAlign="center" horizontalGap="8"
@@ -129,7 +120,7 @@
 									   height="100%" borderColor="0x000000" borderStyle="solid"
 									   horizontalCenter="0" verticalCenter="0">
 								
-								<mx:Panel id="panel_send_phonelist" width="40%" height="100%"
+								<mx:Panel id="panel_send_phonelist" width="30%" height="100%"
 										  cornerRadius="0" horizontalAlign="center"
 										  paddingBottom="0" paddingLeft="0" paddingRight="0"
 										  paddingTop="0" verticalAlign="top">	
@@ -149,21 +140,21 @@
 										
 										<mx:DataGrid id="message_phone_number_grid" height="100%"
 													 dataProvider="{message_phone_number}"
-													 draggableColumns="false" editable="true"
-													 resizableColumns="false">
+													 draggableColumns="true" editable="true"
+													 resizableColumns="true">
 											<mx:columns>				
 												<!-- You can define an inline component as the ItemRenderer for a DataGrid column -->
 												
 												
-												<mx:DataGridColumn width="200" dataField="number"
-																   editable="false"
+												<mx:DataGridColumn minWidth="100" dataField="number"
+																   editable="true"
 																   headerText="手机号码"
 																   itemRenderer="mx.controls.Text"/>
-												<mx:DataGridColumn width="200" dataField="count"
+												<mx:DataGridColumn minWidth="60" dataField="count"
 																   editable="false"
 																   headerText="号码个数"
 																   itemRenderer="mx.controls.Text"/>
-												<mx:DataGridColumn width="50" dataField="check"
+												<mx:DataGridColumn minWidth="40" dataField="check"
 																   editable="true"
 																   editorDataField="selected"
 																   headerText="选择"
@@ -173,7 +164,7 @@
 										</mx:DataGrid>
 									</mx:VBox>
 								</mx:Panel>								
-								<mx:Panel right="0" width="60%" height="100%" paddingBottom="0"
+								<mx:Panel right="0" width="70%" height="100%" paddingBottom="0"
 										  paddingLeft="0" paddingRight="0" paddingTop="0">									
 									<mx:ViewStack id="ViewStack_select_phone" width="100%"
 												  height="100%" color="0x323232">										
@@ -196,10 +187,10 @@
 														 draggableColumns="false" editable="false"
 														 resizableColumns="false">
 												<mx:columns>
-													<mx:DataGridColumn width="200" dataField="number"
+													<mx:DataGridColumn minWidth="200" dataField="number"
 																	   headerText="手机号"
 																	   itemRenderer="mx.controls.Text"/>
-													<mx:DataGridColumn width="50" dataField="check"
+													<mx:DataGridColumn minWidth="50" dataField="check"
 																	   editable="true"
 																	   editorDataField="selected"
 																	   headerText="选择"
@@ -442,22 +433,22 @@
 										<mx:DataGridColumn minWidth="90" dataField="last_update"
 														   editable="false" headerText="发出时间"
 														   itemRenderer="mx.controls.Text"/>
-										<mx:DataGridColumn minWidth="100" dataField="address"
+										<mx:DataGridColumn minWidth="90" dataField="address"
 														   editable="false" headerText="手机号码"
 														   itemRenderer="mx.controls.Text"/>
-										<mx:DataGridColumn minWidth="100" dataField="channel"
+										<mx:DataGridColumn minWidth="80" dataField="channel"
 														   editable="false" headerText="通道"
 														   itemRenderer="mx.controls.Text"/>
 										<mx:DataGridColumn minWidth="50" dataField="status"
 														   editable="false" headerText="状态"
 														   itemRenderer="msg_status_render"/>
-										<mx:DataGridColumn minWidth="40" dataField="msg_num"
+										<mx:DataGridColumn minWidth="50" dataField="msg_num"
 														   editable="false" headerText="条数"
 														   itemRenderer="mx.controls.Text"/>
 										<mx:DataGridColumn minWidth="90" dataField="create_time"
 														   editable="false" headerText="创建时间"
 														   itemRenderer="mx.controls.Text"/>
-										<mx:DataGridColumn minWidth="200" dataField="msg"
+										<mx:DataGridColumn minWidth="150" dataField="msg"
 														   editable="false" headerText="短信内容">
 											<mx:itemRenderer>
 												<mx:Component>
@@ -469,7 +460,7 @@
 												</mx:Component>
 											</mx:itemRenderer>
 										</mx:DataGridColumn >
-										<mx:DataGridColumn minWidth="100" dataField="fail_msg"
+										<mx:DataGridColumn minWidth="80" dataField="fail_msg"
 														   editable="false" headerText="状态明细"
 														   itemRenderer="mx.controls.Text"/>
 									</mx:columns>
