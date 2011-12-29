@@ -239,10 +239,10 @@ class card_sender(object):
                     self.check_and_update_message(m)
                     sql = '''
                         update `card_item` set total = total + 1, 
-                        month = (SELECT IF(MONTH(last_send) = MONTH(NOW()), month + 1, 0)), 
-                        day = (SELECT IF(DAY(last_send) = DAY(NOW()), day + 1, 0)), 
-                        hour = (SELECT IF(HOUR(last_send) = HOUR(NOW()), hour + 1, 0)), 
-                        minute = (SELECT IF(MINUTE(last_send) = MINUTE(NOW()), minute + 1, 0)), 
+                        month = (SELECT IF(MONTH(last_send) = MONTH(NOW()), month + 1, 1)), 
+                        day = (SELECT IF(DAY(last_send) = DAY(NOW()), day + 1, 1)), 
+                        hour = (SELECT IF(HOUR(last_send) = HOUR(NOW()), hour + 1, 1)), 
+                        minute = (SELECT IF(MINUTE(last_send) = MINUTE(NOW()), minute + 1, 1)), 
                         last_send = NOW()  where number = \'%s\'
                         '''  % card_number
                     self.mysql_db.execute(sql)
