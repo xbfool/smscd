@@ -45,7 +45,7 @@
 		
 		<mx:DataGrid id="user_grid" width="100%" height="100%">
 			<mx:columns>
-				<mx:DataGridColumn dataField="uid" headerText="UID"/>
+				<mx:DataGridColumn dataField="index" headerText="序号"/>
 				<mx:DataGridColumn dataField="username" headerText="用户名"/>
 				<mx:DataGridColumn dataField="description" headerText="用户备注"/>
 				<mx:DataGridColumn dataField="msg_num" headerText="剩余条数"/>

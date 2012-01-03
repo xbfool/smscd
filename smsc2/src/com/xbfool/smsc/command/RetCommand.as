@@ -20,6 +20,13 @@ package com.xbfool.smsc.command
 		public var reqestService:IRequestService;
 		[Inject]
 		public var user:UserProxy;
+		
+		private function add_index(l:Array):void{
+			for(var i:int = 0; i < l.length; i++){
+				var o:Object = l[i];
+				o.index = i + 1;
+			}
+		}
 		override public function execute():void
 		{
 			for each (var item:Object in event.param){
@@ -35,18 +42,21 @@ package com.xbfool.smsc.command
 					case 'channel_item_query_all':{
 						if(item.errno == 0){
 							user.channel_item_list = item.ret;
+							this.add_index(user.channel_item_list);
 						}
 						break;
 					}
 					case 'channel_list_query_all':{
 						if(item.errno == 0){
 							user.channel_list_list = item.ret;
+							this.add_index(user.channel_list_list);
 						}
 						break;
 					}
 					case 'user_query_all':{
 						if(item.errno == 0){
 							user.user_channel_list = item.ret;
+							this.add_index(user.user_channel_list);
 						}
 						break;
 					}
@@ -60,6 +70,7 @@ package com.xbfool.smsc.command
 								o.day_remain = o.day_max - o.day;
 								o.hour_remain = o.hour_max - o.hour;
 							}
+							this.add_index(user.card_item_list)
 						}
 						break;
 					}
