@@ -95,6 +95,10 @@
 				<mx:DataGridColumn dataField="type" headerText="类型"/>
 				<mx:DataGridColumn dataField="provider" headerText="运营商"/>
 				<mx:DataGridColumn dataField="due_time" headerText="到期时间"/>
+				<mx:DataGridColumn dataField="total_remain" headerText="总可发剩余"/>
+				<mx:DataGridColumn dataField="month_remain" headerText="月可发剩余"/>
+				<mx:DataGridColumn dataField="day_remain" headerText="日可发剩余"/>
+				<mx:DataGridColumn dataField="hour_remain" headerText="小时可发剩余"/>
 				<mx:DataGridColumn dataField="total_max" headerText="可发总数"/>
 				<mx:DataGridColumn dataField="total" headerText="已发总数"/>
 				<mx:DataGridColumn dataField="month_max" headerText="每月总数"/>

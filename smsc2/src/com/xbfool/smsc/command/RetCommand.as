@@ -9,8 +9,9 @@ package com.xbfool.smsc.command
 	import com.xbfool.smsc.model.*;
 	import com.xbfool.smsc.services.*;
 	
-	import org.robotlegs.mvcs.Command;
 	import mx.controls.Alert;
+	
+	import org.robotlegs.mvcs.Command;
 	public class RetCommand extends Command
 	{
 		[Inject]
@@ -52,6 +53,13 @@ package com.xbfool.smsc.command
 					case 'card_item_query':{
 						if(item.errno == 0){
 							user.card_item_list = item.ret;
+							for(var i:int = 0; i < user.card_item_list.length; i++){
+								var o:Object = user.card_item_list[i];
+								o.total_remain = o.total_max - o.total;
+								o.month_remain = o.month_max - o.month;
+								o.day_remain = o.day_max - o.day;
+								o.hour_remain = o.hour_max - o.hour;
+							}
 						}
 						break;
 					}
