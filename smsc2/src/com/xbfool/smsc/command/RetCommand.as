@@ -42,6 +42,7 @@ package com.xbfool.smsc.command
 					case 'channel_item_query_all':{
 						if(item.errno == 0){
 							user.channel_item_list = item.ret;
+							user.channel_item_list.sortOn(['name']);
 							this.add_index(user.channel_item_list);
 						}
 						break;
@@ -49,6 +50,7 @@ package com.xbfool.smsc.command
 					case 'channel_list_query_all':{
 						if(item.errno == 0){
 							user.channel_list_list = item.ret;
+							user.channel_list_list.sortOn(['name']);
 							this.add_index(user.channel_list_list);
 						}
 						break;
@@ -56,6 +58,7 @@ package com.xbfool.smsc.command
 					case 'user_query_all':{
 						if(item.errno == 0){
 							user.user_channel_list = item.ret;
+							user.user_channel_list.sortOn(['username']);
 							this.add_index(user.user_channel_list);
 						}
 						break;
@@ -70,6 +73,7 @@ package com.xbfool.smsc.command
 								o.day_remain = o.day_max - o.day;
 								o.hour_remain = o.hour_max - o.hour;
 							}
+							user.card_item_list.sortOn(['number']);
 							this.add_index(user.card_item_list)
 						}
 						break;
