@@ -86,6 +86,18 @@ package com.xbfool.smsc.view.card
 		private function onQueryBack(e:CompRetEvent):void
 		{
 			card_item_list.source = user.card_item_list;
+			cardItemManagePage.remain_total = 0;
+			cardItemManagePage.remain_month = 0;
+			cardItemManagePage.remain_day = 0;
+			cardItemManagePage.remain_hour = 0;
+			
+			for(var i:int = 0; i < user.card_item_list.length; i++) {
+				var o:Object = user.card_item_list[i];
+				cardItemManagePage.remain_total += o.total_remain;
+				cardItemManagePage.remain_month += o.month_remain;
+				cardItemManagePage.remain_day += o.day_remain;
+				cardItemManagePage.remain_hour += o.hour_remain;
+			}
 		}
 		
 		private function onUpdate(e:CardPageEvent):void

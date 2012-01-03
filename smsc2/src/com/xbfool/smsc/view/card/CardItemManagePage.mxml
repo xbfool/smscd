@@ -13,6 +13,14 @@
 			import mx.validators.Validator;
 			import mx.validators.ZipCodeValidatorDomainType;
 			[Bindable]
+			public var remain_total:int;
+			[Bindable]
+			public var remain_month:int;
+			[Bindable]
+			public var remain_day:int;
+			[Bindable]
+			public var remain_hour:int;
+			[Bindable]
 			private var validatorArr:Array;
 			
 			private function init():void {
@@ -113,6 +121,8 @@
 				<mx:DataGridColumn dataField="status" headerText="状态"/>
 			</mx:columns>
 		</mx:DataGrid>
+		<s:HGroup>
+	
 		
 		<mx:Form backgroundAlpha="1.0" backgroundColor="#FFFFFF" cornerRadius="16"
 				 defaultButton="{okButton}" horizontalCenter="0" verticalCenter="0">
@@ -173,6 +183,22 @@
 				</mx:HBox>			
 			</mx:FormItem>		
 		</mx:Form>
-
+			
+			<mx:Form>
+				<mx:FormHeading label="增加新通道"/>
+				<mx:FormItem label="总剩余">
+					<mx:Label  text="{remain_total}"/>
+				</mx:FormItem>
+				<mx:FormItem label="月剩余">
+					<mx:Label  text="{remain_month}"/>
+				</mx:FormItem>
+				<mx:FormItem label="日剩余">
+					<mx:Label  text="{remain_day}"/>
+				</mx:FormItem>
+				<mx:FormItem label="小时剩余">
+					<mx:Label  text="{remain_hour}"/>
+				</mx:FormItem>
+			</mx:Form>
+		</s:HGroup>
 	</s:VGroup>	
 </s:Group>
