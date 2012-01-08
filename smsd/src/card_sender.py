@@ -102,6 +102,9 @@ class card_sender(object):
     def __worker(self):
         while not self.__worker_exit_lock.acquire(False) and not self.kill_received:
             #print 'checking queue: ', datetime.now()
+            if datetime.now().hour >= 19 or datetime.now() <= 8:
+                print 'now sleeping %s' % datetime.now()
+                sleep(60)
             try:
                 if self.__process_queue() == 0:
                     sleep(self.__chk_interval)
@@ -215,6 +218,9 @@ class card_sender(object):
     def send_card_message(self, item):
         self.message_pool[item.uid] = item
         for addr in item.address_list:
+            if datetime.now().hour >= 19 or datetime.now() <= 8:
+                print 'now sleeping %s' % datetime.now()
+                sleep(60)
             seq = self.genseqnum()
             item.address_pool[seq] = addr
             self.linear_send(item.uid, seq, addr, item.msg)
@@ -272,7 +278,30 @@ class card_sender(object):
         p = None
         while not p:
             sql = '''
-            select * from `card_item` where card_item.total_max > card_item.total and card_item.due_time > NOW() and (card_item.month_max > card_item.month or MONTH(card_item.last_send) < MONTH(NOW()))  and (card_item.day_max > card_item.day or DAY(card_item.last_send) < DAY(NOW())) and (card_item.hour_max > card_item.hour or HOUR(card_item.last_send) < HOUR(NOW())) and (card_item.minute_max > card_item.minute or MINUTE(card_item.last_send) < MINUTE(NOW())) order by day, last_send limit 1;
+            select * from `card_item` where card_item.total_max > card_item.total
+            and card_item.due_time > NOW() and (card_item.month_max > card_item.month or 
+                                                YEAR(card_item.last_send) < YEAR(NOW()) or 
+                                                MONTH(card_item.last_send) < MONTH(NOW())
+                                                )  
+                                           and (card_item.day_max > card_item.day or 
+                                                YEAR(card_item.last_send) < YEAR(NOW()) or 
+                                                MONTH(card_item.last_send) < MONTH(NOW() or
+                                                DAY(card_item.last_send) < DAY(NOW())
+                                                ) 
+                                           and (card_item.hour_max > card_item.hour or 
+                                                YEAR(card_item.last_send) < YEAR(NOW()) or 
+                                                MONTH(card_item.last_send) < MONTH(NOW() or
+                                                DAY(card_item.last_send) < DAY(NOW()) or
+                                                HOUR(card_item.last_send) < HOUR(NOW())
+                                                ) 
+                                           and (card_item.minute_max > card_item.minute or 
+                                                YEAR(card_item.last_send) < YEAR(NOW()) or 
+                                                MONTH(card_item.last_send) < MONTH(NOW() or
+                                                DAY(card_item.last_send) < DAY(NOW()) or
+                                                HOUR(card_item.last_send) < HOUR(NOW()) or
+                                                MINUTE(card_item.last_send) < MINUTE(NOW())
+                                                ) 
+            order by day, last_send limit 1;
             '''
             p = self.mysql_db.execute(sql).first()
             if not p:
