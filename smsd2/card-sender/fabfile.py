@@ -43,4 +43,4 @@ def l(n, pidfile='twistd.pid'):
         local('kill `cat %s`' % pidfile)
     except:
         pass
-    local('twistd --pidfile=%s -y sender_service%s.tac' % (pidfile, n))
+    local('twistd --pidfile=%s -n -y sender_service%s.tac' % (pidfile, n))

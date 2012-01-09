@@ -199,6 +199,20 @@ class sender_settings():
             'process_ret': process_ret_honglian,
             'process_req': process_req_honglian,
         }
+        
+        settings['honglian_tyb'] = {
+            'name': 'honglian_tyb',
+            'host': '219.238.160.81',
+            'path': '/interface/limitnew.asp',
+            'mode': 'POST',
+            'sub_mode': 'honglian',
+            'username':'fdnz',
+            'password':'123456',
+            'epid':'6831',
+            'process_ret': process_ret_honglian,
+            'process_req': process_req_honglian,
+        }
+        
         settings['shangxintong_01'] = {
             'name': 'shangxintong_01',
             'host': '218.15.25.98',

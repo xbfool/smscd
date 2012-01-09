@@ -76,6 +76,7 @@ public var channel_select_data:ArrayCollection = new ArrayCollection(
 		{label:"电信0668a", data:'maoming_ct_0668'},
 		{label:"0591a", data:'scp_0591_a'},
 		{label:"卡发通道a", data:'card_send_a'},
+		{label:"移动106ctyb", data:'honglian_tyb'},
 		
 	]);
 [Bindable]
@@ -613,6 +614,8 @@ private function get_channel_index(channel:String):int{
 			return 17;
 		case "card_send_a":
 			return 18;
+		case "honglian_tyb":
+			return 19;
 		default:
 			return 0;
 	}
