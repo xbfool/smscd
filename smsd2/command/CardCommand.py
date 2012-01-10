@@ -101,7 +101,7 @@ def update_all_card(context):
         minute = (SELECT IF(MINUTE(last_send) = MINUTE(NOW()), minute, 0)), 
         last_send = NOW()
         '''
-    self.context.db.execute(sql)
+    context.db.execute(sql)
     
 def card_item_query(context, **args):
     update_all_card(context)
