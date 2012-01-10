@@ -91,6 +91,18 @@ def card_item_add_list(context, **args):
             return ret_util(True, 0, 'add %d numbers' % len(lo))
         except:
             print_exc(False, -3, 'something is error')
+
+def update_all_card(context):
+    sql = '''
+        update `card_item` set total = total, 
+        month = (SELECT IF(MONTH(last_send) = MONTH(NOW()), month, 0)), 
+        day = (SELECT IF(DAY(last_send) = DAY(NOW()), day, 0)), 
+        hour = (SELECT IF(HOUR(last_send) = HOUR(NOW()), hour, 0)), 
+        minute = (SELECT IF(MINUTE(last_send) = MINUTE(NOW()), minute, 0)), 
+        last_send = NOW()
+        '''
+    self.context.db.execute(sql)
+    
 def card_item_query(context, **args):
     try:
         a = context.session.query(CardItem).all()
