@@ -387,7 +387,7 @@ class smsd(object):
         if channel in ('changshang_a_01', 'changshang_a_02', 'changshang_a_03',
                        'honglian_01',
                          'honglian_bjyh', 'honglian_jtyh',
-                         'honglian_ty'):
+                         'honglian_ty', 'honglian_tyb'):
             addr = []
             for i in xrange(0, len(addr_list), 20):
                 addr.append(addr_list[i: min(i + 20, len(addr_list))])
@@ -470,6 +470,7 @@ class smsd(object):
                                              'honglian_bjyh',
                                              'honglian_jtyh',
                                              'honglian_ty',
+                                             'honglian_tyb',
                                              'changshang_a_01',
                                              'changshang_a_02',
                                              'changshang_a_04']:
