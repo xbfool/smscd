@@ -104,6 +104,7 @@ def update_all_card(context):
     self.context.db.execute(sql)
     
 def card_item_query(context, **args):
+    update_all_card(context)
     try:
         a = context.session.query(CardItem).all()
         l = list([])
