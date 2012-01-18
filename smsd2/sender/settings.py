@@ -67,8 +67,8 @@ class sender_settings():
             'process_ret' : process_ret_hb_ct,
             'process_req' : process_req_hb_ct
         }
-        settings['hb_ct_05'] = {
-            'name': 'hb_ct_05',
+        settings['hb_ct_04'] = {
+            'name': 'hb_ct_04',
             'host': '58.53.194.80',
             'path': '/swdx/services/APService',
             'mode': 'soap',
@@ -82,7 +82,7 @@ class sender_settings():
             'process_req' : process_req_hb_ct
         }
         settings['hb_ct_05'] = {
-            'name': 'hb_ct_04',
+            'name': 'hb_ct_05',
             'host': '58.53.194.80',
             'path': '/swdx/services/APService',
             'mode': 'soap',
