@@ -567,6 +567,7 @@ class smsd(object):
                                      'honglian_bjyh',
                                      'honglian_jtyh',
                                      'honglian_ty',
+                                     'honglian_tyb',
                                      'changshang_a_01',
                                      'changshang_a_02',
                                      'changshang_a_04']:
