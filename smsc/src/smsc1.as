@@ -77,7 +77,8 @@ public var channel_select_data:ArrayCollection = new ArrayCollection(
 		{label:"0591a", data:'scp_0591_a'},
 		{label:"卡发通道a", data:'card_send_a'},
 		{label:"移动106ctyb", data:'honglian_tyb'},
-		
+		{label:"电信0728b", data:'hb_ct_05'},
+		{label:"移动106ctyd", data:'honglian_tyd'}
 	]);
 [Bindable]
 public var user_percent_list:ArrayCollection = new ArrayCollection([
@@ -616,6 +617,10 @@ private function get_channel_index(channel:String):int{
 			return 18;
 		case "honglian_tyb":
 			return 19;
+		case "hb_ct_05":
+			return 20;
+		case "honglian_tyd":
+			return 21;
 		default:
 			return 0;
 	}

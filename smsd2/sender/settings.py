@@ -67,7 +67,21 @@ class sender_settings():
             'process_ret' : process_ret_hb_ct,
             'process_req' : process_req_hb_ct
         }
-        settings['hb_ct_04'] = {
+        settings['hb_ct_05'] = {
+            'name': 'hb_ct_05',
+            'host': '58.53.194.80',
+            'path': '/swdx/services/APService',
+            'mode': 'soap',
+            'sub_mode':'hb_ct',
+            'entid': 'hbtmzx002',
+            'uid': 'hbtmzx002',
+            'apid': 'hbtmzx002',
+            'appwd': 'Pb64Hct7',
+            'webpwd': 'sdj5alk6',
+            'process_ret' : process_ret_hb_ct,
+            'process_req' : process_req_hb_ct
+        }
+        settings['hb_ct_05'] = {
             'name': 'hb_ct_04',
             'host': '58.53.194.80',
             'path': '/swdx/services/APService',
@@ -212,7 +226,18 @@ class sender_settings():
             'process_ret': process_ret_honglian,
             'process_req': process_req_honglian,
         }
-        
+        settings['honglian_tyd'] = {
+            'name': 'honglian_tyd',
+            'host': '219.238.160.81',
+            'path': '/interface/limitnew.asp',
+            'mode': 'POST',
+            'sub_mode': 'honglian',
+            'username':'fdhz',
+            'password':'123456',
+            'epid':'6831',
+            'process_ret': process_ret_honglian,
+            'process_req': process_req_honglian,
+        }
         settings['shangxintong_01'] = {
             'name': 'shangxintong_01',
             'host': '218.15.25.98',
