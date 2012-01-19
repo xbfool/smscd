@@ -232,9 +232,9 @@ class sender_settings():
             'path': '/interface/limitnew.asp',
             'mode': 'POST',
             'sub_mode': 'honglian',
-            'username':'fdhz',
+            'username':'fdgg',
             'password':'123456',
-            'epid':'6831',
+            'epid':'6856',
             'process_ret': process_ret_honglian,
             'process_req': process_req_honglian,
         }
