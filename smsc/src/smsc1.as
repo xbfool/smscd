@@ -205,6 +205,8 @@ public var phonebook_data:ArrayCollection = new ArrayCollection();
 [Bindable]
 public var logistics_data:ArrayCollection = new ArrayCollection();
 [Bindable]
+public var logistics_data_2:ArrayCollection = new ArrayCollection();
+[Bindable]
 public var logistics_send_data:Array = new Array();
 private var logistics_send_data_length:int = 0;
 [Bindable]
@@ -959,6 +961,24 @@ private function start_sendmessagelist():void {
 		Alert.show("请导入短信列表");
 	}
 }
+private function start_sendmessagelist_2():void {
+	if(logistics_send_data != null && 
+		logistics_send_data.length != 0 && 
+		logistics_send_data[0] != null){
+		var c:int = 0;
+		
+		for(var i:int = 0;i < logistics_send_data.length;i++){
+			c += compute_msg_count(logistics_send_data[i][1]);
+		}
+		if(c > user_msg_num){
+			Alert.show("余额不足");
+		}else{
+			conitune_sendmessagelist()
+		}
+	}else{
+		Alert.show("请导入短信列表");
+	}
+}
 private function conitune_sendmessagelist():void {
 	if(logistics_send_data != null && 
 		logistics_send_data.length != 0 && 
@@ -974,10 +994,15 @@ private function conitune_sendmessagelist():void {
 			list:msg_list, remain:1});
 	}
 }
+
 private function processor_sendmessagelist(param:Object):void{
 	if(param.errno == 0){
-		this.sendProgressBar.visible = false;
-		logistics_data.removeAll()
+		if(this.sendProgressBar != null)
+			this.sendProgressBar.visible = false;
+		if(logistics_data != null)
+			logistics_data.removeAll()
+		if(logistics_data_2 != null)
+			logistics_data_2.removeAll()
 		Alert.show('处理请求成功');
 		this.request({q:'userinfo', sid:this.session});
 	}else{
@@ -1423,8 +1448,11 @@ private function change_view_stack(view:String):void{
 		this.request({q:'userinfo', sid:this.session});
 		ViewStack_main.selectedChild = viewpage_message_special_send;
 		logistics_data.removeAll();
-		
-	} else if (view == "message_check"){
+	} else if (view == 'message_special_send_2'){
+		this.request({q:'userinfo', sid:this.session});
+		ViewStack_main.selectedChild = viewpage_message_special_send_2;
+	} 
+	else if (view == "message_check"){
 		request_listcheckmsg();
 		ViewStack_main.selectedChild = viewpage_message_manage;
 	} else if(view == "message_send_log"){
@@ -2226,6 +2254,14 @@ private function download_logistics_csv_template_1(): void{
 	var fr:FileReference = new FileReference();  
 	fr.save(file,"物流发送模板1.csv"); 
 }
+private function download_logistics_csv_template_2(): void{	
+	
+	var file:ByteArray = new ByteArray;
+	file.writeMultiByte("手机号,姓名,内容\r\n", "gb2312");
+	file.writeMultiByte("18612345678,张三,新年快乐\r\n", "gb2312");
+	var fr:FileReference = new FileReference();  
+	fr.save(file,"特殊发送模板1.csv"); 
+}
 
 private function import_from_logistics_csv_template_1():void{
 	address_file = new FileReference();
@@ -2235,6 +2271,16 @@ private function import_from_logistics_csv_template_1():void{
 	address_file.addEventListener(Event.COMPLETE, completeLogisticsHandler);
 
 }
+
+private function import_from_logistics_csv_template_2():void{
+	address_file = new FileReference();
+	address_file.browse();
+	
+	address_file.addEventListener(Event.SELECT, selectHandler);
+	address_file.addEventListener(Event.COMPLETE, completeLogisticsHandler_2);
+	
+}
+
 private function check_70(s:String):int{
 	var l:int = s.length;
 	if(l == 0)
@@ -2271,9 +2317,9 @@ private function completeLogisticsHandler(event:Event):void {
 		}
 	}
 	
-	for ( var i:int = 1; i < rows.length; i++) {
-		var row:String = rows[i];
-		var col:Array = row.split(",");
+	for (i = 1; i < rows.length; i++) {
+		row = rows[i];
+		col = row.split(",");
 		if ( col.length != 10 ) 
 			continue;
 		var o:Object = {date:col[0],
@@ -2300,6 +2346,50 @@ private function completeLogisticsHandler(event:Event):void {
 
 }
 
+private function completeLogisticsHandler_2(event:Event):void {
+	
+	var adds:ByteArray = address_file.data;
+	var contents:String = adds.readMultiByte(adds.length, "gb2312");
+	var rows:Array = contents.split("\r\n");
+	trace(rows.length);
+	
+	logistics_send_data = new Array;
+	logistics_data.removeAll();
+	special_msg_num_70 = 0;
+	special_msg_num_64 = 0;
+	
+	for ( var i:int = 1; i < rows.length; i++) {
+		var row:String = rows[i];
+		var col:Array = row.split(",");
+		if(row.length > 0 && col != null && String(col[0]).length != 11 && String(col[1]).length != 0){
+			Alert.show("第"+ String(i)+"条手机号码格式有问题，请检查");
+			return;
+		}
+	}
+	
+	for ( i = 1; i < rows.length; i++) {
+		row = rows[i];
+		col = row.split(",");
+		if(col.length < 3)
+			continue;
+		var col_1:Array = col.slice(2);
+		var msg:String = col_1.join(",");
+		var o:Object = {phone:col[0],
+			name:col[1],
+			content:msg};
+		
+		logistics_data_2.addItem(o);
+		var send_string:String = makeLogistics2String(o);
+		if(String(col[0]).length == 11){
+			logistics_send_data.push([col[0],send_string]);
+			special_msg_num_70 += check_70(send_string);
+			special_msg_num_64 += check_64(send_string);
+		}
+	}
+	logistics_send_data_length = logistics_send_data.length
+	logistics_data_2.refresh();
+	
+}
 private function makeLogistics1String(o:Object):String{
 	var t:String = o.name +"您好，您于" 
 					+ o.date +"在" + o.company + "物流公司发送到" +
@@ -2309,7 +2399,11 @@ private function makeLogistics1String(o:Object):String{
 					o.company_phone;
 	return t;
 }
-
+private function makeLogistics2String(o:Object):String{
+	var t:String = o.name +"，" 
+		+ o.content;
+	return t;
+}
 private function import_phonebook_from_xls(): void {	
 	address_file = new FileReference();
 	address_file.browse();
