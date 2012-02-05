@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+<mx:Application
+				xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				xmlns:view="com.xbfool.smsc.view.*"
+				xmlns:smsc="com.xbfool.smsc.*"
 				minWidth="955" minHeight="600" applicationComplete="init();"
-				backgroundColor="#FFFFFF" layout="absolute" xmlns:s="library://ns.adobe.com/flex/spark">
-	<mx:Style source="style.css"/>
+				backgroundColor="#FFFFFF" layout="absolute">
+	<fx:Style source="style.css"/>
 
-	<mx:Script source="smsc1.as"/>
-	
+	<fx:Script source="smsc1.as"/>
+
 	<mx:Canvas id="view_login" visible="{stage_id == 0}" width="370" height="200"
 			   borderColor="0x000000" borderStyle="solid" horizontalCenter="0" verticalCenter="-100">
 		<mx:Label horizontalCenter="0" text="短信群发管理登陆" verticalCenter="-50"/>
@@ -35,10 +40,10 @@
 					<mx:Accordion width="100%" color="0x323232" headerHeight="32">
 						
 						<mx:headerRenderer>
-							<mx:Component>
+							<fx:Component>
 								<mx:Button fontSize="15" fontWeight="normal" labelPlacement="left"
 										   textAlign="center"/>
-							</mx:Component>
+							</fx:Component>
 						</mx:headerRenderer>
 						<!-- Define each panel using a VBox container. -->
 						<mx:VBox width="100%" label="短信中心" horizontalAlign="center"
@@ -62,14 +67,25 @@
 							<mx:LinkButton width="100%" label="密码修改"
 										   click="{ViewStack_main.selectedChild=viewpage_change_password}"/>
 						</mx:VBox>
+						<mx:VBox width="100%" label="管理员" visible="{user_name == 'root'}" horizontalAlign="center"
+								 verticalAlign="middle">
+							<mx:LinkButton width="100%" label="管理页面" visible="{user_name == 'root'}" 
+										   click="{ViewStack_main.selectedChild=viewpage_adminpage}"/>
+
+						</mx:VBox>
 					</mx:Accordion>
 					<mx:Button width="100%" height="30" label="注销登录" click="{logout();}"/>
 				</mx:Panel>
 				<mx:Panel id="view_content" width="100%" height="100%" paddingBottom="10"
 						  paddingLeft="10" paddingRight="10" paddingTop="10">
+					
+						
 					<mx:ViewStack id="ViewStack_main" width="100%" height="100%" color="0x323232">
 						<mx:VBox id="viewpage_welcome">
 							<mx:Label text="欢迎使用短信群发平台"/>
+						</mx:VBox>
+						<mx:VBox id="viewpage_adminpage">
+							<smsc:smsc2 width="100%" height="100%"/>
 						</mx:VBox>
 						<mx:VBox id="viewpage_message_send">
 							<s:HGroup color="#FF0000" textAlign="left">
@@ -484,13 +500,13 @@
 										<mx:DataGridColumn minWidth="150" dataField="msg"
 														   editable="false" headerText="短信内容">
 											<mx:itemRenderer>
-												<mx:Component>
+												<fx:Component>
 													<mx:HBox width="100%" height="100%"
 															 horizontalAlign="center">
 														<mx:TextArea width="100%" height="100%"
 																	 text="{data.msg}"/>
 													</mx:HBox>		
-												</mx:Component>
+												</fx:Component>
 											</mx:itemRenderer>
 										</mx:DataGridColumn >
 										<mx:DataGridColumn minWidth="80" dataField="fail_msg"
@@ -700,11 +716,11 @@
 										
 										<mx:DataGridColumn width="20">
 											<mx:itemRenderer>
-												<mx:Component>
+												<fx:Component>
 													<mx:HBox horizontalAlign="center">
 														<mx:CheckBox selected="{data.selected}"/>
 													</mx:HBox>		
-												</mx:Component>
+												</fx:Component>
 											</mx:itemRenderer>
 										</mx:DataGridColumn >
 										<mx:DataGridColumn width="100" dataField="uid"
