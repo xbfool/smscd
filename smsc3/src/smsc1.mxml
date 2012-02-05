@@ -1,0 +1,1254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+				minWidth="955" minHeight="600" applicationComplete="init();"
+				backgroundColor="#FFFFFF" layout="absolute" xmlns:s="library://ns.adobe.com/flex/spark">
+	<mx:Style source="style.css"/>
+
+	<mx:Script source="smsc1.as"/>
+	
+	<mx:Canvas id="view_login" visible="{stage_id == 0}" width="370" height="200"
+			   borderColor="0x000000" borderStyle="solid" horizontalCenter="0" verticalCenter="-100">
+		<mx:Label horizontalCenter="0" text="短信群发管理登陆" verticalCenter="-50"/>
+		<mx:Label x="71" y="86" text="用户名"/>
+		<mx:Label x="71" y="116" text="密码"/>
+		<mx:TextInput id="login_user" x="137" y="84"
+					  change="login_btn.enabled = login_chk(login_user.text, login_pass.text);"
+					  enter="login(login_user.text, login_pass.text);"/>
+		<mx:TextInput id="login_pass" x="137" y="114"
+					  change="login_btn.enabled = login_chk(login_user.text, login_pass.text);"
+					  displayAsPassword="true" enter="login(login_user.text, login_pass.text);"/>
+		<mx:Button id="login_btn" x="137" y="144" label="登陆"
+				   click="login(login_user.text, login_pass.text);" enabled="false"/>
+		<mx:Label x="227" y="146" text="{login_prompt}"/>		
+	</mx:Canvas>
+	
+	<mx:Canvas id="view_main" visible="{stage_id != 0}" width="100%" height="100%">
+		<mx:VBox width="100%" height="100%" verticalGap="0">
+			<!--mx:Canvas id="view_header" width="100%" height="100" >
+			
+			</mx:Canvas-->
+			<mx:HBox width="100%" height="100%" horizontalGap="0" paddingBottom="0" paddingLeft="0"
+					 paddingRight="0" paddingTop="0">
+				<mx:Panel id="view_sidebar" width="150" height="100%" cornerRadius="0"
+						  horizontalAlign="center" layout="vertical" paddingBottom="0"
+						  paddingLeft="0" paddingRight="0" paddingTop="0" verticalAlign="top">
+					<mx:Accordion width="100%" color="0x323232" headerHeight="32">
+						
+						<mx:headerRenderer>
+							<mx:Component>
+								<mx:Button fontSize="15" fontWeight="normal" labelPlacement="left"
+										   textAlign="center"/>
+							</mx:Component>
+						</mx:headerRenderer>
+						<!-- Define each panel using a VBox container. -->
+						<mx:VBox width="100%" label="短信中心" horizontalAlign="center"
+								 textAlign="center" verticalAlign="middle">
+							<mx:LinkButton width="100%" label="短信发送"
+										   click="{change_view_stack('message_send');}"/>
+							<mx:LinkButton width="100%" label="特殊发送" click="{change_view_stack('message_special_send');}"/>
+							<mx:LinkButton width="100%" label="特殊发送2" click="{change_view_stack('message_special_send_2');}"/>
+							<mx:LinkButton width="100%" label="发送纪录"
+										   click="{change_view_stack('message_send_log')}"/>
+							<mx:LinkButton width="100%" label="统计汇总" click="{change_view_stack('message_report')}"/>
+							<mx:LinkButton width="100%" label="充值记录" click="{change_view_stack('addmsglog')}"/>
+							<mx:LinkButton width="100%" label="通讯录管理" click="{change_view_stack('manage_phonenumber')}"/>
+							<mx:LinkButton width="100%" label="上行查询" click="{change_view_stack('upload_report')}"/>
+							<mx:LinkButton width="100%" visible="{user_name == 'root'}" label="通道发送统计"
+										   click="{change_view_stack('channel_report')}"/>
+						</mx:VBox>
+						<mx:VBox width="100%" label="用户管理" horizontalAlign="center"
+								 verticalAlign="middle">
+							<mx:LinkButton width="100%" label="用户设置" click="{change_view_stack('usermanage')}"/>
+							<mx:LinkButton width="100%" label="密码修改"
+										   click="{ViewStack_main.selectedChild=viewpage_change_password}"/>
+						</mx:VBox>
+					</mx:Accordion>
+					<mx:Button width="100%" height="30" label="注销登录" click="{logout();}"/>
+				</mx:Panel>
+				<mx:Panel id="view_content" width="100%" height="100%" paddingBottom="10"
+						  paddingLeft="10" paddingRight="10" paddingTop="10">
+					<mx:ViewStack id="ViewStack_main" width="100%" height="100%" color="0x323232">
+						<mx:VBox id="viewpage_welcome">
+							<mx:Label text="欢迎使用短信群发平台"/>
+						</mx:VBox>
+						<mx:VBox id="viewpage_message_send">
+							<s:HGroup color="#FF0000" textAlign="left">
+								<mx:Label text="剩余短信"/>
+								<mx:Label text="{user_msg_num}"/>
+							</s:HGroup>
+							<mx:VBox backgroundColor="#EDF9FE" borderStyle="solid" paddingBottom="10"
+									 paddingLeft="10" paddingRight="10" paddingTop="10">
+								<mx:VBox width="750">
+									<mx:HBox width="100%" verticalAlign="middle">
+										<mx:Label width="100" text="短信内容" textAlign="center"/>
+										<mx:HBox>
+											<mx:TextArea id="message_content_input" width="400"
+														 height="100"
+														 change="check_char_count(message_content_input, message_content_count, get_address_str())"/>
+											<mx:VBox>
+												<mx:Button label="清空内容"
+														   click="{message_content_input.text = ''}"/>
+											</mx:VBox>	
+										</mx:HBox>
+										
+									</mx:HBox>
+									<mx:Label id="message_content_count" width="100%"
+											  text="短信字数: 0 拆分条数(64字一条): 0 拆分条数(70字一条): 0 联系人数: 0 总条数(64): 0 总条数(67): 0"
+											  textAlign="center"/>
+									<mx:HBox width="100%">
+										<mx:Label width="100" text="输入接收手机号" textAlign="center"/>
+										<mx:HBox>
+											<mx:TextInput id="message_new_number"/>
+											<mx:Button label="添加"
+													   click="{add_phonenumber(message_new_number.text)}"/>
+											<mx:Button label="从通讯录选择"
+													   click="{select_phone_number_from_phonebook()}"/>
+																				<mx:Button label="导入文件"
+																						   click="{import_phone_number_from_file()}"/>
+											<mx:Label text="txt文件，一行一个号码"/>
+										</mx:HBox>
+									</mx:HBox >
+									<mx:HBox width="100%" horizontalAlign="center" horizontalGap="8"
+											 textAlign="right">
+										<mx:Button label="立即发送" click="{commit_message()}"/>
+										
+										<mx:Button label="返回"
+												   click="{ViewStack_main.selectedChild=viewpage_welcome}"/>
+									</mx:HBox>
+								</mx:VBox>
+							</mx:VBox>
+							<mx:Canvas id="view_send_phonelist" visible="true" width="100%"
+									   height="100%" borderColor="0x000000" borderStyle="solid"
+									   horizontalCenter="0" verticalCenter="0">
+								
+								<mx:Panel id="panel_send_phonelist" width="30%" height="100%"
+										  cornerRadius="0" horizontalAlign="center"
+										  paddingBottom="0" paddingLeft="0" paddingRight="0"
+										  paddingTop="0" verticalAlign="top">	
+									<mx:VBox width="100%" height="100%" borderStyle="solid"
+											 paddingBottom="10" paddingLeft="10" paddingRight="10"
+											 paddingTop="10">
+										
+										
+										<mx:HBox width="100%" horizontalAlign="left"
+												 textAlign="center">
+											<mx:Button label="过滤重号"
+													   click="{filter_same_phone_number()}"/>	
+											<mx:Button label="清空号码" click="{erase_allphonenumber()}"/>
+											<mx:Button label="删除号码" click="{delete_phonenumber()}"/>
+											<mx:Button label="保存号码" click="{open_save_temp_view()}"/>
+										</mx:HBox>
+										
+										<mx:DataGrid id="message_phone_number_grid" height="100%"
+													 dataProvider="{message_phone_number}"
+													 draggableColumns="true" editable="true"
+													 resizableColumns="true">
+											<mx:columns>				
+												<!-- You can define an inline component as the ItemRenderer for a DataGrid column -->
+												
+												
+												<mx:DataGridColumn minWidth="100" dataField="number"
+																   editable="true"
+																   headerText="手机号码"
+																   itemRenderer="mx.controls.Text"/>
+												<mx:DataGridColumn minWidth="60" dataField="count"
+																   editable="false"
+																   headerText="号码个数"
+																   itemRenderer="mx.controls.Text"/>
+												<mx:DataGridColumn minWidth="40" dataField="check"
+																   editable="true"
+																   editorDataField="selected"
+																   headerText="选择"
+																   itemRenderer="mx.controls.CheckBox"
+																   rendererIsEditor="true"/>
+											</mx:columns>
+										</mx:DataGrid>
+									</mx:VBox>
+								</mx:Panel>								
+								<mx:Panel right="0" width="70%" height="100%" paddingBottom="0"
+										  paddingLeft="0" paddingRight="0" paddingTop="0">									
+									<mx:ViewStack id="ViewStack_select_phone" width="100%"
+												  height="100%" color="0x323232">										
+										<mx:VBox id="viewpage_select_phone_welcome">
+										</mx:VBox>
+										<mx:VBox id="viewpage_save_temp_phonelist">											
+											<mx:HBox width="100%" horizontalAlign="left"
+													 textAlign="center">	
+												<mx:Label text="通讯录名称"/>
+												<mx:TextInput id="save_temp_phonebook_name"/>
+												<mx:Button label="全选"
+														   click="{select_all_phone_list()}"/>
+												<mx:Button label="全部取消"
+														   click="{select_none_phone_list()}"/>
+												<mx:Button label="保存"
+														   click="{save_temp_phonebook(save_temp_phonebook_name.text)}"/>
+											</mx:HBox>
+											<mx:DataGrid id="save_temp_phone_grid" height="100%"
+														 dataProvider="{phone_list_data}"
+														 draggableColumns="false" editable="false"
+														 resizableColumns="false">
+												<mx:columns>
+													<mx:DataGridColumn minWidth="200" dataField="number"
+																	   headerText="手机号"
+																	   itemRenderer="mx.controls.Text"/>
+													<mx:DataGridColumn minWidth="50" dataField="check"
+																	   editable="true"
+																	   editorDataField="selected"
+																	   headerText="选择"
+																	   itemRenderer="mx.controls.CheckBox"
+																	   rendererIsEditor="true"/>
+												</mx:columns>
+											</mx:DataGrid>
+										</mx:VBox>
+										<mx:VBox id="viewpage_select_phone">		
+											<mx:VBox width="100%" height="100%" borderStyle="solid"
+													 paddingBottom="10" paddingLeft="10"
+													 paddingRight="10" paddingTop="10">
+												
+												<mx:HBox width="100%" horizontalAlign="left"
+														 textAlign="center">													
+													<mx:Label id="select_phonebook_field" text="号码本"/>
+													<mx:ComboBox id="select_phonebook_field_select"
+																 height="20"
+																 change="{select_phonebook_list(select_phonebook_field_select.value.toString())}"
+																 dataProvider="{phonebook_list}"/>
+													<mx:Label text="查询"/>
+													<mx:TextInput id="select_phone_list_query"/>
+													<mx:Button label="查询"
+															   click="{report_phone_list_query(select_phone_list_query.text)}"/>
+												</mx:HBox>											
+												<mx:HBox width="100%" horizontalAlign="left"
+														 textAlign="center">		
+													<mx:Button label="全选"
+															   click="{select_all_phone_list()}"/>
+													<mx:Button label="全部取消"
+															   click="{select_none_phone_list()}"/>
+													<mx:Button label="确定" click="{select_send_msg()}"/>
+													<mx:Button label="返回"
+															   click="{ViewStack_select_phone.selectedChild = viewpage_select_phone_welcome;}"/>
+												</mx:HBox>											
+												<mx:DataGrid id="message_select_phone_grid"
+															 height="100%"
+															 dataProvider="{phone_list_data}"
+															 draggableColumns="false"
+															 editable="true"
+															 resizableColumns="false">
+													<mx:columns>
+														<mx:DataGridColumn width="100"
+																		   dataField="name"
+																		   headerText="姓名"
+																		   itemRenderer="mx.controls.Text"/>
+														<mx:DataGridColumn width="200"
+																		   dataField="companyname"
+																		   headerText="单位"
+																		   itemRenderer="mx.controls.Text"/>
+														<mx:DataGridColumn width="200"
+																		   dataField="mobile"
+																		   headerText="手机号"
+																		   itemRenderer="mx.controls.Text"/>
+														<mx:DataGridColumn width="50"
+																		   dataField="check"
+																		   editable="true"
+																		   editorDataField="selected"
+																		   headerText="选择"
+																		   itemRenderer="mx.controls.CheckBox"
+																		   rendererIsEditor="true"/>
+													</mx:columns>
+												</mx:DataGrid>
+											</mx:VBox>
+										</mx:VBox>
+									</mx:ViewStack>
+								</mx:Panel>
+							</mx:Canvas>
+						</mx:VBox>
+						<mx:VBox id="viewpage_message_special_send">
+							<s:HGroup>
+								<mx:Label text="当前余额"/>
+								<mx:Label text="{user_msg_num}"/>
+							</s:HGroup>
+							<s:VGroup>
+								<mx:Label text="物流发送"/>
+								<mx:Label text="以70字一条计算的总条数: {special_msg_num_70}"/>
+								<mx:Label text="以64字一条计算的总条数: {special_msg_num_64}"/>
+								<s:HGroup>
+									<mx:Button label="导入" click="{import_from_logistics_csv_template_1()}"/>
+									<mx:Button label="下载模板" click="{download_logistics_csv_template_1()}"/>
+									<mx:Button label="全部发送" click="{start_sendmessagelist()}"/>
+									
+								</s:HGroup>
+								<mx:ProgressBar id="sendProgressBar"
+												mode="manual"
+												width="150"
+												creationComplete="sendProgressBar.setProgress(0, 100)" 
+												visible="false"/>
+								<mx:DataGrid id="Logistics_grid" dataProvider="{logistics_data}">
+							
+									<mx:columns>
+										<mx:DataGridColumn dataField="date"
+														   headerText="日期"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="name"
+														   headerText="姓名"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="phone"
+														   headerText="手机号"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="linename" headerText="线路名称"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="goodsname" headerText="货物品名"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="num" headerText="件数"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="receipt_id" headerText="单据号"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="money" headerText="金额"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="company" headerText="物流公司名"
+																   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="company_phone" headerText="联系电话"
+																   itemRenderer="mx.controls.Text"/>
+										
+									</mx:columns>
+								</mx:DataGrid>
+							</s:VGroup>
+						</mx:VBox>
+						<mx:VBox id="viewpage_message_special_send_2">
+							<s:HGroup>
+								<mx:Label text="当前余额"/>
+								<mx:Label text="{user_msg_num}"/>
+							</s:HGroup>
+							<s:VGroup>
+								<mx:Label text="物流发送"/>
+								<mx:Label text="以70字一条计算的总条数: {special_msg_num_70}"/>
+								<mx:Label text="以64字一条计算的总条数: {special_msg_num_64}"/>
+								<s:HGroup>
+									<mx:Button label="导入" click="{import_from_logistics_csv_template_2()}"/>
+									<mx:Button label="下载模板" click="{download_logistics_csv_template_2()}"/>
+									<mx:Button label="全部发送" click="{start_sendmessagelist_2()}"/>
+									
+								</s:HGroup>
+					
+								<mx:DataGrid id="Logistics_grid_2" dataProvider="{logistics_data_2}">
+									
+									<mx:columns>
+										<mx:DataGridColumn dataField="phone"
+														   headerText="手机号"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="name"
+														   headerText="姓名"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="content"
+														   headerText="内容"
+														   itemRenderer="mx.controls.Text"/>
+										
+									</mx:columns>
+								</mx:DataGrid>
+							</s:VGroup>
+						</mx:VBox>
+						<mx:VBox id="viewpage_message_manage" width="100%" height="100%">
+							<mx:VBox width="100%" backgroundColor="#EDF9FE" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								<mx:Label text="您当前的位置: 短信中心-&gt;发送任务审核"/>
+								<mx:HBox width="100%" horizontalAlign="right">	
+									<mx:Label text="发送人"/>
+									<mx:TextInput id="message_manage_send_user_name_input"/>
+									<mx:Label text="短信内容"/>
+									<mx:TextInput id="message_manage_send_message_content"/>
+									<mx:Button label="查询" click="{request_listcheckmsg()}"/>
+								</mx:HBox>
+							</mx:VBox>
+							<mx:VBox width="100%" height="100%" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								<mx:HBox width="100%">
+									<mx:HBox width="100%" horizontalAlign="right">
+										<mx:Button label="导出" click="{export_check_msg()}"/>
+										<mx:Button label="发出"
+												   click="{request_managemsg('admit', false)}"/>
+										<mx:Button label="全部发出"
+												   click="{request_managemsg('admit', true)}"/>
+										<mx:Button label="拒绝"
+												   click="{request_managemsg('reject', false)}"/>
+										<mx:Button label="全部拒绝"
+												   click="{request_managemsg('reject', true)}"/>
+										<mx:Button label="删除"
+												   click="{request_managemsg('delete', false)}"/>
+										<mx:Button label="全部删除"
+												   click="{request_managemsg('delete', true)}"/>
+									</mx:HBox>
+								</mx:HBox>
+								<mx:DataGrid id="message_nanage_grid" width="100%" height="100%"
+											 dataProvider="{check_mssage_list}"
+											 draggableColumns="false" editable="true">
+									<mx:columns>				
+										
+										<mx:DataGridColumn dataField="check" editable="true"
+														   editorDataField="selected"
+														   headerText="选择"
+														   itemRenderer="mx.controls.CheckBox"
+														   rendererIsEditor="true"/>
+										
+										<mx:DataGridColumn width="100" dataField="username"
+														   editable="false" headerText="发送人"
+														   itemRenderer="mx.controls.Text"/>
+										
+										<mx:DataGridColumn dataField="create_time" editable="false"
+														   headerText="提交时间"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="status" editable="false"
+														   headerText="状态"
+														   itemRenderer="msg_status_render"/>
+										<mx:DataGridColumn dataField="addr_num" editable="false"
+														   headerText="号码总数"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="msg_num" editable="false"
+														   headerText="分割条数"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn width="100" dataField="msg"
+														   editable="false" headerText="短信内容"
+														   itemRenderer="mx.controls.TextArea"/>
+									</mx:columns>
+								</mx:DataGrid>
+							</mx:VBox>
+						</mx:VBox>
+						
+						<mx:VBox id="viewpage_message_send_log" width="100%" height="100%">
+							<mx:VBox width="100%" backgroundColor="#EDF9FE" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								<mx:Label text="您当前的位置: 短信中心-&gt;发送记录"/>
+								<mx:HBox width="100%">
+									<mx:Label text="起始日期:"/>
+									<mx:DateField id="message_send_log_date_from" width="110"
+												  formatString="YYYY-MM-DD"
+												  selectedDate="{new Date()}"/>
+									<mx:Label text="截止日期:"/>
+									<mx:DateField id="message_send_log_date_to" width="110"
+												  formatString="YYYY-MM-DD"
+												  selectedDate="{new Date()}"/>
+									<mx:Label text="短信状态"/>
+									<mx:ComboBox id="message_send_log_status_select" height="20"
+												 dataProvider="{message_send_status}"/>
+									<mx:Button label="查询"
+											   click="{request_listmsg(user_name,parseInt(message_send_log_status_select.value.toString()),               message_send_log_date_from.selectedDate,               message_send_log_date_to.selectedDate);}"/>
+								</mx:HBox>
+							</mx:VBox>
+							<mx:VBox width="100%" height="100%" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								<mx:HBox width="100%">
+									<mx:HBox width="100%">
+										<mx:Button label="导出" click="{export_msg_log()}"/>
+										<mx:Button label="删除" click="{delete_log_msg()}"/>
+										<mx:Button label="全部删除" click="{deleteall_log_msg()}"/>
+									</mx:HBox>
+								</mx:HBox>
+								<mx:DataGrid id="message_send_log__grid" width="100%" height="100%"
+											 dataProvider="{message_log_data}"
+											 draggableColumns="false" editable="true"
+											 resizableColumns="false" rowHeight="50"
+											 variableRowHeight="false">
+									<mx:columns>				
+										<!-- You can define an inline component as the ItemRenderer for a DataGrid column -->
+										
+										
+										<mx:DataGridColumn minWidth="40" dataField="selected"
+														   editable="true"
+														   editorDataField="selected"
+														   headerText="选择"
+														   itemRenderer="mx.controls.CheckBox"
+														   rendererIsEditor="true"/>
+										
+										<mx:DataGridColumn minWidth="50" dataField="username"
+														   editable="false" headerText="发送人"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn minWidth="90" dataField="last_update"
+														   editable="false" headerText="发出时间"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn minWidth="90" dataField="address"
+														   editable="false" headerText="手机号码"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn minWidth="80" dataField="channel"
+														   editable="false" headerText="通道"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn minWidth="50" dataField="status"
+														   editable="false" headerText="状态"
+														   itemRenderer="msg_status_render"/>
+										<mx:DataGridColumn minWidth="50" dataField="msg_num"
+														   editable="false" headerText="条数"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn minWidth="90" dataField="create_time"
+														   editable="false" headerText="创建时间"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn minWidth="150" dataField="msg"
+														   editable="false" headerText="短信内容">
+											<mx:itemRenderer>
+												<mx:Component>
+													<mx:HBox width="100%" height="100%"
+															 horizontalAlign="center">
+														<mx:TextArea width="100%" height="100%"
+																	 text="{data.msg}"/>
+													</mx:HBox>		
+												</mx:Component>
+											</mx:itemRenderer>
+										</mx:DataGridColumn >
+										<mx:DataGridColumn minWidth="80" dataField="fail_msg"
+														   editable="false" headerText="状态明细"
+														   itemRenderer="mx.controls.Text"/>
+									</mx:columns>
+								</mx:DataGrid>
+							</mx:VBox>
+						</mx:VBox>			
+						<mx:VBox id="viewpage_message_report" width="100%" height="100%">
+							<mx:VBox width="100%" backgroundColor="#EDF9FE" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								<mx:Label text="您当前的位置: 短信中心-&gt;统计报表汇集"/>
+								<mx:HBox width="100%">
+									<mx:Label text="发送人"/>
+									<mx:TextInput id="message_report_send_user"/>
+									<mx:Label text="起始日期:"/>
+									<mx:DateField id="message_report_date_from" width="110"
+												  formatString="YYYY-MM-DD"
+												  selectedDate="{new Date()}"/>
+									<mx:Label text="截止日期:"/>
+									<mx:DateField id="message_report_date_to" width="110"
+												  formatString="YYYY-MM-DD"
+												  selectedDate="{new Date()}"/>
+									<mx:Button label="查询"
+											   click="{report_query(message_report_send_user.text,                message_report_date_from.selectedDate,                message_report_date_to.selectedDate)}"/>
+									<mx:Label id="message_report_mobile_type_field" visible="false"
+											  text="通道"/>
+									<mx:ComboBox id="message_report_mobile_type_select"
+												 visible="false" height="20"
+												 dataProvider="{message_mobile_type}"/>
+									<mx:Label id="message_report_log_status_field" visible="false"
+											  text="短信状态"/>
+									<mx:ComboBox id="message_report_log_status_select"
+												 visible="false" height="20"
+												 dataProvider="{message_send_status}"/>
+									<mx:Button id="export_message_report_log_btn" visible="false"
+											   label="导出"
+											   click="{export_report_log(message_report_send_user.text,                parseInt(message_report_mobile_type_select.value.toString()),                parseInt(message_report_log_status_select.value.toString()),               message_report_date_from.selectedDate,                message_report_date_to.selectedDate)}"/>
+									
+								</mx:HBox>
+							</mx:VBox>
+							<mx:VBox width="100%" height="100%" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">		
+								
+								<mx:AdvancedDataGrid id="message_report_grid" width="100%"
+													 height="100%" displayItemsExpanded="true">
+									<mx:dataProvider>
+										<mx:HierarchicalData source="{message_phone_number}"/>
+									</mx:dataProvider>
+									<mx:columns>
+										<mx:AdvancedDataGridColumn dataField="send_user"
+																   headerText="发件人"/>
+										<mx:AdvancedDataGridColumn dataField="send_num"
+																   headerText="发送总数"/> 									
+										<mx:AdvancedDataGridColumn dataField="success_num"
+																   headerText="成功总数"/>
+										<mx:AdvancedDataGridColumn dataField="fail_num"
+																   headerText="失败总数"/>
+										<mx:AdvancedDataGridColumn dataField="append_num"
+																   headerText="待发送总数"/>
+										<mx:AdvancedDataGridColumn dataField="cm_d_num"
+																   headerText="移动总数"/>
+										<mx:AdvancedDataGridColumn dataField="cm_s_num"
+																   headerText="移动成功"/>
+										<mx:AdvancedDataGridColumn dataField="cm_f_num"
+																   headerText="移动失败"/>
+										<mx:AdvancedDataGridColumn dataField="cu_d_num"
+																   headerText="联通总数"/>
+										<mx:AdvancedDataGridColumn dataField="cu_s_num"
+																   headerText="联通成功"/>
+										<mx:AdvancedDataGridColumn dataField="cu_f_num"
+																   headerText="联通失败"/>
+										<mx:AdvancedDataGridColumn dataField="ct_d_num"
+																   headerText="电信总数"/>
+										<mx:AdvancedDataGridColumn dataField="ct_s_num"
+																   headerText="电信成功"/>
+										<mx:AdvancedDataGridColumn dataField="ct_f_num"
+																   headerText="电信失败"/>
+									</mx:columns>
+								</mx:AdvancedDataGrid>   
+							</mx:VBox>
+						</mx:VBox>
+						<mx:VBox id="viewpage_upload_report" width="100%" height="100%">
+							<mx:VBox width="100%" backgroundColor="#EDF9FE" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								<mx:Label text="您当前的位置: 短信中心-&gt;上行短信"/>
+								<mx:HBox width="100%">
+									<mx:Label text="发送人"/>
+									<mx:TextInput id="upload_report_send_user"/>
+									<mx:Label text="起始日期:"/>
+									<mx:DateField id="upload_report_date_from" width="110"
+												  formatString="YYYY-MM-DD"
+												  selectedDate="{new Date()}"/>
+									<mx:Label text="截止日期:"/>
+									<mx:DateField id="upload_report_date_to" width="110"
+												  formatString="YYYY-MM-DD"
+												  selectedDate="{new Date()}"/>
+									<mx:Button label="查询"
+											   click="{upload_msg_report_query(upload_report_send_user.text,                upload_report_date_from.selectedDate,                upload_report_date_to.selectedDate)}"/>
+									
+								</mx:HBox>
+							</mx:VBox>
+							<mx:VBox width="100%" height="100%" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								
+								<mx:DataGrid id="upload_report_grid" width="100%" height="100%"
+											 dataProvider="{message_phone_number}"
+											 draggableColumns="false" resizableColumns="false">
+									<mx:columns>
+										<mx:DataGridColumn dataField="userid" headerText="用户ID"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="username" headerText="用户名"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="ext" headerText="扩展号"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="number" headerText="手机号"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="time" headerText="时间"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="content" headerText="上行内容"
+														   itemRenderer="mx.controls.Text"/>
+									</mx:columns>
+								</mx:DataGrid>
+							</mx:VBox>
+						</mx:VBox>
+						
+						<mx:VBox id="viewpage_channel_report" width="100%" height="100%">
+							<mx:VBox width="100%" backgroundColor="#EDF9FE" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								<mx:Label text="您当前的位置: 短信中心-&gt;通道统计报表汇集"/>
+								<mx:HBox width="100%">
+									<mx:Label text="起始日期:"/>
+									<mx:DateField id="channel_report_date_from" width="110"
+												  formatString="YYYY-MM-DD"
+												  selectedDate="{new Date()}"/>
+									<mx:Label text="截止日期:"/>
+									<mx:DateField id="channel_report_date_to" width="110"
+												  formatString="YYYY-MM-DD"
+												  selectedDate="{new Date()}"/>
+									<!--mx:Label text="报表"/>
+									<mx:ComboBox id="message_report_type_select" dataProvider="{message_report_type}"/-->
+									<mx:Button label="查询"
+											   click="{channel_report_query(channel_report_date_from.selectedDate,                channel_report_date_to.selectedDate)}"/>
+									
+								</mx:HBox>
+							</mx:VBox>
+							<mx:VBox width="100%" height="100%" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								<mx:DataGrid id="channel_report_grid" width="100%" height="100%"
+											 dataProvider="{message_phone_number}"
+											 draggableColumns="false" resizableColumns="false">
+									<mx:columns>		
+										<mx:DataGridColumn width="150" dataField="channel"
+														   headerText="通道"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn width="150" dataField="send_num"
+														   headerText="发送总数"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn width="150" dataField="success_num"
+														   headerText="成功总数"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn width="150" dataField="fail_num"
+														   headerText="失败总数"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn width="150" dataField="append_num"
+														   headerText="待发送总数"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn width="150" dataField="sub_num"
+														   headerText="实际总数"
+														   itemRenderer="mx.controls.Text"/>
+									</mx:columns>
+								</mx:DataGrid>
+							</mx:VBox>
+						</mx:VBox>
+						<mx:VBox id="viewpage_role_manage" width="100%">
+							<mx:VBox width="100%" backgroundColor="#EDF9FE" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								<mx:Label text="您当前的位置: 用户管理-&gt;角色设置"/>
+								<mx:HBox width="100%">
+									<mx:Label text="角色名称"/>
+									<mx:TextInput id="role_name"/>
+									<mx:Button label="查询" click="{alert_not_impl()}"/>
+								</mx:HBox>
+							</mx:VBox>
+							<mx:VBox width="100%" borderStyle="solid" paddingBottom="10"
+									 paddingLeft="10" paddingRight="10" paddingTop="10">
+								<mx:HBox width="100%">
+									<mx:HBox width="100%">
+										<mx:Button label="添加" click="{alert_not_impl()}"/>
+										<mx:Button label="修改" click="{alert_not_impl()}"/>
+										<mx:Button label="删除" click="{alert_not_impl()}"/>
+										<mx:Button label="导出" click="{alert_not_impl()}"/>
+									</mx:HBox>
+								</mx:HBox>
+								<mx:DataGrid id="role_grid" width="100%"
+											 dataProvider="{message_phone_number}"
+											 draggableColumns="false" resizableColumns="false">
+									<mx:columns>
+										
+										<mx:DataGridColumn width="20">
+											<mx:itemRenderer>
+												<mx:Component>
+													<mx:HBox horizontalAlign="center">
+														<mx:CheckBox selected="{data.selected}"/>
+													</mx:HBox>		
+												</mx:Component>
+											</mx:itemRenderer>
+										</mx:DataGridColumn >
+										<mx:DataGridColumn width="100" dataField="uid"
+														   headerText="编号"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn width="150" dataField="name"
+														   headerText="角色名称"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="desc" headerText="角色说明"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="status" headerText="授权情况"
+														   itemRenderer="mx.controls.Text"/>
+									</mx:columns>
+								</mx:DataGrid>
+							</mx:VBox>
+						</mx:VBox>
+						<mx:VBox id="viewpage_manage_phonenumber" width="100%" height="100%">
+							<mx:VBox width="100%" backgroundColor="#EDF9FE" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								<mx:Label text="您当前的位置: 短信中心-&gt;通讯录管理"/>
+							</mx:VBox>
+							<mx:Canvas id="view_addresslist" visible="true" width="100%"
+									   height="100%" borderColor="0x000000" borderStyle="solid"
+									   horizontalCenter="0" verticalCenter="0">
+								<mx:Panel id="panel" width="30%" height="100%" cornerRadius="0"
+										  horizontalAlign="center" paddingBottom="0" paddingLeft="0"
+										  paddingRight="0" paddingTop="0" verticalAlign="top">	
+									<mx:VBox width="100%" borderStyle="solid" paddingBottom="10"
+											 paddingLeft="10" paddingRight="10" paddingTop="10">
+										<mx:Label fontWeight="bold" text="通讯录列表"/>
+										<mx:HBox width="100%">
+											<mx:Button label="添加"
+													   click="open_add_new_phonebook_view()"/>
+											<mx:Button label="修改"
+													   click="open_manage_phonebook_view()"/>
+											<mx:Button label="删除" click="request_delete_phonebook()"/>
+											<mx:Button label="导入"
+													   click="import_phonebook_info_from_csv()"/>
+										</mx:HBox>
+									</mx:VBox>
+									<mx:DataGrid id="phonebook_data_grid" width="100%" height="80%"
+												 buttonMode="true" click="show_phone_data_list()"
+												 dataProvider="{phonebook_data}"
+												 draggableColumns="false" editable="true"
+												 resizableColumns="false" rowHeight="30"
+												 variableRowHeight="false">
+										<mx:columns>				
+											<!-- You can define an inline component as the ItemRenderer for a DataGrid column -->
+											<mx:DataGridColumn width="80" dataField="name"
+															   editable="false" headerText="通讯录名称"
+															   itemRenderer="mx.controls.Text"/>
+											<mx:DataGridColumn width="80" dataField="remark"
+															   editable="false" headerText="通讯录备注"
+															   itemRenderer="mx.controls.Text"/>
+										</mx:columns>
+									</mx:DataGrid>
+								</mx:Panel>
+								<mx:Panel right="0" width="70%" height="100%" paddingBottom="0"
+										  paddingLeft="0" paddingRight="0" paddingTop="0">
+									<mx:ViewStack id="ViewStack_phone" width="100%" height="100%"
+												  color="0x323232">
+										<mx:VBox id="viewpage_phonebook_welcome">
+										</mx:VBox>
+										<mx:VBox id="viewpage_phone_list">
+											<mx:VBox width="100%" borderStyle="solid"
+													 paddingBottom="10" paddingLeft="10"
+													 paddingRight="10" paddingTop="10">
+												<mx:Label fontWeight="bold" text="联系人列表"/>
+												<mx:HBox width="100%">
+													<mx:Button label="添加"
+															   click="{open_add_new_phone_view()}"/>
+													<mx:Button label="修改"
+															   click="{open_manage_phone_view()}"/>
+													<mx:Button label="删除"
+															   click="{request_delete_phonelist()}"/>
+													<mx:Button label="发送"
+															   click="{phonelist_send_msg()}"/>
+													<mx:Button label="全选"
+															   click="{select_all_phone_list()}"/>
+													<mx:Button label="全部取消"
+															   click="{select_none_phone_list()}"/>
+													<mx:Label text="查询"/>
+													<mx:TextInput id="phone_list_query"/>
+													<mx:Button label="查询"
+															   click="{report_phone_list_query(phone_list_query.text)}"/>
+													<mx:Button id="phone_list_back_btn"
+															   visible="false" label="返回"
+															   click="{phone_list_back()}"/>
+												</mx:HBox>
+											</mx:VBox>
+											<mx:DataGrid id="contacterlist_data_grid" width="100%"
+														 height="80%"
+														 dataProvider="{phone_list_data}"
+														 draggableColumns="false" editable="true"
+														 resizableColumns="false" rowHeight="30"
+														 variableRowHeight="false">
+												<mx:columns>				
+													<!-- You can define an inline component as the ItemRenderer for a DataGrid column -->
+													<mx:DataGridColumn width="80" dataField="name"
+																	   editable="false"
+																	   headerText="姓名"
+																	   itemRenderer="mx.controls.Text"/>
+													<mx:DataGridColumn width="80"
+																	   dataField="companyname"
+																	   editable="false"
+																	   headerText="单位名称"
+																	   itemRenderer="mx.controls.Text"/>
+													<mx:DataGridColumn width="80" dataField="title"
+																	   editable="false"
+																	   headerText="职称"
+																	   itemRenderer="mx.controls.Text"/>
+													<mx:DataGridColumn width="80"
+																	   dataField="mobiletype"
+																	   editable="false"
+																	   headerText="号码类型"
+																	   itemRenderer="mx.controls.Text"/>
+													<mx:DataGridColumn width="80" dataField="mobile"
+																	   editable="false"
+																	   headerText="电话"
+																	   itemRenderer="mx.controls.Text"/>
+													<mx:DataGridColumn width="20" dataField="check"
+																	   editable="true"
+																	   editorDataField="selected"
+																	   headerText="选择"
+																	   itemRenderer="mx.controls.CheckBox"
+																	   rendererIsEditor="true"/>								
+												</mx:columns>
+											</mx:DataGrid>	
+										</mx:VBox>
+										<mx:VBox id="viewpage_add_phonebook">											
+											<mx:Label width="120" fontWeight="bold" text="新增通讯录"
+													  textAlign="center"/>
+											<mx:Label text="名称："/>
+											<mx:TextInput id="phonebook_add_name"
+														  text="{select_phonebook_name}"/>
+											<mx:Label text="备注："/>
+											<mx:TextArea id="phonebook_add_remark" width="400"
+														 height="100"
+														 text="{select_phonebook_remark}"/> 
+											<mx:HBox width="100%">
+												<mx:Button label="添加"
+														   click="{request_add_phonebook(phonebook_add_name.text, phonebook_add_remark.text)}"/>
+												<mx:Button label="返回"
+														   click="{ViewStack_phone.selectedChild=viewpage_phonebook_welcome}"/>
+											</mx:HBox>
+										</mx:VBox>
+										<mx:VBox id="viewpage_manage_phonebook">											
+											<mx:Label width="120" fontWeight="bold" text="修改通讯录"
+													  textAlign="center"/>
+											<mx:Label text="名称："/>
+											<mx:TextInput id="phonebook_manage_name"
+														  text="{select_phonebook_name}"/>
+											<mx:Label text="备注："/>
+											<mx:TextArea id="phonebook_manage_remark" width="400"
+														 height="100"
+														 text="{select_phonebook_remark}"/> 
+											<mx:HBox width="100%">
+												<mx:Button label="修改"
+														   click="{request_manage_phonebook(phonebook_manage_name.text,phonebook_manage_remark.text)}"/>
+												<mx:Button label="返回"
+														   click="{ViewStack_phone.selectedChild=viewpage_phonebook_welcome}"/>
+											</mx:HBox>
+										</mx:VBox>
+										<mx:VBox id="viewpage_add_phone">											
+											<mx:Label width="120" fontWeight="bold" text="新增联系人"
+													  textAlign="center"/>
+											<mx:Label text="姓名："/>
+											<mx:TextInput id="phone_new_name"
+														  text="{select_phone_name}"/>
+											<mx:Label text="单位名称："/>
+											<mx:TextInput id="phone_new_companyname"
+														  text="{select_phone_companyname}"/>
+											<mx:Label text="联系电话："/>
+											<mx:TextInput id="phone_new_mobile"
+														  text="{select_phone_mobile}"/>
+											<mx:Label text="职称："/>
+											<mx:TextInput id="phone_new_title"
+														  text="{select_phone_title}"/>
+											<mx:HBox width="100%">
+												<mx:Button label="添加"
+														   click="{request_add_phone(phone_new_name.text, phone_new_companyname.text, phone_new_mobile.text, phone_new_title.text)}"/>
+												<mx:Button label="返回"
+														   click="{ViewStack_phone.selectedChild=viewpage_phone_list}"/>
+											</mx:HBox>
+										</mx:VBox>
+										<mx:VBox id="viewpage_manage_phone">											
+											<mx:Label width="120" fontWeight="bold" text="修改联系人"
+													  textAlign="center"/>
+											<mx:Label text="姓名："/>
+											<mx:TextInput id="phone_manage_name"
+														  text="{select_phone_name}"/>
+											<mx:Label text="单位名称："/>
+											<mx:TextInput id="phone_manage_companyname"
+														  text="{select_phone_companyname}"/>
+											<mx:Label text="联系电话："/>
+											<mx:TextInput id="phone_manage_mobile"
+														  text="{select_phone_mobile}"/>
+											<mx:Label text="职称："/>
+											<mx:TextInput id="phone_manage_title"
+														  text="{select_phone_title}"/>
+											<mx:HBox width="100%">
+												<mx:Button label="修改"
+														   click="{request_manage_phone(phone_manage_name.text,phone_manage_companyname.text, phone_manage_mobile.text, phone_manage_title.text)}"/>
+												<mx:Button label="返回"
+														   click="{ViewStack_phone.selectedChild=viewpage_phone_list}"/>
+											</mx:HBox>
+										</mx:VBox>
+										<mx:VBox id="viewpage_import_phonebook">											
+											<mx:Label width="120" fontWeight="bold" text="导入联系人"
+													  textAlign="center"/>
+											<mx:Label text="新导入的通讯录名称："/>
+											<mx:TextInput id="import_phonebook_name"/>
+											<mx:HBox width="100%">
+												<mx:Button label="导入"
+														   click="{import_phonebook_from_xls()}"/>
+												<mx:Button label="下载模版"
+														   click="{download_import_template()}"/>
+											</mx:HBox>
+										</mx:VBox>
+									</mx:ViewStack>									
+								</mx:Panel>
+								<mx:VBox width="100%" height="100%" borderStyle="solid"
+										 paddingBottom="10" paddingLeft="10" paddingRight="10"
+										 paddingTop="10">
+									<mx:HBox width="100%">
+										<mx:HBox width="100%">										
+											<mx:Label visible="false" width="120" text="输入手机集合名称"
+													  textAlign="center"/>
+											<mx:TextInput id="phonelist_name" visible="false"/> 
+											<!--	<mx:Button label="添加" click="{add_phonenumber_tolist(phonelist_name.text)}" />
+											-->	
+											<mx:Button visible="false" label="从txt文件导入"
+													   click="{import_phone_number_from_file_to_notebook()}"/>
+											<mx:Button visible="false" label="删除"
+													   click="{delete_phonenumber_fromlist()}"/>
+											<mx:Button visible="false" label="全部删除"
+													   click="{deleteall_phonenumber()}"/>
+										</mx:HBox>										
+									</mx:HBox>
+								</mx:VBox>
+							</mx:Canvas>
+						</mx:VBox>
+						<mx:VBox id="viewpage_user_manage" width="100%" height="100%">
+							<mx:VBox width="100%" backgroundColor="#EDF9FE" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								<mx:Label text="您当前的位置: 短信中心-&gt;用户设置"/>
+								<mx:HBox width="100%">
+									<mx:Label text="用户帐号"/>
+									<mx:TextInput id="user_user_id"/>
+									<mx:Label text="用户名称"/>
+									<mx:TextInput id="user_user_name"/>
+									<!--
+									<mx:Label text="部门"/>
+									<mx:TextInput id="user_section_name" />
+									-->
+									<mx:Label text="角色"/>
+									<mx:TextInput id="user_role_name"/>
+									<mx:Button label="查询" click="{request_listchildren()}"/>
+								</mx:HBox>
+							</mx:VBox>
+							<mx:VBox width="100%" height="100%" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								<mx:VBox width="100%">
+									<mx:HBox width="100%">
+										<mx:Button label="添加" click="{open_add_user_view()}"
+												   enabled="{user_enabled}"/>
+										<mx:Button label="修改" click="{open_managerview()}"
+												   enabled="{user_enabled}"/>
+										<mx:Button label="删除" click="{request_deleteuser()}"
+												   enabled="{user_enabled}"/>
+										<mx:Button label="导出" click="{export_user()}"
+												   enabled="{user_enabled}"/>
+										<mx:Button label="禁用" click="{request_setuserstatus(0)}"
+												   enabled="{user_enabled}"/>
+										<mx:Button label="激活" click="{request_setuserstatus(1)}"
+												   enabled="{user_enabled}"/>
+									</mx:HBox>
+									<mx:HBox width="100%" enabled="{user_enabled}">
+										<mx:Label text="输入要充入的条数"/>
+										<mx:TextInput id="message_add_input"/>
+										<mx:Button label="确定充值" click="{addmessage_alert(event)}"/>
+									</mx:HBox>
+								</mx:VBox>
+								
+								<mx:AdvancedDataGrid id="user_grid" width="100%" height="100%"
+													 displayItemsExpanded="true">
+									<mx:dataProvider>
+										<mx:HierarchicalData source="{user_data}"/>
+									</mx:dataProvider>
+									<mx:columns>
+										<mx:AdvancedDataGridColumn dataField="username"
+																   headerText="ID"/>
+										<mx:AdvancedDataGridColumn dataField="description"
+																   headerText="名称"/> 
+										
+										<mx:AdvancedDataGridColumn dataField="is_active"
+																   headerText="账户状态"
+																   itemRenderer="user_status_render"/>
+										<mx:AdvancedDataGridColumn dataField="msg_num"
+																   headerText="可用条数"/>
+										<mx:AdvancedDataGridColumn dataField="is_can_weblogin"
+																   headerText="允许web登录"/>
+										<mx:AdvancedDataGridColumn dataField="is_can_post"
+																   headerText="允许接口发送"/>
+									</mx:columns>
+								</mx:AdvancedDataGrid>   
+								
+							</mx:VBox>
+						</mx:VBox>
+						<mx:Form id="viewpage_change_password" backgroundColor="#EDF9FE"
+								 borderStyle="solid" paddingTop="0">
+							<mx:FormHeading label="修改密码" paddingTop="0"/>
+							
+							<mx:FormItem label="当前密码">
+								<mx:TextInput id="user_pwd_now" displayAsPassword="true"/>
+							</mx:FormItem>
+							
+							<mx:FormItem label="修改后密码">
+								<mx:TextInput id="user_pwd_after_1" displayAsPassword="true"/>
+							</mx:FormItem>
+							
+							<mx:FormItem label="再次输入修改后密码">
+								<mx:TextInput id="user_pwd_after_2" displayAsPassword="true"/>
+							</mx:FormItem>
+							
+							<mx:FormItem>
+								<mx:Button label="确认修改"
+										   click="{request_changepwd(user_pwd_now.text, user_pwd_after_1.text, user_pwd_after_2.text)}"/>
+							</mx:FormItem>
+							
+							<mx:FormItem>
+								<mx:Label id="user_pwd_prompt"/>
+							</mx:FormItem>
+						</mx:Form>
+						<mx:Form id="viewpage_add_user" backgroundColor="#EDF9FE" borderStyle="solid">
+							<mx:FormItem label="用户账号">
+								<mx:TextInput id="add_user_id" text="{select_username}"/>
+							</mx:FormItem>	
+							<mx:FormItem label="用户名称">
+								<mx:TextInput id="add_user_name" text="{select_userdesc}"/>
+							</mx:FormItem>	
+							<mx:FormItem label="密码">
+								<mx:TextInput id="add_user_password" text="{select_userpasswd}"/>
+							</mx:FormItem>
+							<mx:FormItem label="选择用户类型">	
+								<mx:RadioButtonGroup id="add_user_type"/>
+								<mx:RadioButton id="add_user_normal" width="150" label="普通用户"
+												groupName="add_user_type" selected="true"
+												value="user"/>
+								<mx:RadioButton id="add_user_agent" width="150" label="代理商"
+												groupName="add_user_type" value="agent"/>
+								<mx:RadioButton id="add_user_admin" width="150" label="管理员"
+												enabled="{user_name == 'root'}"
+												groupName="add_user_type" value="user"/>
+								<mx:CheckBox id="add_user_can_weblogin" label="可以web登录"/>
+								<mx:CheckBox id="add_user_can_post" label="允许访问接口"/>
+								
+								
+								
+							</mx:FormItem>
+							
+							<mx:FormItem label="移动通道" enabled="{channel_enabled}">
+								<mx:ComboBox id="add_user_cm" dataProvider="{channel_select_data}"
+											 enabled="{channel_enabled}"
+											 selectedIndex="{self_user_cm}"/>
+							</mx:FormItem>
+							<mx:FormItem label="联通通道" enabled="{channel_enabled}">
+								<mx:ComboBox id="add_user_cu" dataProvider="{channel_select_data}"
+											 enabled="{channel_enabled}"
+											 selectedIndex="{self_user_cu}"/>
+							</mx:FormItem>
+							<mx:FormItem label="电信通道" enabled="{channel_enabled}">
+								<mx:ComboBox id="add_user_ct" dataProvider="{channel_select_data}"
+											 enabled="{channel_enabled}"
+											 selectedIndex="{self_user_ct}"/>
+							</mx:FormItem>
+							
+							<mx:FormItem>
+								<mx:Button label="确定添加"
+										   click="{request_adduser(add_user_id.text, add_user_name.text, add_user_password.text,              add_user_can_weblogin.selected,              add_user_can_post.selected,              false,              add_user_cm.value.toString(),              add_user_cu.value.toString(),              add_user_ct.value.toString())}"/>
+								<mx:Button label="取消"
+										   click="ViewStack_main.selectedChild=viewpage_user_manage"/>
+							</mx:FormItem>
+						</mx:Form>
+						<mx:Form id="viewpage_manage_user" backgroundColor="#EDF9FE"
+								 borderStyle="solid">
+							<mx:FormItem label="用户账号" enabled="false">
+								<mx:TextInput id="manage_user_id" editable="false"
+											  text="{select_username}"/>
+							</mx:FormItem>	
+							<mx:FormItem label="用户名称" enabled="{role_enabled}">
+								<mx:TextInput id="manage_user_name" text="{select_userdesc}"/>
+							</mx:FormItem>	
+							<mx:FormItem label="密码" enabled="{role_enabled}">
+								<mx:TextInput id="manage_user_password" text="{select_userpasswd}"/>
+							</mx:FormItem>
+							<mx:FormItem label="选择用户类型" enabled="{role_enabled}">	
+								<mx:RadioButtonGroup id="manage_user_type" enabled="false"/>
+								
+								<mx:RadioButton id="manage_user_normal" width="150" label="普通用户"
+												enabled="{channel_enabled}"
+												groupName="manage_user_type"
+												selected="{select_userrole == 'user'}" value="user"/>
+								<mx:RadioButton id="manage_user_agent" width="150" label="代理商"
+												enabled="{channel_enabled}"
+												groupName="manage_user_type"
+												selected="{select_userrole == 'agent'}"
+												value="agent"/>
+								
+								<mx:RadioButton id="manage_user_admin" width="150" label="管理员"
+												enabled="{channel_enabled}"
+												groupName="manage_user_type"
+												selected="{select_userrole == 'admin'}"
+												value="admin"/>
+								
+								<mx:CheckBox id="manage_user_can_weblogin" label="可以web登录"
+											 selected="{select_user_can_weblogin}"/>
+								<mx:CheckBox id="manage_user_can_post" label="允许访问接口"
+											 selected="{select_user_can_post}"/>
+							</mx:FormItem>
+							<mx:FormItem label="百分比" visible="{channel_enabled}">
+								<mx:ComboBox id="manager_user_percent" visible="{channel_enabled}"
+											 dataProvider="{user_percent_list}"
+											 selectedIndex="{select_user_percent}"/>
+							</mx:FormItem>
+							<mx:FormItem label="扩展号码">
+								<mx:TextInput id="manage_user_ext" enabled="{channel_enabled}"
+											  text="{select_ext}"/>
+							</mx:FormItem>
+							<mx:FormItem label="移动通道" enabled="{role_enabled}">
+								<mx:ComboBox id="manage_user_cm" dataProvider="{channel_select_data}"
+											 enabled="{channel_enabled}"
+											 selectedIndex="{select_user_cm}"/>
+							</mx:FormItem>
+							<mx:FormItem label="联通通道" enabled="{role_enabled}">
+								<mx:ComboBox id="manage_user_cu" dataProvider="{channel_select_data}"
+											 enabled="{channel_enabled}"
+											 selectedIndex="{select_user_cu}"/>
+							</mx:FormItem>
+							<mx:FormItem label="电信通道" enabled="{role_enabled}">
+								<mx:ComboBox id="manage_user_ct" dataProvider="{channel_select_data}"
+											 enabled="{channel_enabled}"
+											 selectedIndex="{select_user_ct}"/>
+							</mx:FormItem>
+							
+							<mx:FormItem>
+								<mx:Button label="确定修改"
+										   click="{request_manageuser(manage_user_id.text, manage_user_name.text,               manage_user_password.text,manage_user_type.selectedValue.toString(),              manage_user_can_weblogin.selected,              manage_user_can_post.selected,              false,              manage_user_cm.selectedItem.data.toString(),              manage_user_cu.selectedItem.data.toString(),              manage_user_ct.selectedItem.data.toString(),              manage_user_ext.text,              manager_user_percent.value.toString()              )}"/>
+								<mx:Button label="取消"
+										   click="ViewStack_main.selectedChild=viewpage_user_manage"/>	
+							</mx:FormItem>
+						</mx:Form>
+						
+						<mx:VBox id="viewpage_msg_manage" width="100%" height="100%">
+							<mx:VBox width="100%" backgroundColor="#EDF9FE" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								
+								<mx:Label text="您当前的位置: 短信中心-&gt;短信详情"/>
+								<mx:HBox width="100%">
+									
+								</mx:HBox>
+								<mx:HBox width="100%">
+									<mx:Button label="返回"
+											   click="{ ViewStack_main.selectedChild = viewpage_user_manage;}"/>
+									<mx:Button label="查询" click="{request_listchildren()}"/>
+								</mx:HBox>
+							</mx:VBox>
+							<mx:VBox width="100%" height="100%" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								
+								<mx:HBox width="100%">
+									<mx:Button label="通过" click="{alert_not_impl()}"/>
+									<mx:Button label="驳回" click="{alert_not_impl()}"/>
+									<mx:Button label="删除" click="{alert_not_impl()}"/>
+									<mx:Button label="导出" click="{alert_not_impl()}"/>
+								</mx:HBox>
+								
+								
+								<mx:DataGrid width="100%" height="100%">
+									
+								</mx:DataGrid>   
+								
+								
+							</mx:VBox>
+						</mx:VBox>
+						
+						<mx:VBox id="viewpage_addmessage_log" width="100%" height="100%">
+							<mx:VBox width="100%" backgroundColor="#EDF9FE" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								<mx:Label text="您当前的位置: 短信中心-&gt;充值记录"/>
+								<mx:HBox width="100%">
+									
+									<mx:Label text="起始日期:"/>
+									<mx:DateField id="addmessage_log_date_from" width="110"
+												  formatString="YYYY-MM-DD"
+												  selectedDate="{new Date()}"/>
+									<mx:Label text="截止日期:"/>
+									<mx:DateField id="addmessage_log_date_to" width="110"
+												  formatString="YYYY-MM-DD"
+												  selectedDate="{new Date()}"/>
+									
+									<mx:Button label="查询"
+											   click="{addmsglog_query(                addmessage_log_date_from.selectedDate,                addmessage_log_date_to.selectedDate)}"/>
+									
+								</mx:HBox>
+							</mx:VBox>
+							<mx:VBox width="100%" height="100%" borderStyle="solid"
+									 paddingBottom="10" paddingLeft="10" paddingRight="10"
+									 paddingTop="10">
+								
+								<mx:DataGrid id="addmessage_log_grid" width="100%" height="100%"
+											 dataProvider="{message_phone_number}"
+											 draggableColumns="false" resizableColumns="false">
+									<mx:columns>		
+										
+										<mx:DataGridColumn dataField="uid" headerText="序号"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="username" headerText="账户名称"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="before_msg_num"
+														   headerText="充值前条数"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="add_msg_num" headerText="充值条数"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="after_msg_num"
+														   headerText="充值后条数"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="type" headerText="充值类型"
+														   itemRenderer="mx.controls.Text"/>
+										<mx:DataGridColumn dataField="create_time" headerText="充值时间"
+														   itemRenderer="mx.controls.Text"/>
+									</mx:columns>
+								</mx:DataGrid>
+							</mx:VBox>
+						</mx:VBox>
+					</mx:ViewStack>	
+				</mx:Panel>
+			</mx:HBox>
+		</mx:VBox>
+	</mx:Canvas>
+</mx:Application>

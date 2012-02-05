@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			private function display(status:int):String{
+				var str_cm:String = "";
+				var str_cu:String = "";
+				var str_ct:String = "";
+				switch(status & 0x003){
+					case 1:
+						str_cm = "移动停止;";
+						break;
+					case 2:
+						str_cm = "移动错误;";
+						break;
+				}
+				
+				switch(status & 0x030){
+					case 1:
+						str_cu = "联通停止;";
+						break;
+					case 2:
+						str_cu = "联通错误;";
+						break;
+				}
+				
+				switch(status & 0x300){
+					case 1:
+						str_ct = "电信停止;";
+						break;
+					case 2:
+						str_ct = "电信错误;";
+						break;
+				}
+				
+				if(status == 0)
+					return "正常";
+				else
+					return str_cm + str_cu + str_ct;
+
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Label  text="{display(data.status)}"/>
+</mx:HBox>

@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%"
+		 xmlns:channel="com.xbfool.smsc.view.channel.*"
+		 creationComplete="init()">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+		<mx:StringValidator id="channel_name_validator" maxLength="20" minLength="2" property="text" source="{channel_name}"
+							tooLongError="字符数超出限制" tooShortError="请输入至少2个字" trigger="{channel_name}"
+							triggerEvent="change"/>	
+		<mx:StringValidator id="channel_desc_validator" maxLength="20" minLength="2" property="text" source="{channel_desc}"
+							tooLongError="字符数超出限制" tooShortError="请输入至少2个字" trigger="{channel_desc}"
+							triggerEvent="change"/>	
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.ValidationResultEvent;
+			import mx.validators.Validator;
+			import mx.validators.ZipCodeValidatorDomainType;
+			[Bindable]
+			private var validatorArr:Array;
+			[Bindable]
+			public var myDP:ArrayCollection = new ArrayCollection();
+			
+			public function closeAndRemove():void
+			{
+				parent.removeChild(this);
+			}
+			private function init():void {
+				validatorArr = new Array();
+				validatorArr.push(channel_name_validator);
+				validatorArr.push(channel_desc_validator);
+			}
+			
+			private function validateForm(evt:MouseEvent):void {
+				var validatorErrorArray:Array = Validator.validateAll(validatorArr);;
+				var isValidForm:Boolean = validatorErrorArray.length == 0;
+				if (isValidForm) {
+					dispatchEvent(new ChannelPageEvent(ChannelPageEvent.CHANNEL_LIST_UPDATE));
+				} else {
+					var err:ValidationResultEvent;
+					var errorMessageArray:Array = [];
+					for each (err in validatorErrorArray) {
+						var errField:String = FormItem(err.currentTarget.source.parent).label
+						errorMessageArray.push(errField + ": " + err.message);
+					}
+					Alert.show(errorMessageArray.join("\n\n"), "Invalid form...", Alert.OK);
+				}
+			}
+			private function get_channel_index(i:int):int{
+				for(var j:int; j < myDP.length;j++){
+					if(myDP[j].uid == i)
+						return j;
+				}
+				return 0;
+			}
+			
+			private function display_status(status:int):String{
+				switch(status){
+					case 0:
+						return "正常";
+					case 1:
+						return "停止";
+					case 2:
+						return "错误挂起";
+						
+				}
+				return "未知";
+			}
+			public function display_name(index:int):String{
+				for(var i:int = 0; i < myDP.source.length; i++){
+					if(myDP[i].uid == index){
+						trace("hahah"+ myDP[i].name)
+						return myDP.source[i].desc + ":" + display_status(myDP[0].status);
+					}
+				}
+				
+				return myDP[0].desc + ":" + display_status(myDP[0].status);
+			}
+		]]>
+	</fx:Script>
+	<s:VGroup width="100%" height = "100%" color="#000000">
+		<s:HGroup >
+			<s:Button label="增加通道列表" 
+					  click="dispatchEvent(new ChannelPageEvent(ChannelPageEvent.CHANNEL_LIST_ADD_PAGE))"/>
+			
+		</s:HGroup>
+		
+		<mx:DataGrid id="channel_list_grid" height="100%">
+			<mx:columns>
+				<mx:DataGridColumn dataField="index" headerText="序号"/>
+				<mx:DataGridColumn dataField="name" headerText="通道列表名"/>
+				<mx:DataGridColumn dataField="desc" headerText="通道列表描述"/>
+				<mx:DataGridColumn dataField="cm1" headerText="移动1">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data.cm1)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn dataField="cm2" headerText="移动2">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data.cm2)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn dataField="cm3" headerText="移动3">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data.cm3)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn dataField="cu1" headerText="联通1">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data.cu1)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn dataField="cu2" headerText="联通2">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data.cu2)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn dataField="cu3" headerText="联通3">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data.cu3)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>	
+				<mx:DataGridColumn dataField="ct1" headerText="电信1">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data.ct1)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn dataField="ct2" headerText="电信2">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data.ct2)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn dataField="ct3" headerText="电信3">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_name(data.ct3)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>		
+			</mx:columns>
+		</mx:DataGrid>
+		
+		<mx:Form height="100%" backgroundAlpha="1.0" backgroundColor="#FFFFFF" cornerRadius="16"
+				 horizontalCenter="0" verticalCenter="0">
+			<mx:FormItem label="uid">
+				<mx:Label id="channel_uid" text="{channel_list_grid.selectedItem.uid}"/>
+			</mx:FormItem>
+			<mx:FormItem label="通道名">
+				<mx:TextInput id="channel_name" text="{channel_list_grid.selectedItem.name}"/>
+			</mx:FormItem>	
+			<mx:FormItem label="通道描述">	
+				<mx:TextInput id="channel_desc" text="{channel_list_grid.selectedItem.desc}"/>
+			</mx:FormItem>
+			
+			<mx:FormItem  label="通道选择">
+			
+			<mx:HBox>
+				<mx:FormItem label="移动1">
+					<s:DropDownList id="cm1" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="desc"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm1)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
+									/>
+				</mx:FormItem>
+				<mx:FormItem label="移动2">
+					<s:DropDownList id="cm2" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="desc"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm2)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
+									/>
+				</mx:FormItem>
+				<mx:FormItem label="移动3">
+					<s:DropDownList id="cm3" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="desc"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cm3)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
+									/>
+				</mx:FormItem>
+			</mx:HBox>
+			<mx:HBox>
+				<mx:FormItem label="联通1">
+					<s:DropDownList id="cu1" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="desc"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu1)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
+									/>
+				</mx:FormItem>
+				<mx:FormItem label="联通2">
+					<s:DropDownList id="cu2" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="desc"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu2)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
+									/>
+				</mx:FormItem>
+				<mx:FormItem label="联通3">
+					<s:DropDownList id="cu3" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="desc"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.cu3)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
+									/>
+				</mx:FormItem>
+			</mx:HBox>
+			<mx:HBox>
+				<mx:FormItem label="电信1">
+					<s:DropDownList id="ct1" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="desc"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct1)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
+									/>
+				</mx:FormItem>
+				<mx:FormItem label="电信2">
+					<s:DropDownList id="ct2" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="desc"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct2)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
+									/>
+				</mx:FormItem>
+				<mx:FormItem label="电信3">
+					<s:DropDownList id="ct3" prompt="请选择通道"
+									dataProvider="{myDP}"
+									labelField="desc"
+									selectedIndex="{get_channel_index(channel_list_grid.selectedItem.ct3)}"
+									itemRenderer="com.xbfool.smsc.view.channel.ChannelNameRender"
+									width="300"
+									/>
+				</mx:FormItem>
+			</mx:HBox>
+			</mx:FormItem>
+			<mx:FormItem width="100%">
+				
+				<mx:HBox width="100%">
+					<s:Button id="okButton" label="修改" click="validateForm(event)"/>
+					<s:Button label="删除当前项" click="dispatchEvent(new ChannelPageEvent(ChannelPageEvent.CHANNEL_LIST_DELETE))"/>				
+				</mx:HBox>
+			</mx:FormItem>
+		</mx:Form>
+	</s:VGroup>	
+</s:Group>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			
+			private function display(status:int):String{
+				switch(status){
+					case 1:
+						return "待审核";
+					case 2:
+						return "已发送";
+					case 3:
+						return "已拒绝";
+					case 4:
+						return "待发送";
+					case 5:
+						return "被删除";
+					case 6:
+						return "被取消";
+					case 7:
+						return "发送失败";
+				}
+				return "未知";
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Label  text="{display(data.status)}"/>
+</mx:HBox>

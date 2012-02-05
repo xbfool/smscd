@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%">
+	<s:layout>
+		<s:HorizontalLayout/>
+	</s:layout>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+
+	<s:Panel height="100%">
+		<mx:Accordion width="150" height="400" headerHeight="40">
+			<s:NavigatorContent width="100%" height="100%" label="管理界面">
+				<s:VGroup>
+					<mx:LinkButton label="通道单项管理" id="message_send_button"
+								   click="dispatchEvent(new MainPageEvent(MainPageEvent.CHANNEL_ITEM_MANAGE_VIEW))"/>
+					<mx:LinkButton label="通道列表管理" id="special_send_button"
+								   click="dispatchEvent(new MainPageEvent(MainPageEvent.CHANNEL_LIST_MANAGE_VIEW))"/>
+					<mx:LinkButton label="用户通道管理" id="message_log_button"
+								   click="dispatchEvent(new MainPageEvent(MainPageEvent.USER_CHANNEL_MANAGE_VIEW))"/>
+					<mx:LinkButton label="手机卡管理" id="card_item_button"
+								   click="dispatchEvent(new MainPageEvent(MainPageEvent.CARD_ITEM_MANAGE_VIEW))"/>
+				</s:VGroup>
+			</s:NavigatorContent>
+		</mx:Accordion>
+		<s:Button x="0"
+				  y="403"
+				  width="100%"
+				  height="40"
+				  label="注销登录"
+				  click="dispatchEvent(new MainPageEvent(MainPageEvent.LOGOUT))"/>
+
+	</s:Panel>
+	<s:Panel width="100%" height="100%" id="content_panel">
+	</s:Panel>
+</s:Group>
