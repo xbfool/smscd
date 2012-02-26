@@ -178,13 +178,50 @@ def __selftest0():
     </soap:Body>
 </soap:Envelope>
 ''' \
-        % ('xghcdrs005', 'xu=qwe', 'xghcdrs1', 'xghcdrs05', '13436999640', '', 'test sms\n测试短信 \nfrom sender') 
+        % ('xghcdrs005', 'xu=qwe', 'xghcdrs1', 'xghcdrs05', '18616820727', '', 'test sms\n测试短信 \nfrom sender') 
         # % ('just', 'a', 'try', '!', '13436999640', '', 'tset sms\n测试短信 \nfrom sender') 
     ret = h.send(soapaction='http://58.53.194.80/swdx/services/APService/', soap=soap)
     print ret[0]
     print ret[1]
     print '\n'.join(map(str, ret[3]))
     print ret[2]
-        
+    
+def __selftest1():
+    from time import time
+    from hashlib import md5
+    t = str(int(time() * 1000))
+    apName = 'xghcdrs005'
+    apPasswd = 'xu=qwe'
+    p = md5('%s%s%s' % ( apName, apPasswd, t)).hexdigest()
+    h = zhttp(host='58.53.194.80',
+              path='/swdx/services/SmsBizService',
+              mode='soap')
+    soap = \
+'''
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <SendMessage xmlns="http://trust.me.nobody/cares/this/">
+            <SendMessageRequest>
+                <id>1</id>
+                <compId>%s</compId>
+                <accountId>%s</accountId>
+                <apName>%s</apName>
+                <apPass>%s</apPass>
+                <timeStamp>%s</timeStamp>
+                <calledNumber>%s</calledNumber>
+                <content>%s</content>
+                <smsType>1</smsType>
+            </SendMessageRequest>
+        </SendMessage>
+    </soap:Body>
+</soap:Envelope>
+''' \
+    % ('xghcdrs1', 'xghcdrs05', apName, p, t, '18616820727', 'test sms from sender') 
+    ret = h.send(soapaction='http://58.53.194.80/swdx/services/SmsBizService/', soap=soap)
+    print ret[0]
+    print ret[1]
+    print '\n'.join(map(str, ret[3]))
+    print ret[2]
 if __name__ == '__main__':
-    __selftest0()
+    __selftest1()
