@@ -52,7 +52,55 @@ def process_req_hb_ct(http_pool, setting, msg):
                    'sub_num':msg['sub_num']},
                   soapaction='http://58.53.194.80/swdx/services/APService',
                   soap=soap)
+
+def process_req_hb_ct_2():
+    from time import time
+    from hashlib import md5
+    t = str(int(time() * 1000))
+    p = md5('%s%s%s' % (  setting['apid'], setting['appwd'], t)).hexdigest()
+    h = zhttp(host='58.53.194.80',
+            path='/swdx/services/SmsBizService',
+            mode='soap')
+    soap = \
+      '''
+      <soap:Envelope
+          xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+          <soap:Body>
+              <SendMessage xmlns="http://trust.me.nobody/cares/this/">
+                  <SendMessageRequest>
+                      <id>1</id>
+                      <compId>%s</compId>
+                      <accountId>%s</accountId>
+                      <apName>%s</apName>
+                      <apPass>%s</apPass>
+                      <timeStamp>%s</timeStamp>
+                      <calledNumber>%s</calledNumber>
+                      <content>%s</content>
+                      <smsType>1</smsType>
+                  </SendMessageRequest>
+              </SendMessage>
+          </soap:Body>
+      </soap:Envelope>
+      ''' \
+      % (
+         setting['entid'], 
+         setting['uid'],
+         setting['apid'], 
+         setting['appwd'], 
+         t,
+         ','.join(msg['addr']), 
+           msg['content'])
+    http_pool.req(msg['channel'], 
+                {'user_uid':msg['user_uid'],
+                'setting':setting, 
+                'uid':msg['uid'], 
+                'msg_num':msg['msg_num'], 
+                'percent':msg['percent'],
+                'sub_num':msg['sub_num']},
+                soapaction='http://58.53.194.80/swdx/services/SmsBizService/',
+                soap=soap)
     
+  
 def process_req_sd_ct(http_pool, setting, msg):
     address_list = msg['addr']
     address_f = [address_list[i] for i in range(len(address_list)) if address_list[i][0:3] != '182']

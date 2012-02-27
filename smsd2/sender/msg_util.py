@@ -296,11 +296,25 @@ class MsgController():
             update_args = {}
             update_args['status'] = msg_status.F_FAIL
             update_args['channel'] = param['setting']['name']
+            update_args['fail_msg'] = result
+            update_args['last_update'] = param['time']
             up = self.msg_t.update().where(self.msg_t.c.uid == param['uid']).values(**update_args)
             self.db.execute(up)
         except:
             print_exc()
-      
+            
+    def send_result(self, param, result):
+        try:
+            update_args = {}
+            update_args['channel'] = param['setting']['name']
+            update_args['fail_msg'] = result
+            update_args['last_update'] = param['time']
+            update_args['channel'] = param['setting']['name']
+            up = self.msg_t.update().where(self.msg_t.c.uid == param['uid']).values(**update_args)
+            self.db.execute(up)
+        except:
+            print_exc()
+            
     def start_channel(self, item, addr=None):
         try:
             update_args = {}

@@ -86,14 +86,14 @@ class sender_settings():
             'host': '58.53.194.80',
             'path': '/swdx/services/APService',
             'mode': 'soap',
-            'sub_mode':'hb_ct',
+            'sub_mode':'hb_ct_2',
             'entid': 'hbtmbckj',
             'uid': 'hbtmbckj',
             'apid': 'hbtmbckj',
             'appwd': 'b5EZq4BW',
             'webpwd': 'sdj5alk6',
-            'process_ret' : process_ret_hb_ct,
-            'process_req' : process_req_hb_ct
+            'process_ret' : process_ret_hb_ct_2,
+            'process_req' : process_req_hb_ct_2
         }
         settings['hlyd_01'] = {
             'name': 'hlyd_01',
