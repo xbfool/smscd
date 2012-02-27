@@ -53,7 +53,7 @@ def process_req_hb_ct(http_pool, setting, msg):
                   soapaction='http://58.53.194.80/swdx/services/APService',
                   soap=soap)
 
-def process_req_hb_ct_2():
+def process_req_hb_ct_2(http_pool, setting, msg):
     from time import time
     from hashlib import md5
     t = str(int(time() * 1000))
