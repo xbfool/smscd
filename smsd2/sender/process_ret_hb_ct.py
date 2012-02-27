@@ -44,7 +44,7 @@ def process_ret_hb_ct_2(sender, param):
         if ret[0] == 'SUCC':
             sender.msg_controller.send_success(param, result)
             return 1
-        else if ret[0] == 'FAIL':
+        elif ret[0] == 'FAIL':
             if ret[1] == '200':
                 sender.msg_controller.send_result(param, result)
                 return -1
