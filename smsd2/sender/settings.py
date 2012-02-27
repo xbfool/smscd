@@ -6,7 +6,7 @@ Created on 2011-10-18
 from process_ret_sd_ct import process_ret_sd_ct
 from process_ret_changshang_a import process_ret_changshang_a
 from process_ret_dongguan_0769 import process_ret_dongguan_0769
-from process_ret_hb_ct import process_ret_hb_ct
+from process_ret_hb_ct import process_ret_hb_ct, process_ret_hb_ct_2
 from process_ret_hlyd import process_ret_hlyd
 from process_ret_honglian import process_ret_honglian
 from process_ret_maoming_ct import process_ret_maoming_ct
