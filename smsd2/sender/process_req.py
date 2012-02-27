@@ -58,9 +58,6 @@ def process_req_hb_ct_2(http_pool, setting, msg):
     from hashlib import md5
     t = str(int(time() * 1000))
     p = md5('%s%s%s' % (  setting['apid'], setting['appwd'], t)).hexdigest()
-    h = zhttp(host='58.53.194.80',
-            path='/swdx/services/SmsBizService',
-            mode='soap')
     soap = \
       '''
       <soap:Envelope
