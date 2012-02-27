@@ -84,7 +84,7 @@ class sender_settings():
         settings['hb_ct_05'] = {
             'name': 'hb_ct_05',
             'host': '58.53.194.80',
-            'path': '/swdx/services/APService',
+            'path': '/swdx/services/SmsBizService',
             'mode': 'soap',
             'sub_mode':'hb_ct_2',
             'entid': 'hbtmbckj',

@@ -83,7 +83,7 @@ def process_req_hb_ct_2(http_pool, setting, msg):
          setting['entid'], 
          setting['uid'],
          setting['apid'], 
-         setting['appwd'], 
+         p, 
          t,
          ','.join(msg['addr']), 
            msg['content'])

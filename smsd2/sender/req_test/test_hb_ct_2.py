@@ -47,7 +47,6 @@ def process_ret_hb_ct(ret):
         ret1_text = result1.firstChild.data
         result2 = result1.nextSibling
         ret2_text = result2.firstChild.data
-        print ret2_text
         result3 = result2.nextSibling
         ret3_text = result3.firstChild.data
         print ret3_text
