@@ -41,6 +41,11 @@ def process_ret_hb_ct_2(sender, param):
         ret3_text = result3.firstChild.data
         ret = ret2_text.split('-')
         result = '.'.join((ret1_text, ret2_text, ret3_text))
+        try:
+            result = result.encode('utf8')
+        except:
+            pass
+            
         if ret[0] == 'SUCC':
             sender.msg_controller.send_success(param, result)
             return 1
