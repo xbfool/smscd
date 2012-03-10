@@ -189,11 +189,14 @@ class sms_sender(object):
         count = 0
         self.msg_controller.clean_dict()
         for msg in messages:
+            print msg['uid']
             if msg['uid'] in self.__pending:
+                print str(msg['uid']) + 'pending'
                 continue
             msg['addr'] = msg['address'].split(';')
             channel_list = self.msg_controller.get_channel_list(msg)
             if len(channel_list) == 0:
+                print str(msg['uid']) + 'no channel list'
                 continue
             
             for item in channel_list:
@@ -203,23 +206,26 @@ class sms_sender(object):
                     
                 #if channel stop means there is some thing error in our system
                 #don't neet to try
-                if channel_status.is_channel_stop(item['status'], msg['addr'][0]):
-                    self.logger.debug('channel error: this channel:%s is down' % (item['name'])) 
-                    continue
+                #if channel_status.is_channel_stop(item['status'], msg['addr'][0]):
+                #    self.logger.debug('channel error: this channel:%s is down' % (item['name'])) 
+                #    continue
                 
                 #channel ok but in timeout dict means cannot cannot connet for last try
                 #when last_update >= time interval than could have a try again
-                elif (channel_status.is_channel_ok(item['status'], msg['addr'][0]) and self.timeout_dict.get(item['uid']) and
-                      datetime.now() - self.timeout_dict[item['uid']]['last_update'] <= timedelta(seconds=self._getWaitTime(self.timeout_dict[item['uid']]['count']))):
-                    continue
+                #elif (channel_status.is_channel_ok(item['status'], msg['addr'][0]) and self.timeout_dict.get(item['uid']) and
+                #      datetime.now() - self.timeout_dict[item['uid']]['last_update'] <= timedelta(seconds=self._getWaitTime(self.timeout_dict[item['uid']]['count']))):
+                #    continue
                 
                 #if tried a lot of times then the channel is down for some time
                 #retry it 2 hour later                                                               
-                elif (self.timeout_dict.get(item['uid']) and 
-                      datetime.now() - self.timeout_dict[item['uid']]['last_update'] <= timedelta(hours=2) and
-                    not channel_status.is_channel_ok(item['status'], msg['addr'][0])):
+                #elif (self.timeout_dict.get(item['uid']) and 
+                #      datetime.now() - self.timeout_dict[item['uid']]['last_update'] <= timedelta(hours=2) and
+                #    not channel_status.is_channel_ok(item['status'], msg['addr'][0])):
+                #    continue
+                
+                if not channel_status.is_channel_ok(item['status'], msg['addr'][0]):
+                    print '%s channel %s not ok' % ( msg,  item)
                     continue
-
                 print self.timeout_dict.get(item['uid']), datetime.now()
                 
                 try:
@@ -234,12 +240,13 @@ class sms_sender(object):
                         #self.logger.debug('channel start: channel:%s' % (item))
                     sending_str = 'sending : msg_uid:%s, channel:%s, msg:%s' % (msg['uid'], item['setting'], msg)
                     self.logger.debug(sending_str)
-                    #print sending_str
+                    print sending_str
                     self.process_req(item, msg)
                     #here just means our function not error, not means the channel not error
                     count += 1
                     break
                 except:
+                    
                     if msg['uid'] in self.__pending:
                         try:
                             self.__pending.remove(msg['uid'])
