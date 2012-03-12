@@ -23,7 +23,7 @@ import msg_util
 from random import seed, shuffle
 def dump(path, username):
     ph = phonenumber.phonenumber()
-    t = '%s,%s,%s,%s,%s,%s,%s,%s' % ('uid','send_time','send_address','ignored_address','channel','tota_num','send_num','message')
+    t = '%s,%s,%s,%s,%s,%s,%s,%s\r\n' % ('uid','send_time','send_address','ignored_address','channel','tota_num','send_num','message')
     ct = open(path+'ct.csv', 'w')
     ct.write(t)
     cu = open(path+'cu.csv', 'w')
@@ -36,7 +36,7 @@ def dump(path, username):
                                   c.msg_t.c.user_uid == c.user_t.c.uid,\
                                   c.user_t.c.username == username,\
                                   c.channel_item_t.c.name == c.msg_t.c.channel,\
-                                  )).limit(5)
+                                  ))
 
     res = c.db.execute(sel)
     for i in res:
@@ -64,7 +64,7 @@ def dump(path, username):
         else:
             ret1 = addr
             ret2 = []
-        t1 = '%s,%s,%s,%s,%d,%d,%s' % (\
+        t1 = '%s,%s,%s,%s,%d,%d,%s\r\n' % (\
                                              i.last_update,\
                                              ';'.join(ret1),\
                                              ';'.join(ret2),\
