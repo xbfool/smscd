@@ -49,21 +49,19 @@ def dump(path, username):
             f = cu
         elif channel == ph.S_CT:
             f = ct
-        percent = i.percent
-        total_num = i.total_num
+        percent = len(addr) * 100 * i.sub_num / i.total_num
+
         my_seed = i.seed
         ret1 = []
         ret2 = []
-        if(percent is not None and percent <= 100 and percent >= 50 and total_num >= 50):
-            addr.sort()
-            seed(my_seed)
-            shuffle(addr)
+        
+        addr.sort()
+        seed(my_seed)
+        shuffle(addr)
             
-            ret1 = addr[0:max(1, len(addr) * percent / 100)]
-            ret2 = addr[max(1, len(addr) * percent / 100):]
-        else:
-            ret1 = addr
-            ret2 = []
+        ret1 = addr[0:max(1, len(addr) * percent / 100)]
+        ret2 = addr[max(1, len(addr) * percent / 100):]
+
         t1 = '%s,%s,%s,%s,%d,%d,%s\r\n' % (\
                                              i.last_update,\
                                              ';'.join(ret1),\
