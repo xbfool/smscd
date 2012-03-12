@@ -49,7 +49,7 @@ def dump(path, username):
             f = cu
         elif channel == ph.S_CT:
             f = ct
-        percent = len(addr) * 100 * i.sub_num / i.total_num
+        percent = len(addr) * 100 * i.sub_num / i.msg_num
 
         my_seed = i.seed
         ret1 = []
