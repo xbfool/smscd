@@ -23,7 +23,7 @@ import msg_util
 from random import seed, shuffle
 def dump(path, username):
     ph = phonenumber.phonenumber()
-    t = '%s,%s,%s,%s,%s,%s,%s,%s\r\n' % ('uid','send_time','send_address','ignored_address','channel','tota_num','send_num','message')
+    t = '%s,%s,%s,%s,%s,%s,%s\r\n' % ('send_time','send_address','ignored_address','channel','tota_num','send_num','message')
     ct = open(path+'ct.csv', 'w')
     ct.write(t)
     cu = open(path+'cu.csv', 'w')
