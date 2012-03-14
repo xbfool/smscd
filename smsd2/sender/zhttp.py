@@ -185,6 +185,30 @@ def __selftest0():
     print ret[1]
     print '\n'.join(map(str, ret[3]))
     print ret[2]
-        
+
+def __selftest2():
+    setting = {
+               'name': 'qixintong_106d',
+            'host': '202.85.221.191',
+            'path': '/mc/httpsendsms.php',
+            'port': '80',
+            'sub_mode': 'qixintong2012',
+            'ua': 'sdcjc',
+            'pw': '3183401',
+            'mode': 'GET',
+            'mobile': '18616820727',
+            'msg': 'test'}
+    h = zhttp(**setting)
+    
+
+    ret = h.send()
+    from xml.dom.minidom import parseString
+    print ret[0]
+    print ret[1]
+#    print '\n'.join(map(str, ret[3]))
+    resultDOM = parseString(ret[2])
+    print resultDOM.firstChild.firstChild.firstChild.data
+    print ret[2]
+
 if __name__ == '__main__':
-    __selftest0()
+    __selftest2()

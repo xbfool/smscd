@@ -11,7 +11,7 @@ from process_ret_hlyd import process_ret_hlyd
 from process_ret_honglian import process_ret_honglian
 from process_ret_maoming_ct import process_ret_maoming_ct
 from process_ret_scp_0591 import process_ret_scp_0591
-from process_ret_shangxintong import process_ret_shangxintong
+from process_ret_shangxintong import process_ret_shangxintong, process_ret_qixintong2012
 from process_req import *
 from datetime import datetime
 class sender_settings():
@@ -283,6 +283,18 @@ class sender_settings():
             'port': '8000',
             'process_ret': None,
             'process_req' : None
+        }
+        settings['qixintong2012_106d'] = {
+            'name': 'qixintong_106d',
+            'host': '202.85.221.191',
+            'path': '/mc/httpsendsms.php',
+            'port': '80',
+            'sub_mode': 'qixintong2012',
+            'ua': 'sdcjc',
+            'pw': '318340',
+            'mode': 'GET',
+            'process_ret': process_ret_qixintong2012,
+            'process_req' : process_req_qixintong2012
         }
         settings['default'] = settings['hb_ct_01']
         

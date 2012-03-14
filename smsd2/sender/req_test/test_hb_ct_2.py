@@ -49,7 +49,9 @@ def process_ret_hb_ct(ret):
         ret2_text = result2.firstChild.data
         result3 = result2.nextSibling
         ret3_text = result3.firstChild.data
-        print ret3_text
+        a = ret3_text.encode('gbk')
+        b = a.decode('gbk').encode('utf8')
+        print b.decode('utf8')
         ret = ret2_text.split('-')
         print ret[0]
         if ret[0] == 'SUCC':

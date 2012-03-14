@@ -26,3 +26,23 @@ def process_ret_shangxintong(sender, param):
         return 0
   
     return 1
+
+def process_ret_qixintong2012(sender, param):
+    result = "something is error"
+    try:
+        resultDOM = parseString(param['ret'][2])
+        result = resultDOM.firstChild.firstChild.firstChild.data
+
+        
+        if result[0] == '1':
+            sender.msg_controller.send_success(param, result)
+            return 1
+        else:
+            return -1
+            
+    except:
+        print_exc()
+        sender.msg_controller.send_fail(param, result)
+        return 0
+  
+    return 1

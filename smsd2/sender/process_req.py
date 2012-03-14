@@ -358,3 +358,15 @@ def process_req_scp_0591(http_pool, setting, msg):
                   Mobile=address_shu, 
                   MsgContent=tmpmsg)
     
+def process_req_qixintong2012(http_pool, setting, msg):
+    http_pool.req(msg['channel'], 
+                  {'user_uid':msg['user_uid'], 
+                   'setting':setting, 
+                   'uid':msg['uid'], 
+                   'msg_num':msg['msg_num'], 
+                   'sub_num':msg['sub_num'],
+                   'percent':msg['percent']},
+                  us=setting['us'], 
+                  pw=setting['pw'],
+                  mobile=','.join(msg['addr']), 
+                  msg=msg)
