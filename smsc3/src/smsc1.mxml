@@ -746,20 +746,29 @@
 							<mx:Canvas id="view_addresslist" visible="true" width="100%"
 									   height="100%" borderColor="0x000000" borderStyle="solid"
 									   horizontalCenter="0" verticalCenter="0">
-								<mx:Panel id="panel" width="30%" height="100%" cornerRadius="0"
+								<mx:HBox width = "100%" height="100%">
+									
+								
+								<mx:Panel id="panel" width="30%"  cornerRadius="0" height="90%"
 										  horizontalAlign="center" paddingBottom="0" paddingLeft="0"
-										  paddingRight="0" paddingTop="0" verticalAlign="top">	
+										  paddingRight="0" paddingTop="0" verticalAlign="top"
+										  minWidth="180">	
 									<mx:VBox width="100%" borderStyle="solid" paddingBottom="10"
 											 paddingLeft="10" paddingRight="10" paddingTop="10">
 										<mx:Label fontWeight="bold" text="通讯录列表"/>
 										<mx:HBox width="100%">
-											<mx:Button label="添加"
-													   click="open_add_new_phonebook_view()"/>
-											<mx:Button label="修改"
-													   click="open_manage_phonebook_view()"/>
-											<mx:Button label="删除" click="request_delete_phonebook()"/>
-											<mx:Button label="导入"
-													   click="import_phonebook_info_from_csv()"/>
+											<mx:VBox>
+												<mx:Button label="添加"
+														   click="open_add_new_phonebook_view()"/>
+												<mx:Button label="修改"
+														   click="open_manage_phonebook_view()"/>
+											</mx:VBox>
+											<mx:VBox>
+												<mx:Button label="删除" click="request_delete_phonebook()"/>
+												<mx:Button label="导入"
+														   click="import_phonebook_info_from_csv()"/>
+											</mx:VBox>
+											
 										</mx:HBox>
 									</mx:VBox>
 									<mx:DataGrid id="phonebook_data_grid" width="100%" height="80%"
@@ -779,8 +788,9 @@
 										</mx:columns>
 									</mx:DataGrid>
 								</mx:Panel>
-								<mx:Panel right="0" width="70%" height="100%" paddingBottom="0"
-										  paddingLeft="0" paddingRight="0" paddingTop="0">
+								<mx:Panel right="0" width="70%" height="90%" paddingBottom="0"
+										  paddingLeft="0" paddingRight="0" paddingTop="0"
+										  minWidth="350">
 									<mx:ViewStack id="ViewStack_phone" width="100%" height="100%"
 												  color="0x323232">
 										<mx:VBox id="viewpage_phonebook_welcome">
@@ -791,18 +801,27 @@
 													 paddingRight="10" paddingTop="10">
 												<mx:Label fontWeight="bold" text="联系人列表"/>
 												<mx:HBox width="100%">
-													<mx:Button label="添加"
-															   click="{open_add_new_phone_view()}"/>
-													<mx:Button label="修改"
-															   click="{open_manage_phone_view()}"/>
-													<mx:Button label="删除"
-															   click="{request_delete_phonelist()}"/>
-													<mx:Button label="发送"
-															   click="{phonelist_send_msg()}"/>
-													<mx:Button label="全选"
-															   click="{select_all_phone_list()}"/>
-													<mx:Button label="全部取消"
-															   click="{select_none_phone_list()}"/>
+													<mx:VBox>
+														<mx:Button label="添加"
+																   click="{open_add_new_phone_view()}"/>
+														<mx:Button label="修改"
+																   click="{open_manage_phone_view()}"/>
+													</mx:VBox>
+													<mx:VBox>
+														<mx:Button label="删除"
+																   click="{request_delete_phonelist()}"/>
+														<mx:Button label="发送"
+																   click="{phonelist_send_msg()}"/>
+													</mx:VBox>
+													<mx:VBox>
+														<mx:Button label="全选"
+																   click="{select_all_phone_list()}"/>
+														<mx:Button label="全部取消"
+																   click="{select_none_phone_list()}"/>
+													</mx:VBox>
+													
+													
+													
 													<mx:Label text="查询"/>
 													<mx:TextInput id="phone_list_query"/>
 													<mx:Button label="查询"
@@ -943,6 +962,7 @@
 										</mx:VBox>
 									</mx:ViewStack>									
 								</mx:Panel>
+								</mx:HBox>
 								<mx:VBox width="100%" height="100%" borderStyle="solid"
 										 paddingBottom="10" paddingLeft="10" paddingRight="10"
 										 paddingTop="10">
