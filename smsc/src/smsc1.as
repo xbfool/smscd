@@ -1490,7 +1490,9 @@ private function change_view_stack(view:String):void{
 		ViewStack_main.selectedChild = viewpage_user_manage;
 	} else if (view == "manage_phonenumber"){
 		ViewStack_main.selectedChild = viewpage_manage_phonenumber;
-		//ViewStack_phone.selectedChild = viewpage_phonebook_welcome;
+		if(ViewStack_phone != null){
+			ViewStack_phone.selectedChild = viewpage_phonebook_welcome;
+		}
 		get_phone_book_info();
 	} else if (view == "upload_report"){
 		ViewStack_main.selectedChild = viewpage_upload_report;
