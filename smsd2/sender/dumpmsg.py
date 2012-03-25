@@ -23,7 +23,7 @@ import msg_util
 from random import seed, shuffle
 def dump(path, username):
     ph = phonenumber.phonenumber()
-    t = '%s,%s,%s,%s,%s,%s,%s\r\n' % ('send_time','send_address','ignored_address','channel','tota_num','send_num','message')
+    t = '%s,%s,%s,%s,%s,%s,%s\r\n' % ('send_time','send_address','ignored_address','channel','msg_num','send_num','message')
     ct = open(path+'ct.csv', 'w')
     ct.write(t)
     cu = open(path+'cu.csv', 'w')
@@ -49,7 +49,7 @@ def dump(path, username):
             f = cu
         elif channel == ph.S_CT:
             f = ct
-        percent = len(addr) * 100 * i.sub_num / i.total_num
+        l = len(addr) * i.sub_num / i.msg_num
 
         my_seed = i.seed
         ret1 = []
@@ -59,8 +59,8 @@ def dump(path, username):
         seed(my_seed)
         shuffle(addr)
             
-        ret1 = addr[0:max(1, len(addr) * percent / 100)]
-        ret2 = addr[max(1, len(addr) * percent / 100):]
+        ret1 = addr[0:l]
+        ret2 = addr[l:]
 
         t1 = '%s,%s,%s,%s,%d,%d,%s\r\n' % (\
                                              i.last_update,\
