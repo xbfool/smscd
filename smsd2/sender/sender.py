@@ -174,7 +174,7 @@ class sms_sender(object):
                 % (self.__class__.__name__, param['uid'])
     
     def get_filtered_addr(self, addr, percent, my_seed, total_num=0):
-        if(percent is not None and percent <= 100 and percent >= 50 and total_num >= 50):
+        if(percent is not None and percent <= 300 and percent >= 50 and total_num >= 50):
             addr.sort()
             seed(my_seed)
             shuffle(addr)
