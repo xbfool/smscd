@@ -29,7 +29,7 @@ def initLogger(loggername, dirname=".", level=DEBUG, backcnt=90):
     @param backcnt 存放备份个数
     @return 生成的日志对象
     """
-    default_dirname = '/var/apache2/smsd/'
+    default_dirname = '/var/log/apache2/smsd/'
     #目录不存在，创建目录
     try:
         if not os.path.exists(dirname):
