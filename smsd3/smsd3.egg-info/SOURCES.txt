@@ -7,3 +7,6 @@ smsd3.egg-info/dependency_links.txt
 smsd3.egg-info/entry_points.txt
 smsd3.egg-info/not-zip-safe
 smsd3.egg-info/top_level.txt
+smsd3/channels/__init__.py
+smsd3/channels/honglian.py
+smsd3/channels/testHonglian.py
