@@ -17,7 +17,7 @@ def process_ret_changshang_a(sender, param):
         elif result == u'100' or result == u'101' or result == 100 or result == 101:
             return -1 #channel error
         elif result == u'102' or result == u'103' or result == 102 or result == 103:
-            return -2 #msg_error
+            return -1 #msg_error
         else:
             return 0
     except:
