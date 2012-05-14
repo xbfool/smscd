@@ -129,9 +129,17 @@ class sendsms(object):
         else :
             return ['%d' % (errno)]
     
-    def __get_user_channel(self, u):
-        ret = self.db.raw_sql_query('SELECT channel_cm FROM user WHERE uid = %s', (u))
-        if(len(ret) == 0):
+    def __get_user_channel(self, u, addr):
+        pm = phonenumber.phonenumber()
+        ret = None
+        addr_channel = pm.check_addr(addr)
+        if  addr_channel == pm.S_CM:
+            ret = self.db.raw_sql_query('SELECT channel_cm FROM user WHERE uid = %s', (u))
+        elif addr_channel == pm.S_CU:
+            ret = self.db.raw_sql_query('SELECT channel_cu FROM user WHERE uid = %s', (u))
+        elif addr_channel == pm.S_CT:
+            ret = self.db.raw_sql_query('SELECT channel_ct FROM user WHERE uid = %s', (u))
+        else:
             return None
         return ret[0][0]
     def __check_user(self, u, p,type):
@@ -148,35 +156,27 @@ class sendsms(object):
                                         (user_uid, message.F_ADMIT))[0][0]
         return user_uid, msg_num - (pending or 0)
     
+    def common_message_num(self, msg):
+        l = len(msg.decode('utf8'))
+        if l <= 70:
+            return 1
+        else:
+            return (l - 1) / 64 + 1
+            
     def __send(self, u, recv, msg):
         ret = 0
         try:
-            recv_list = self.__split_message(recv.split(';'))
-            for new_recv in recv_list:
-                channel = self.__get_user_channel(u)
-                msg_num = ((len(msg.decode('utf8').encode('gbk')) - 1) / 140 + 1) * len(new_recv)
+            recv_list = recv.split(';')
+            for addr in recv_list:
+                channel = self.__get_user_channel(u, addr)
+                msg_num = self.common_message_num(msg)
                 self.db.raw_sql('INSERT INTO message(user_uid,address,msg,msg_num,status,create_time,channel) VALUES(%s,%s,%s,%s,%s,%s,%s)',
-                                (u, ';'.join(new_recv), msg, msg_num, message.F_ADMIT, datetime.now(), channel))
+                                (u, addr, msg, msg_num, message.F_ADMIT, datetime.now(), channel))
 
                 ret += msg_num
         except:
             pass
         return ret
-        
-    def __split_message(self, recv):
-        pm = phonenumber.phonenumber()
-        split_addr = pm.split_addr(recv)
-        recv_list = []
-        l = [pm.S_CM, pm.S_CU, pm.S_CT]
-        for item_index in l:
-            item = split_addr[item_index]
-            new_l =  [[item[i] for i in range(a, min(a+20, len(item)))] for a in range(0, len(item), 20)]
-            for k in new_l:
-                if k:
-                    recv_list.append(k)
-        
-        return recv_list
-        
 
 def wsgiref_daemon():
     port = 8080
