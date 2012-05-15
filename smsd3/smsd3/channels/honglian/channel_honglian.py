@@ -3,7 +3,8 @@
 import pika
 import simplejson as json
 from honglian_queue import HonglianQueue
-
+import copy
+import httplib, urllib
 
 honglian_real_setting = {
     'site':{
@@ -35,7 +36,7 @@ honglian_mock_setting = {
 
 
 def make_param(body):
-    s = copy.copy(honglian_mock_setting)
+    s = copy.copy(honglian_real_setting)
     s['params']['phone']= body['addr']
     s['params']['message']= body['msg']
     return s

@@ -9,15 +9,25 @@ def honglian_server(environ, start_response):
 
     status = '200 OK'
     headers = [('Content-type', 'text/plain')]
+    post_data = env['wsgi.input'].read(length)
 
+    query = urldecode(post_data)
+    
+    username = query.get('username')
+    password = query.get('password')
+    epid = query.get('epid')
+    
     start_response(status, headers)
-    print 'abc'
-    ret = ret_ok()
+    if password != '123456'
+        ret = ret_password_error()
     return ret
 
 def ret_ok():
     return '00'
     
+def ret_password_error(user, pass):
+    ret = 'error:用户名%s  密码错误%s' % (user, pass)
+    return ret.decode('utf8').encode('gbk')
 
 def serve_honglian_server(port=8000):
     httpd = make_server('', port, honglian_server)
