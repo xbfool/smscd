@@ -25,9 +25,10 @@ class ChannelHonglian():
     _conn = None
     _retry_times = 3
     _callback = None
-    def __init__(self, account, sender, callback, retry_times=3):
+    def __init__(self, account, callback, retry_times=3):
         self._sender = sender
         self._site = self.make_site()
+        self._sender = 
         self._account = account
         self._retry_times = retry_times
         self._callback = callback

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from wsgiref.util import setup_testing_defaults
 from wsgiref.simple_server import make_server
 
@@ -10,9 +11,13 @@ def honglian_server(environ, start_response):
     headers = [('Content-type', 'text/plain')]
 
     start_response(status, headers)
-
-    ret = '00'
+    print 'abc'
+    ret = ret_ok()
     return ret
+
+def ret_ok():
+    return '00'
+    
 
 def serve_honglian_server(port=8000):
     httpd = make_server('', port, honglian_server)
