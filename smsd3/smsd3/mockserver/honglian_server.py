@@ -18,8 +18,12 @@ def honglian_server(environ, start_response):
     epid = query.get('epid')
     
     start_response(status, headers)
-    if password != '123456'
+    if (password != '123456' or 
+        username != 'fdzxyy' or 
+        epid != '6101'):
         ret = ret_password_error()
+    else:
+        
     return ret
 
 def ret_ok():
