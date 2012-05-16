@@ -102,9 +102,10 @@ class card_sender(object):
     def __worker(self):
         while not self.__worker_exit_lock.acquire(False) and not self.kill_received:
             #print 'checking queue: ', datetime.now()
-            if datetime.now().hour >= 19 or datetime.now().hour <= 8:
+            if datetime.now().hour >= 20 or datetime.now().hour <= 8:
                 print 'now sleeping %s' % datetime.now()
                 sleep(60)
+                continue
             try:
                 if self.__process_queue() == 0:
                     sleep(self.__chk_interval)
@@ -218,9 +219,10 @@ class card_sender(object):
     def send_card_message(self, item):
         self.message_pool[item.uid] = item
         for addr in item.address_list:
-            if datetime.now().hour >= 19 or datetime.now().hour <= 8:
+            if datetime.now().hour >= 20 or datetime.now().hour <= 8:
                 print 'now sleeping %s' % datetime.now()
                 sleep(60)
+                continue
             seq = self.genseqnum()
             item.address_pool[seq] = addr
             self.linear_send(item.uid, seq, addr, item.msg)
