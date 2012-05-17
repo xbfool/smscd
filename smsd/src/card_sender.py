@@ -303,7 +303,7 @@ class card_sender(object):
                                                 HOUR(card_item.last_send) < HOUR(NOW()) or
                                                 MINUTE(card_item.last_send) < MINUTE(NOW())
                                                 ) 
-            order by day, last_send limit 1;
+            order by last_send, minute limit 1;
             '''
             p = self.mysql_db.execute(sql).first()
             if not p:
