@@ -4,6 +4,4 @@ smsc2/.*
 smsc/html-template
 smsc2/html-template
 smsd/.*
-.project
 .pydevproject
-.settings/
