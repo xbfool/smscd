@@ -305,12 +305,12 @@ class card_sender(object):
                                                 ) 
             order by last_send, minute limit 1;
             '''
-            p = self.mysql_db.execute(sql).first()
-            if not p:
+            p = self.mysql_db.execute(sql).all()
+            if not p or len(p) == 0:
                 sleep(60)
-        return p.number
-    
-
+            for i in p:
+                yield p.number
+        
     def init_logger(self):
         import glob
         import logging
