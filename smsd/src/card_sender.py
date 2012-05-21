@@ -81,6 +81,7 @@ class card_sender(object):
         self.message_pool = {}
         self.seq_pool = {}
         self.__pending = []
+        self.number_pool = [] #for card_number pool
         #self.__resp_thread = Thread(None, self.__resp_worker, '%s resp thread' % self.__class__.__name__)   
         #self.__resp_thread.start()     
 
@@ -275,41 +276,48 @@ class card_sender(object):
             self.seqnum += 1
         return self.seqnum
     
-    
     def get_send_card_number(self):
-        p = None
-        while not p:
-            sql = '''
-            select * from `card_item` where card_item.total_max > card_item.total
-            and card_item.due_time > NOW() and (card_item.month_max > card_item.month or 
-                                                YEAR(card_item.last_send) < YEAR(NOW()) or 
-                                                MONTH(card_item.last_send) < MONTH(NOW())
-                                                )  
-                                           and (card_item.day_max > card_item.day or 
-                                                YEAR(card_item.last_send) < YEAR(NOW()) or 
-                                                MONTH(card_item.last_send) < MONTH(NOW()) or
-                                                DAY(card_item.last_send) < DAY(NOW())
-                                                ) 
-                                           and (card_item.hour_max > card_item.hour or 
-                                                YEAR(card_item.last_send) < YEAR(NOW()) or 
-                                                MONTH(card_item.last_send) < MONTH(NOW()) or
-                                                DAY(card_item.last_send) < DAY(NOW()) or
-                                                HOUR(card_item.last_send) < HOUR(NOW())
-                                                ) 
-                                           and (card_item.minute_max > card_item.minute or 
-                                                YEAR(card_item.last_send) < YEAR(NOW()) or 
-                                                MONTH(card_item.last_send) < MONTH(NOW()) or
-                                                DAY(card_item.last_send) < DAY(NOW()) or
-                                                HOUR(card_item.last_send) < HOUR(NOW()) or
-                                                MINUTE(card_item.last_send) < MINUTE(NOW())
-                                                )  
-            order by rand() limit 1;
-            '''
-            p = self.mysql_db.execute(sql).first()
-            if  p == None:
-                sleep(60)
-            else:
-                return p.number
+        if len(self.number_pool) > 0:
+            return self.number_pool.pop()
+            
+        while len(self.number_pool) == 0:
+            self.get_send_card_number_from_dict()
+            if len(self.number_pool) == 0:
+                sleep(10)
+                
+        return self.number_pool.pop()
+        
+    def get_send_card_number_from_dict(self):
+        sql = '''
+        select * from `card_item` where card_item.total_max > card_item.total
+        and card_item.due_time > NOW() and (card_item.month_max > card_item.month or 
+                                            YEAR(card_item.last_send) < YEAR(NOW()) or 
+                                            MONTH(card_item.last_send) < MONTH(NOW())
+                                            )  
+                                       and (card_item.day_max > card_item.day or 
+                                            YEAR(card_item.last_send) < YEAR(NOW()) or 
+                                            MONTH(card_item.last_send) < MONTH(NOW()) or
+                                            DAY(card_item.last_send) < DAY(NOW())
+                                            ) 
+                                       and (card_item.hour_max > card_item.hour or 
+                                            YEAR(card_item.last_send) < YEAR(NOW()) or 
+                                            MONTH(card_item.last_send) < MONTH(NOW()) or
+                                            DAY(card_item.last_send) < DAY(NOW()) or
+                                            HOUR(card_item.last_send) < HOUR(NOW())
+                                            ) 
+                                       and (card_item.minute_max > card_item.minute or 
+                                            YEAR(card_item.last_send) < YEAR(NOW()) or 
+                                            MONTH(card_item.last_send) < MONTH(NOW()) or
+                                            DAY(card_item.last_send) < DAY(NOW()) or
+                                            HOUR(card_item.last_send) < HOUR(NOW()) or
+                                            MINUTE(card_item.last_send) < MINUTE(NOW())
+                                            )  
+        order by last_send, day;
+        '''
+        res = self.mysql_db.execute(sql)
+
+        for i in res:
+            self.number_pool.append(i.number)
  
     def init_logger(self):
         import glob
