@@ -282,6 +282,7 @@ class card_sender(object):
             
         while len(self.number_pool) == 0:
             self.get_send_card_number_from_dict()
+            print self.number_pool
             if len(self.number_pool) == 0:
                 sleep(10)
                 
