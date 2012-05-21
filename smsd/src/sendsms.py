@@ -66,6 +66,7 @@ class sendsms(object):
             return self.__ret(env, start_response, -99, 'error, empty POST body')
         try:
             post_data = env['wsgi.input'].read(length)
+            print 'post_data:\n%s' % post_data
         except:
             print 'error reading POST data'
             print_exc()
@@ -111,7 +112,11 @@ class sendsms(object):
             return self.__ret(env, start_response, -2, 'not enough credit')
         else:
             if len(recv.split(';')) > 1000:
-                return self.__ret(env, start_response, -3, 'not support more than 1000 address');
+                ret_str = '''not support more than 1000 address
+                your phone numbers is %d,
+                phone number is %s
+                ''' % ( len(recv.split(';')), recv)
+                return self.__ret(env, start_response, -3, ret_str);
             for addr in recv.split(';'):
                 if len(addr) != 11:
                     return self.__ret(env, start_response, -4, 'some address error, use \';\' to split address number');
