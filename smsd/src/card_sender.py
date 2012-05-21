@@ -234,7 +234,7 @@ class card_sender(object):
             print 'trying times for %d time' % try_time
             try:
                 card_number = self.get_send_card_number()
-
+                print 'card_nuber %s' % card_number
                 sumbit_sms(self.card_socket, seq, card_number, addr, send_msg)
                 self.logger.debug('submit:time,%s,seq,%d,card,%s,addr,%s,msg,\'%s\'' % (str(datetime.now()), seq, card_number, addr, msg))
       
@@ -302,15 +302,15 @@ class card_sender(object):
                                                 DAY(card_item.last_send) < DAY(NOW()) or
                                                 HOUR(card_item.last_send) < HOUR(NOW()) or
                                                 MINUTE(card_item.last_send) < MINUTE(NOW())
-                                                ) 
-            order by last_send, minute limit 1;
+                                                )  
+            order by rand() limit 1;
             '''
-            p = self.mysql_db.execute(sql).all()
-            if not p or len(p) == 0:
+            p = self.mysql_db.execute(sql).first()
+            if  p == None:
                 sleep(60)
-            for i in p:
-                yield p.number
-        
+            else:
+                return p.number
+ 
     def init_logger(self):
         import glob
         import logging
