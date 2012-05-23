@@ -284,14 +284,14 @@ class sender_settings():
             'process_ret': None,
             'process_req' : None
         }
-        settings['qixintong2012_106d'] = {
-            'name': 'qixintong_106d',
+        settings['qixintong2012_01'] = {
+            'name': 'qixintong2012_01',
             'host': '202.85.221.191',
             'path': '/mc/httpsendsms.php',
             'port': '80',
             'sub_mode': 'qixintong2012',
-            'ua': 'sdcjc',
-            'pw': '318340',
+            'ua': 'cjcsd',
+            'pw': '1234',
             'mode': 'GET',
             'process_ret': process_ret_qixintong2012,
             'process_req' : process_req_qixintong2012

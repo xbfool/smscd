@@ -14,7 +14,7 @@ import time
 from datetime import datetime
 from traceback import print_exc
 from sqlalchemy.sql import and_, or_, not_
-
+import os
 class msg_send():
     def __init__(self):
         self.addr = []
@@ -30,7 +30,13 @@ class channel_list():
     pass
 class MsgController():
     def __init__(self):
-        self.cfg = loadcfg('config.yaml')
+        if __name__ != '__main__':
+            config_path = os.path.dirname(__file__)
+            print config_path
+            self.cfg = loadcfg(config_path+'/config.yaml')
+            #sys.path.append(config_path)
+        else:
+            self.cfg = loadcfg('config.yaml')
         self.db = create_db(self.cfg)
         self.meta = MetaData()
         self.msg_t = Table('message', self.meta, autoload=True, autoload_with=self.db)
@@ -235,6 +241,7 @@ class MsgController():
         r = res.fetchone()
         if not r:
             print name
+        print r
         r_d = dict(r.items())
         self.channel_item_name_dict[name] = r_d
         r_d['setting'] = self.settings.get(name)
