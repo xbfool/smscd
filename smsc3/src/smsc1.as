@@ -78,7 +78,8 @@ public var channel_select_data:ArrayCollection = new ArrayCollection(
 		{label:"卡发通道a", data:'card_send_a'},
 		{label:"移动106ctyb", data:'honglian_tyb'},
 		{label:"电信0728b", data:'hb_ct_05'},
-		{label:"移动106ctyd", data:'honglian_tyd'}
+		{label:"移动106ctyd", data:'honglian_tyd'},
+		{label:"移动106d", data:'qixintong2012_01'}
 	]);
 [Bindable]
 public var user_percent_list:ArrayCollection = new ArrayCollection([

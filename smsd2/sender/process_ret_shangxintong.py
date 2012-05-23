@@ -33,10 +33,12 @@ def process_ret_qixintong2012(sender, param):
         resultDOM = parseString(param['ret'][2])
         result = resultDOM.firstChild.firstChild.firstChild.data
 
-        
+        print param
         if result[0] == '1':
             sender.msg_controller.send_success(param, result)
             return 1
+        elif result[0] in ('-2', '-3', '-4', '-5','-6','-7','-8','-20','-99'):
+            return -2
         else:
             return -1
             
