@@ -23,6 +23,8 @@ def process_ret_honglian(sender, param):
         return 1
     elif param['ret'][2] == 'error:\xd3\xe0\xb6\xee\xb2\xbb\xd7\xe30': #no money
         return -1
+    elif result in ('001', '010', '100', '101', '110', '011', '111')
+        return -1
     else:
         return 0
         
