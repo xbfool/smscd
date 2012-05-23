@@ -15,6 +15,8 @@ from loadcfg import loadcfg
 from dbsql import dbsql
 from dbobj import dbobj
 
+from common.log import logger
+
 class user(dbobj):
     # dbobj need these
     table_name = 'user'
