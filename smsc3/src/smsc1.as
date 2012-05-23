@@ -624,6 +624,8 @@ private function get_channel_index(channel:String):int{
 			return 20;
 		case "honglian_tyd":
 			return 21;
+		case "qixintong2012_01":
+			return 22;
 		default:
 			return 0;
 	}
