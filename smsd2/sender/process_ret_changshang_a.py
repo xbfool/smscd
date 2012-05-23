@@ -18,8 +18,10 @@ def process_ret_changshang_a(sender, param):
             return -1 #channel error
         elif result == u'102' or result == u'103' or result == 102 or result == 103:
             return -1 #msg_error
+        elif result == u'109' or result == 109:
+            return -1
         else:
-            return 0
+            return -1
     except:
         print_exc()
         sender.msg_controller.send_fail(param, result)
