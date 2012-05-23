@@ -359,6 +359,7 @@ def process_req_scp_0591(http_pool, setting, msg):
                   MsgContent=tmpmsg)
     
 def process_req_qixintong2012(http_pool, setting, msg):
+    tmpmsg = safe_utf8_2_gbk(msg['content'])
     http_pool.req(msg['channel'], 
                   {'user_uid':msg['user_uid'], 
                    'setting':setting, 
@@ -366,7 +367,7 @@ def process_req_qixintong2012(http_pool, setting, msg):
                    'msg_num':msg['msg_num'], 
                    'sub_num':msg['sub_num'],
                    'percent':msg['percent']},
-                  us=setting['us'], 
+                  ua=setting['ua'], 
                   pw=setting['pw'],
                   mobile=','.join(msg['addr']), 
-                  msg=msg)
+                  msg=tmpmsg)
