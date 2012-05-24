@@ -47,11 +47,11 @@
             params.allowscriptaccess = "sameDomain";
             params.allowfullscreen = "true";
             var attributes = {};
-            attributes.id = "smsc1";
-            attributes.name = "smsc1";
+            attributes.id = "smsc";
+            attributes.name = "smsc";
             attributes.align = "middle";
             swfobject.embedSWF(
-                "smsc1.swf", "flashContent", 
+                "smsc.swf", "flashContent", 
                 "100%", "100%", 
                 swfVersionStr, xiSwfUrlStr, 
                 flashvars, params, attributes);
@@ -77,14 +77,14 @@
         </div>
         
         <noscript>
-            <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%" height="100%" id="smsc1">
-                <param name="movie" value="smsc1.swf" />
+            <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%" height="100%" id="smsc">
+                <param name="movie" value="smsc.swf" />
                 <param name="quality" value="high" />
                 <param name="bgcolor" value="#ffffff" />
                 <param name="allowScriptAccess" value="sameDomain" />
                 <param name="allowFullScreen" value="true" />
                 <!--[if !IE]>-->
-                <object type="application/x-shockwave-flash" data="smsc1.swf" width="100%" height="100%">
+                <object type="application/x-shockwave-flash" data="smsc.swf" width="100%" height="100%">
                     <param name="quality" value="high" />
                     <param name="bgcolor" value="#ffffff" />
                     <param name="allowScriptAccess" value="sameDomain" />
