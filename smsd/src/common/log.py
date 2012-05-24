@@ -29,11 +29,17 @@ def initLogger(loggername, dirname=".", level=DEBUG, backcnt=90):
 	@param backcnt 存放备份个数
 	@return 生成的日志对象
 	"""
-	
+	default_dirname = '/var/apache2/smsd/'
 	#目录不存在，创建目录
-	if not os.path.exists(dirname):
-		os.makedirs(dirname)
-		
+    try:
+    	if not os.path.exists(dirname):
+    		os.makedirs(dirname)
+	except:
+        #如果失败说明没有当前目录权限
+        dirname = default_dirname
+    	if not os.path.exists(dirname):
+    		os.makedirs(dirname)
+        	
 	#记录信息按天回滚
 	trfFileName = os.path.join(dirname, loggername + ".log")
 	trfHandler = logging.handlers.TimedRotatingFileHandler(trfFileName, 'midnight', backupCount = backcnt)
@@ -55,6 +61,7 @@ def initLogger(loggername, dirname=".", level=DEBUG, backcnt=90):
 	logger.addHandler(rfHandler)
 	logger.addHandler(trfHandler)
 	
+    #TODO 如果创建logger失败需要如何? 
 	return logger
 
 smsd_log_path = os.path.dirname(__file__) + "/../log/"
