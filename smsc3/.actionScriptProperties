@@ -14,10 +14,7 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
-    <application path="smsc3.mxml"/>
     <application path="smsc.mxml"/>
-    <application path="smsc1.mxml"/>
-    <application path="smsc2.mxml"/>
   </applications>
   <modules/>
   <buildCSSFiles/>
