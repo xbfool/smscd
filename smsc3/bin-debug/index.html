@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>福达短信平台</title>
+		<title>短信平台</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<style type="text/css">
 			body{margin:0px;overflow:hidden};
@@ -21,22 +21,22 @@
 					querystring = document.URL.substring(querystring_start + 1);
 			}
 			*/
-			var querystring = "smsd=http://xbfool.com:8080/";
+			var querystring = "smsd=http://www.fudaduanxin.com:81/smsd/";
 			var params = {};
 			params.flashvars = querystring;
 			params.bgcolor = "#000000";
 			params.quality = "autolow";
 			params.menu = "false";
-			params.allowScriptAccess = "sameDomain";
+			params.allowScriptAccess = "always";
 			params.allowFullScreen = "true";
-			swfobject.embedSWF("sms_client.swf", "stars_loader", "100%", "100%", "10.0.0", null, null, params);
+			swfobject.embedSWF("smsc1.swf", "stars_loader", "100%", "100%", "10.0.0", null, null, params);
 		</script>
 	</head>
 	<body scroll="no">
 		<div id="stars_loader">
 			<a id="no_flashplayer" href="http://www.adobe.com/go/getflashplayer" style="display:none">
 				<img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="安装 Adobe Flash Player"/><br/>
-				福达短信平台需要Adobe Flash Player, 您没有安装或是版本过低, 点击此处安装, 安装之后需要重新启动浏览器
+				福达短信平台需要Adobe Flash Player, 您没有安装或是版本过低，点击此处安装, 安装之后需要重新启动浏览器
 			</a>
 			<a id="no_script">
 				福达短信平台需要浏览器启用Javascript支持
