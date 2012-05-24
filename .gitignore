@@ -5,3 +5,7 @@ smsc/html-template
 smsc2/html-template
 smsd/.*
 .pydevproject
+*/bin-debug/*.swf
+*/bin-debug/history
+*/bin-debug/smsc*
+*/bin-debug/*.js

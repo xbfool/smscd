@@ -6,7 +6,7 @@ print sys.path
 from hashlib import sha1
 from datetime import datetime, timedelta
 import time
-from traceback import print_exc
+from traceback import print_exc,format_exc
 import json
 
 from utils import *
@@ -24,6 +24,9 @@ from special_channel import *
 from random import randint, seed
 import sys
 import os
+
+from common.log import logger
+from common.timer import Timer
 
 
 if __name__ != '__main__':
@@ -96,15 +99,16 @@ class smsd(object):
         print 'smsd init complete'
     
     def __reload_all(self):
+        logger.debug("__reload_all")
         
         user.set_db(self.db, 'user')
         message.set_db(self.db, 'message')
         users = user.load()
         
-                
+         
         if len(users) == 0:
             # add default user
-            print 'no user(s) found, creating default root user'
+            logger.debug('no user(s) found, creating default root user')
             u = user()
             u.new('root', 'root', sha1('debug').hexdigest(), 0, 1000, True,
                   False, True, 'default', 'default', 'default', user.F_CHARGE | user.F_CREATE_USER | user.F_CREATE_CHARGE)
@@ -122,12 +126,10 @@ class smsd(object):
                 
         for u in users:
             self.user_ids[u.uid] = u
-            
+        logger.debug("Load User Cnt : %d " % len(users))    
             
 
     def reload_message(self, where = None):
-        
-        
         
         messages = message.load(where)
                 #compute commit nums
@@ -144,70 +146,91 @@ class smsd(object):
                     m.msg.decode('gbk')
                 except:
                     print m.uid, 'cannot decode as gbk\n'
-        print 'load message count: %d' % len(messages)
+        logger.debug('load message count: %d' % len(messages))
+        
     def __call__(self, env, start_response):
         # request handler hub
+        print id(logger)
         self.num_req += 1
         if env['REQUEST_METHOD'] != 'POST' or 'CONTENT_LENGTH' not in env:
-            print 'invalid query, not POST or invalid POST length'
-            print_exc()
+            logger.error('invalid query, not POST or invalid POST length')
             return self.__not_found(env, start_response)
+        
         length = int(env['CONTENT_LENGTH'])
+        
         if length <= 0:
-            print 'invalid query, empty POST body'
+            logger.error('invalid query, empty POST body')
             return self.__not_found(env, start_response)
+        
         try:
             post_data = env['wsgi.input'].read(length)
         except:
-            print 'error reading POST data'
-            print_exc()
+            logger.error('error reading POST data')
+            logger.error(format_exc())
             return self.__not_found(env, start_response)
+        
         try:
             query = rec_uni2str(json.loads(post_data))
         except:
-            print 'error parsing query: %s' % post_data
+            logger.error('error parsing query: %s' % post_data)
+            logger.error(format_exc())
             return self.__not_found(env, start_response)
+        
         if 'q' not in query:
-            print 'invalid query, no query key: %s' % post_data
+            logger.error('invalid query, no query key: %s' % post_data)
             return self.__not_found(env, start_response)
+        
         q = query['q']
         self.__reload_all()
         if q == 'auth':
             # authenticate
+            timer = Timer()
             session = self.__auth(query)
             if session == False:
                 # auth failed
-                self.__add_op_log(query['user'], query, 1)
+                self.__log_query_stat(query['user'], query, 1, timer.elapse())
                 return self.__ret_json({'rtype':'err', 'errno':'1'}, start_response)
+            
             self.db.raw_sql('INSERT INTO sessions(username,sid,active) VALUES(%s,%s,%s)',
                             (session.username, session.sid, session.active))
-            self.__add_op_log(session.username, query, 0)
+            
+            self.__log_query_stat(session.username, query, 0, timer.elapse())
             return self.__ret_json({'rtype':'auth', 'sid':session.sid, 'username':session.username}, start_response)
+        
         elif 'sid' in query:
             # check session
+            timer = Timer()
             session = self.__chk_session(query['sid'])
+            
             if session == False:
                 # invalid/expired session
-                self.__add_op_log(None, query, 2)
+                self.__log_query_stat("", query, 2, timer.elapse())
                 return self.__ret_json({'rtype':'err', 'errno':'2'}, start_response)
+            
+            
             try:
                 processor = self.__getattribute__('processor_' + q)
             except:
-                print 'invalid query, no suitable processor found for query \'%s\'' % q
+                logger.error('invalid query, no suitable processor found for query \'%s\'' % q)
+                logger.error(format_exc())
                 return self.__not_found(env, start_response)
+            
             try:
                 errno, ret = processor(session.user, query)
-                self.__add_op_log(session.username, query, errno)
+                self.__log_query_stat(session.username, query, errno, timer.elapse())
             except:
-                print 'exception raised while processing query \'%s\'' % q
-                print_exc()
-                self.__add_op_log(session.username, query, 3)
+                logger.error('exception raised while processing query \'%s\'' % q)
+                logger.error(format_exc())
+                self.__log_query_stat(session.username, query, 3, timer.elapse())
                 return self.__ret_json({'rtype':'err', 'errno':'3'}, start_response)
+            
             if errno != 0:
                 # user defined error number, start from 0x0100
                 return self.__ret_json({'rtype':'err', 'errno':errno, 'errmsg':ret}, start_response)
+            
             return self.__ret_json(ret, start_response)
         else:
+            logger.error('invalid query: %s' % post_data)
             return self.__not_found(env, start_response)
     
     def __not_found(self, env, start_response):
@@ -227,8 +250,8 @@ class smsd(object):
             return False
         u = query['user'] # u for username
         p = query['pass'] # p for password
+        logger.debug("__auth: user:%s | pass:%s " % (u,p))
 
-        
         user = self.users.get(u)
 
         if not user:
@@ -241,6 +264,7 @@ class smsd(object):
         return s
 
     def __chk_session(self, session_id):
+        logger.debug("__chk_session: %s" % session_id)
         ret = self.db.raw_sql_query('SELECT sid, username, active FROM sessions WHERE sid = %s AND active > %s',
                                    (session_id, time.time() - self.__session_expire))
         if len(ret) == 0:
@@ -263,10 +287,8 @@ class smsd(object):
         else:
             return s
     
-    def __add_op_log(self, username, query, errno):
-        #listlog and listuser not logged?
-        if(query['q'] != 'listuser' and query['q'] != 'listlog'):
-            self.logs.append(log(username, query, errno, datetime.today()))
+    def __log_query_stat(self, username, query, errno, time):
+        logger.info("Username:%s | Query:%s | Errorno:%d | ElapseTime:%dms" % (username, query, errno, time))
         
     def processor_echo(self, user, query):
         # example processor
@@ -277,9 +299,9 @@ class smsd(object):
         #{'q':'changepwd', 'sid':sid, 'user':username, 'oldp':oldpassword, 'newp':newpassword}
         #TODO
         username = query['user']
-        
         newp = query['newp']
         
+        logger.debug("processor_changepwd | user:%s | newp:%s " % (username, newp))
         if not self.users.get(username):
             return False
         
@@ -310,6 +332,9 @@ class smsd(object):
         cm = query['cm']
         cu = query['cu']
         ct = query['ct']
+        logger.debug("processor_adduser | username:%s | pass:%s | flags:%d | \
+        desc:%s | can_weblogin:%d | can_post:%d | need_check:%d | cm:%s | cu:%s | ct:%s" % \
+        (username, p, flags, desc, can_weblogin, can_post, need_check, cm, cu, ct))
         if not (u.flags & user.F_CREATE_USER):
             return False
         
@@ -1448,4 +1473,3 @@ if __name__ == '__main__':
     wsgiref_daemon()
 else:
     application = smsd(conf=smsd_path + '/smsd.ini')
-
