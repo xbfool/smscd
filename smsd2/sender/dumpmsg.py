@@ -20,10 +20,10 @@ from datetime import datetime
 from traceback import print_exc
 from sqlalchemy.sql import and_, or_, not_
 import msg_util
-from random import seed, shuffle
+from random import seed, shuffle,random
 def dump(path, username):
     ph = phonenumber.phonenumber()
-    t = '%s,%s,%s,%s,%s,%s,%s\r\n' % ('send_time','send_address','ignored_address','channel','msg_num','send_num','message')
+    t = '%s,%s,%s,%s,%s\r\n' % ('send_time','address','channel','status','message')
     ct = open(path+'ct.csv', 'w')
     ct.write(t)
     cu = open(path+'cu.csv', 'w')
@@ -52,6 +52,8 @@ def dump(path, username):
         l = len(addr) * i.sub_num / i.msg_num
 
         my_seed = i.seed
+	if my_seed == None:
+            continue
         ret1 = []
         ret2 = []
         
@@ -61,17 +63,28 @@ def dump(path, username):
             
         ret1 = addr[0:l]
         ret2 = addr[l:]
-
-        t1 = '%s,%s,%s,%s,%d,%d,%s\r\n' % (\
+        for addr_s in ret1:	
+            t1 = '%s,%s,%s,%d,%s\r\n' % (\
                                              i.last_update,\
-                                             ';'.join(ret1),\
-                                             ';'.join(ret2),\
+                                             addr_s,\
                                              i.desc,\
-                                             i.msg_num,\
-                                             i.sub_num,\
-                                             i.msg)
-        print t1
-        f.write(t1)
+                                             0,\
+                                             i.msg.decode('utf8').encode('gbk'))
+            f.write(t1)
+        
+        seed(i.uid + len(i.msg) * my_seed + len(addr))
+        for addr_s in ret2:
+            s = 'null'
+             
+            if random() < 0.25:
+                s = '1'
+            t2 = '%s,%s,%s,%s,%s\r\n' % (\
+                                             i.last_update,\
+                                             addr_s,\
+                                             i.desc,\
+                                             s,\
+                                             i.msg.decode('utf8').encode('gbk'))
+            f.write(t2)            
                                              
 if __name__ == '__main__':
-    dump('/tmp/', '10002007')
+    dump('/tmp/', '10053')
