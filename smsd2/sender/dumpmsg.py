@@ -24,11 +24,11 @@ from random import seed, shuffle,random
 def dump(path, username):
     ph = phonenumber.phonenumber()
     t = '%s,%s,%s,%s,%s\r\n' % ('send_time','address','channel','status','message')
-    ct = open(path+'ct.csv', 'w')
+    ct = open(path+username+'_ct.csv', 'w')
     ct.write(t)
-    cu = open(path+'cu.csv', 'w')
+    cu = open(path+username+'_cu.csv', 'w')
     cu.write(t)
-    cm = open(path+'cm.csv', 'w')
+    cm = open(path+username+'_cm.csv', 'w')
     cm.write(t)
     f = cm
     c = msg_util.MsgController()
@@ -87,4 +87,4 @@ def dump(path, username):
             f.write(t2)            
                                              
 if __name__ == '__main__':
-    dump('/tmp/', '10053')
+    dump('/tmp/', '00001')
