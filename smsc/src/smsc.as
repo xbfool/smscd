@@ -628,7 +628,7 @@ private function get_channel_index(channel:String):int{
 		case "qixintong2012_01":
 			return 22;
 		case "qixintong2012_02":
-			return 22;
+			return 23;
 		default:
 			return 0;
 	}
