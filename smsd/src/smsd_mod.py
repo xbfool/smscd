@@ -1122,43 +1122,39 @@ class smsd(object):
         pbegin = datetime.fromtimestamp(begin)
         pend = datetime.fromtimestamp(end) + timedelta(1)
         where = 'create_time between %s and %s' % (pbegin.strftime('%Y%m%d'), pend.strftime('%Y%m%d'))
-        self.reload_message(where)
- 
+        sql = '''select channel, status, sum(msg_num), sum(sub_num)  from message where %s  group by channel, status;
+        ''' % where
+        q = self.db.raw_sql_query(sql)
         msg_dict = {}
         total = {'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0, 'sub_num':0}
-        for k in self.messages.itervalues():                    
-            if pbegin <= k.create_time and k.create_time <= pend:
-                channel = k.channel
-                if channel == 'default':
-                    channel = 'hb_ct_01'
-                if channel not in msg_dict.keys():
-                    msg_json = {'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0, 'sub_num':0}
-                else:
-                    msg_json = msg_dict[channel]
-                    
-                msg_json['send_num'] = msg_json['send_num'] + k.msg_num;
-                if k.status == k.F_SEND:
-                    msg_json['success_num'] = msg_json['success_num'] + k.msg_num
-                    msg_json['sub_num'] += k.sub_num
-                elif k.status == k.F_FAIL:  
-                    msg_json['fail_num'] = msg_json['fail_num'] + k.msg_num   
-                elif k.status == k.F_ADMIT:
-                    msg_json['append_num'] = msg_json['append_num'] + k.msg_num
+        for channel, status, msg_num, sub_num in q:
+            if channel == 'default':
+                channel = 'hb_ct_01'
+            if channel not in msg_dict.keys():
+                msg_json = {'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0, 'sub_num':0}
+            else:
+                msg_json = msg_dict[channel]
                 
-                msg_dict[channel] = msg_json
+            if status == message.F_SEND:
+                msg_json['success_num'] += int(msg_num)
+                msg_json['sub_num'] += int(sub_num)
+            elif status == message.F_FAIL:  
+                msg_json['fail_num'] += int(msg_num)   
+            elif status == message.F_ADMIT:
+                msg_json['append_num'] +=  int(msg_num)
+            msg_json['send_num'] += int(msg_num)
+            msg_dict[channel] = msg_json
+            print msg_json 
         for v in msg_dict.values():
             for key, value in v.iteritems():
                 total[key] += value
         msg_dict['total'] = total
         result = []
         for channel, msg_json in msg_dict.items():
-            #print "channel:" + channel
-            #print msg_json
             msg_json['channel'] = channel
             result.append(msg_json)
-                                        
-        return 0, {'rtype':'channelqueryreport', 'result':result, 'errno': 0}     
-    
+        return 0, {'rtype':'channelqueryreport', 'result':result, 'errno': 0}
+       
     def processor_addmsglog(self, u, query):
         #{q:'queryreport',sid:this.session, user:username, degin:start.time, end:end.time, type:type}
         #TODO 
