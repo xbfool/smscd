@@ -8,6 +8,7 @@ from xml.dom.minidom import parseString
 
 from traceback import print_exc
 def process_ret_shangxintong(sender, param):
+    success_str = '<Result>1</Result>'
     result = "something is error"
     try:
         resultDOM = parseString(param['ret'][2])
@@ -43,8 +44,14 @@ def process_ret_qixintong2012(sender, param):
             return -1
             
     except:
+        import string
+        success_str = '<Result>1</Result>'
+        if string.find(str, success_str):
+            sender.msg_controller.send_success(param, result)
+            return 1
+            
         print_exc()
         sender.msg_controller.send_fail(param, result)
         return 0
-  
+    
     return 1
