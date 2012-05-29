@@ -409,6 +409,7 @@ class smsd(object):
        
     
     def __split_message(self, uid, addr_list, msg, status, channel, seed):
+        print msg
         if channel in ('changshang_a_01', 'changshang_a_02', 'changshang_a_03',
                        'honglian_01',
                          'honglian_bjyh', 'honglian_jtyh',
@@ -450,6 +451,7 @@ class smsd(object):
         lists = query['list']
         itemindex = 0
         totalnum = 0
+        msg_postfix = u.msg_postfix.decode('utf8')
         for item in lists:
             try:
                 print itemindex
@@ -467,14 +469,16 @@ class smsd(object):
                         msgcontent = msg.decode('utf8')
                     except:
                         return 0, {'rtype':'sendmessagelist', 'errno':-1} #unknow encoding
+                 
+                p = 0
                 if len(msgcontent) == 0:
                     p = 0
-                elif len(msgcontent) <= 70:
+                elif len(msgcontent) + len(msg_postfix) <= 70:
                     p = 1
                 elif len(msgcontent) <= 500:
-                    p = (len(msgcontent) - 1) / 64 + 1
+                    p = (len(msgcontent) - 1) / (64 - len(msg_postfix)) + 1
                 else:
-                    return 0, {'rtype':'sendmessagelist', 'errno':-4} #zero message
+                     return 0, {'rtype':'sendmessagelist', 'errno':-4} #zero message
                  
                 num = p
                 
@@ -503,12 +507,12 @@ class smsd(object):
                                              'qixintong2012_01',
                                              'qixintong2012_02']:
                         if len(split_addr[addr]) > 0:
-                            self.__split_message(u.uid, split_addr[addr], msg, message.F_ADMIT, channel, my_seed)
+                            self.__split_message(u.uid, split_addr[addr], msg + msg_postfix.encode('utf8'), message.F_ADMIT, channel, my_seed)
                     else:
                         for i in range(p):
                             if len(split_addr[addr]) > 0:
                                 self.__split_message(u.uid, split_addr[addr], "(" + str(i + 1) + "/" + str(p) + ")" + 
-                                            msgcontent[i * 64:(i + 1) * 64].encode('utf8'), message.F_ADMIT, channel, my_seed)
+                                            msgcontent[i * (64 - len(msg_postfix)):(i + 1) * (64 - len(msg_postfix))].encode('utf8') + msg_postfix.encode('utf8'), message.F_ADMIT, channel, my_seed)
                 totalnum += num
             except:
                 pass
@@ -565,14 +569,16 @@ class smsd(object):
             l.pop()
         if len(l) > 1000:
             return 0, {'rtype':'sendmessage', 'errno':-5} #zero message
-        
+
+        msg_postfix = u.msg_postfix.decode('utf8')
+        print len(msgcontent)
         p = 0
         if len(msgcontent) == 0:
             p = 0
-        elif len(msgcontent) <= 70:
+        elif len(msgcontent) + len(msg_postfix) <= 70:
             p = 1
         elif len(msgcontent) <= 500:
-            p = (len(msgcontent) - 1) / 64 + 1
+            p = (len(msgcontent) - 1) / (64 - len(msg_postfix)) + 1
         else:
             return 0, {'rtype':'sendmessage', 'errno':-4} #zero message
          
@@ -603,12 +609,12 @@ class smsd(object):
                                      'qixintong2012_01',
                                      'qixintong2012_02']:
                 if len(split_addr[addr]) > 0:
-                    self.__split_message(u.uid, split_addr[addr], msg, message.F_ADMIT, channel, my_seed)
+                    self.__split_message(u.uid, split_addr[addr], msg + msg_postfix.encode('utf8'), message.F_ADMIT, channel, my_seed)
             else:
                 for i in range(p):
                     if len(split_addr[addr]) > 0:
                         self.__split_message(u.uid, split_addr[addr], "(" + str(i + 1) + "/" + str(p) + ")" + 
-                                    msgcontent[i * 64:(i + 1) * 64].encode('utf8'), message.F_ADMIT, channel, my_seed)
+                                    msgcontent[i * (64 - len(msg_postfix)):(i + 1) * (64 - len(msg_postfix))].encode('utf8') + msg_postfix.encode('utf8'), message.F_ADMIT, channel, my_seed)
                         
         return 0, {'rtype':'sendmessage', 'num':num, 'errno': 0}
     
@@ -1462,6 +1468,22 @@ class smsd(object):
             new_phone.new(phonebook_uid, name, companyname, title, mobile)
         return 0, {'rtype':'addphonelist', 'errno':0} #成功 
     
+    def processor_change_user_msg_postfix(self, u, query):
+        if ('msg_postfix' not in query):
+            return False
+             
+        pu = self.users[query['user']]
+        if(not u.is_admin() and not (u.is_agent()
+          and pu.parent_id == u.uid)):
+            return 0, {'rtype':'change_user_msg_postfix', 'errno': 1}
+        
+        msg_postfix = query['msg_postfix']
+        if ('all_children' in query) and query['all_children'] == True:
+            ret = pu.set_all_child_msg_postfix(msg_postfix)
+        else:
+            ret = pu.set_msg_postfix(msg_postfix)
+    
+        return 0, {'rtype':'change_user_msg_postfix', 'errno':ret}
 def wsgiref_daemon():
     port = 8082
     from wsgiref.simple_server import make_server

@@ -1048,6 +1048,8 @@
 																   headerText="允许web登录"/>
 										<mx:AdvancedDataGridColumn dataField="is_can_post"
 																   headerText="允许接口发送"/>
+										<mx:AdvancedDataGridColumn dataField="msg_postfix"
+																   headerText="短信尾部扩展"/>
 									</mx:columns>
 								</mx:AdvancedDataGrid>   
 								
@@ -1173,17 +1175,17 @@
 								<mx:TextInput id="manage_user_ext" enabled="{channel_enabled}"
 											  text="{select_ext}"/>
 							</mx:FormItem>
-							<mx:FormItem label="移动通道" enabled="{role_enabled}">
+							<mx:FormItem label="移动通道" enabled="{channel_enabled}">
 								<mx:ComboBox id="manage_user_cm" dataProvider="{channel_select_data}"
 											 enabled="{channel_enabled}"
 											 selectedIndex="{select_user_cm}"/>
 							</mx:FormItem>
-							<mx:FormItem label="联通通道" enabled="{role_enabled}">
+							<mx:FormItem label="联通通道" enabled="{channel_enabled}">
 								<mx:ComboBox id="manage_user_cu" dataProvider="{channel_select_data}"
 											 enabled="{channel_enabled}"
 											 selectedIndex="{select_user_cu}"/>
 							</mx:FormItem>
-							<mx:FormItem label="电信通道" enabled="{role_enabled}">
+							<mx:FormItem label="电信通道" enabled="{channel_enabled}">
 								<mx:ComboBox id="manage_user_ct" dataProvider="{channel_select_data}"
 											 enabled="{channel_enabled}"
 											 selectedIndex="{select_user_ct}"/>
@@ -1195,6 +1197,18 @@
 								<mx:Button label="取消"
 										   click="ViewStack_main.selectedChild=viewpage_user_manage"/>	
 							</mx:FormItem>
+							<mx:FormItem label="修改短信后缀" enabled="{channel_enabled}">
+								<mx:TextInput id="manage_user_msg_postfix" enabled="{channel_enabled}"
+											  text="{select_user_msg_postfix}"/>
+								<mx:HBox>
+									<mx:Label text="修改自己及下属所有用户"/>
+									<mx:CheckBox id="manage_user_msg_postfix_all_child"/>
+								</mx:HBox>
+								
+								<mx:Button label="确定修改后缀"
+										   click="{request_change_user_msg_postfix(manage_user_id.text, manage_user_msg_postfix.text, manage_user_msg_postfix_all_child.selected)}"/>
+							</mx:FormItem>
+							
 						</mx:Form>
 						
 						<mx:VBox id="viewpage_msg_manage" width="100%" height="100%">

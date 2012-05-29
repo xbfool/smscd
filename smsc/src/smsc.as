@@ -183,6 +183,8 @@ private var select_user_cu:int;
 [Bindable]
 private var select_user_ct:int;
 [Bindable]
+private var select_user_msg_postfix:String;
+[Bindable]
 private var select_user_percent:int;
 [Bindable]
 private var self_user_cm:int;
@@ -753,6 +755,7 @@ private function open_managerview():void{
 		select_user_cm = get_channel_index(user.cm);
 		select_user_cu = get_channel_index(user.cu);
 		select_user_ct = get_channel_index(user.ct);
+		select_user_msg_postfix = user.msg_postfix;
 		select_user_percent = get_user_percent_index(user.percent);
 		select_ext = user.ext;
 		select_userpasswd = "";
@@ -2453,4 +2456,23 @@ private function import_phonebook_info_from_csv():void{
 	if ( import_phonebook_name != null ) {
 		import_phonebook_name.text = "";
 	}
+}
+
+private function request_change_user_msg_postfix(user:String, msg_postfix:String, all_children:Boolean):void{
+	if(this.select_username != null || this.select_username.length > 0 || this.select_user_msg_postfix.length <= 8){
+		this.request({q:'change_user_msg_postfix',sid:this.session, user:user, msg_postfix:msg_postfix, all_children:all_children});
+	}
+	else if(this.select_user_msg_postfix.length > 8){
+		Alert.show("您输入的字符超过8个字符");
+	}
+}
+
+private function processor_change_user_msg_postfix(param:Object):void{
+	if(param.errno == 0){
+		Alert.show("修改成功");
+		request_listchildren();
+	}else if(param.errno == 1){
+		Alert.show("修改失败");
+	}
+	manage_user_msg_postfix_all_child.selected = false;
 }

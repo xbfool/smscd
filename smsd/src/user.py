@@ -22,7 +22,7 @@ class user(dbobj):
     table_name = 'user'
     fields = 'uid,description,username,password,parent_id,msg_num,flags,is_active,'\
     'create_time,last_login,can_weblogin,can_post,need_check,channel_cm,channel_cu,channel_ct,ext,'\
-    'percent'
+    'percent,msg_postfix'
     
     key = 'uid'
     # user right flags
@@ -51,6 +51,7 @@ class user(dbobj):
         self.children = {}
         self.ext = '' 
         self.percent = 100#sub numbers
+        self.msg_postfix = ''
     #   self.logs = []
     #   self.commits = []
         
@@ -58,7 +59,7 @@ class user(dbobj):
             can_post, need_check, 
             channel_cm,
             channel_cu,
-            channel_ct,flags = 0, percent = 100):
+            channel_ct,flags = 0, percent = 100, msg_postfix = ''):
         """ new user """
         self.username = username
         self.description = description
@@ -76,11 +77,12 @@ class user(dbobj):
         self.channel_cu = channel_cu
         self.channel_ct = channel_ct
         self.percent = percent
+        self.msg_postfix = msg_postfix
         self.create()
     
     def from_row(self, uid, description, username, password, parent_id, msg_num,
            flags, is_active, create_time, last_login, can_weblogin, can_post, need_check,
-           channel_cm, channel_cu, channel_ct, ext, percent):
+           channel_cm, channel_cu, channel_ct, ext, percent, msg_postfix):
         """ load from database """
         self.uid = uid
         self.username = username
@@ -100,6 +102,7 @@ class user(dbobj):
         self.channel_ct = channel_ct
         self.ext = ext
         self.percent = percent
+        self.msg_postfix = msg_postfix
         
     def __auth(self, password):
         return self.password == password and self.is_active == 1
@@ -169,7 +172,7 @@ class user(dbobj):
         if self.channel_ct != ct:
             self.channel_ct = ct
             self.save('channel_ct')
-        
+    
     def change_cm_r(self, cm):
         self.change_cm(cm)
         for u in self.children.itervalues():
@@ -188,7 +191,29 @@ class user(dbobj):
     def set_ext(self,ext):
         self.ext = ext
         self.save('ext')
-        
+    
+    def set_msg_postfix(self, msg_postfix):
+        try:
+            sql = '''
+            update user set msg_postfix = '%s' where uid = '%d'
+            ''' % (msg_postfix, self.uid)
+            self.db.raw_sql_query(sql)
+        except:
+            print_exc()
+            return 1
+        return 0
+    
+    def set_all_child_msg_postfix(self, msg_postfix):
+        try:
+            self.set_msg_postfix(msg_postfix)
+            for key, u in self.children.iteritems():
+                ret = u.set_all_child_msg_postfix(msg_postfix)
+                if ret == 1:
+                    return ret
+        except:
+            print_exc()
+            return 1
+        return 0
     def is_admin(self):
         return self.flags == user.F_CHARGE | user.F_CREATE_CHARGE | user.F_CREATE_USER
     
@@ -234,6 +259,7 @@ class user(dbobj):
         d['commit_num'] = self.commit_num
         d['ext'] = self.ext
         d['percent'] = self.percent
+        d['msg_postfix'] = self.msg_postfix
         if self.last_login == None:
             d['last_login'] = None
         else:
