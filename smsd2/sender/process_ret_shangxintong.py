@@ -46,7 +46,7 @@ def process_ret_qixintong2012(sender, param):
     except:
         import string
         success_str = '<Result>1</Result>'
-        if string.find(str, success_str):
+        if string.find(param['ret'][2], success_str):
             sender.msg_controller.send_success(param, result)
             return 1
             
