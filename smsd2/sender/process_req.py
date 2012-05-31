@@ -125,13 +125,22 @@ def process_req_sd_ct(http_pool, setting, msg):
                       content=msg['content'], 
                       uid=setting['uid'],
                       pwd=setting['pwd'])
-
+import phonenumber
+import string
 def process_req_honglian(http_pool, setting, msg):
     msg_num = ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['total_addr'])
     sub_num =  ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['addr'])
     msg['sub_num'] = sub_num
     print 'msg_num ', msg_num
-    send_msg = safe_utf8_2_gbk(msg['content'])
+    pm = phonenumber()
+
+    
+    if pm.check_addr(msg['addr'][0]) == phonenumber.S_CM:
+        new_msg = string.replace(msg['content'], '%', '%25') 
+    else:
+        new_msg = msg['content']
+    
+    send_msg = safe_utf8_2_gbk(new_msg)
 
     if not msg.get('ext') or msg.get('ext') == None  or msg.get('ext') == "":
         http_pool.req(msg['channel'],
