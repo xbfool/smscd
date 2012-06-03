@@ -105,7 +105,7 @@ class sendsms(object):
             passtype = 'sha1'
         else:
             passtype = 'normal'
-        user_uid, remain = self.__check_user(username, password, passtype)
+        user_uid, remain, postfix = self.__check_user(username, password, passtype)
         if user_uid == None:
             return self.__ret(env, start_response, -1, 'user not exist or wrong pass; your input user id:\'%s\', pass :\'%s\'' % (username, password))
         elif remain < 1:
@@ -120,7 +120,8 @@ class sendsms(object):
             for addr in recv.split(';'):
                 if len(addr) != 11:
                     return self.__ret(env, start_response, -4, 'some address error, use \';\' to split address number');
-            ret = self.__send(user_uid, recv, msg)
+            new_msg = msg + postfix
+            ret = self.__send(user_uid, recv, new_msg)
             return self.__ret(env, start_response, ret)
 
         
@@ -152,14 +153,14 @@ class sendsms(object):
         if type == 'normal':
             password = sha1(p).hexdigest()
             
-        ret = self.db.raw_sql_query('SELECT uid,msg_num FROM user WHERE username = %s AND password = %s AND can_post = TRUE AND need_check = FALSE',
+        ret = self.db.raw_sql_query('SELECT uid,msg_num,msg_postfix FROM user WHERE username = %s AND password = %s AND can_post = TRUE AND need_check = FALSE',
                                     (u, password))
         if len(ret) == 0:
             return None, None
-        user_uid, msg_num = ret[0]
+        user_uid, msg_num, msg_postfix = ret[0]
         pending = self.db.raw_sql_query('SELECT SUM(msg_num) FROM message WHERE user_uid = %s AND status = %s',
                                         (user_uid, message.F_ADMIT))[0][0]
-        return user_uid, msg_num - (pending or 0)
+        return user_uid, msg_num - (pending or 0), msg_postfix
     
     def common_message_num(self, msg):
         l = len(msg.decode('utf8'))
