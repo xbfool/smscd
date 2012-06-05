@@ -25,9 +25,12 @@ from random import randint, seed
 import sys
 import os
 
-from common.log import logger
+from common.log import initLogger
 from common.timer import Timer
 
+#init logger
+smsd_log_path = os.path.dirname(__file__) + "/log/"
+logger = initLogger("smsd", smsd_log_path)
 
 if __name__ != '__main__':
     smsd_path = os.path.dirname(__file__)
@@ -150,7 +153,6 @@ class smsd(object):
         
     def __call__(self, env, start_response):
         # request handler hub
-        print id(logger)
         self.num_req += 1
         if env['REQUEST_METHOD'] != 'POST' or 'CONTENT_LENGTH' not in env:
             logger.error('invalid query, not POST or invalid POST length')
@@ -372,6 +374,8 @@ class smsd(object):
                 try:
                     self.db.raw_sql('INSERT INTO addmsglog(username,before_msg_num,add_msg_num,after_msg_num,type,create_time) VALUES(%s,%s,%s,%s,%s,%s)',
                         (u.username, before_num, num, u.msg_num, 0, datetime.now()))
+                    logger.debug("processor_addmessage | username:%s | before_msg_num:%d | add_msg_num:%d | after_msg_num:%d | type:0"  
+                                 % (u.username, before_num, num, u.msg_num))
                 except:
                     pass
                 return 0, {'rtype':'addmessage', 'num':num, 'errno': 0}
@@ -400,6 +404,8 @@ class smsd(object):
             try:
                 self.db.raw_sql('INSERT INTO addmsglog(username,before_msg_num,add_msg_num,after_msg_num,type,create_time) VALUES(%s,%s,%s,%s,%s,%s)',
                                 (pu.username, before_num, num, pu.msg_num, 0, datetime.now()))
+                logger.debug("processor_addmessage | username:%s | before_msg_num:%d | add_msg_num:%d | after_msg_num:%d | type:0"  
+                                 % (pu.username, before_num, num, pu.msg_num))
             except:
                 pass
             u.add_message(-num)
@@ -409,7 +415,6 @@ class smsd(object):
        
     
     def __split_message(self, uid, addr_list, msg, status, channel, seed):
-        print msg
         if channel in ('changshang_a_01', 'changshang_a_02', 'changshang_a_03',
                        'honglian_01',
                          'honglian_bjyh', 'honglian_jtyh',
@@ -449,15 +454,18 @@ class smsd(object):
     def processor_sendmessagelist(self, u, query): 
         #TODO
         lists = query['list']
+        
+        msg_postfix = u.msg_postfix.decode('utf8')
         itemindex = 0
         totalnum = 0
-        msg_postfix = u.msg_postfix.decode('utf8')
         for item in lists:
             try:
                 print itemindex
                 itemindex = itemindex + 1
                 address = item[0]
                 msg = item[1]
+                
+                logger.debug("processor_sendmessagelist | msg:%s | address_len:%d" % (msg, len(address)))
                 
                 p = 0
                 msgcontent = ""
@@ -469,16 +477,16 @@ class smsd(object):
                         msgcontent = msg.decode('utf8')
                     except:
                         return 0, {'rtype':'sendmessagelist', 'errno':-1} #unknow encoding
-                 
+                
                 p = 0
                 if len(msgcontent) == 0:
                     p = 0
                 elif len(msgcontent) + len(msg_postfix) <= 70:
                     p = 1
                 elif len(msgcontent) <= 500:
-                    p = (len(msgcontent) - 1) / (64 - len(msg_postfix)) + 1
+                     p = (len(msgcontent) - 1) / (64 - len(msg_postfix)) + 1
                 else:
-                     return 0, {'rtype':'sendmessagelist', 'errno':-4} #zero message
+                    return 0, {'rtype':'sendmessagelist', 'errno':-4} #zero message
                  
                 num = p
                 
@@ -530,11 +538,9 @@ class smsd(object):
         address_list = query['address_list']
         msg = query['msg']
         
-
         phone_type = query.get('type' , self.PHONE_NUMBER)
-
-      
-           
+        logger.debug("processor_sendmessage | userid:%d | address_len:%d | type:%d" % (uid, len(address), phone_type))
+        
         try:
             msgcontent = msg.decode('utf8')
         except:
@@ -550,6 +556,7 @@ class smsd(object):
             return 0, {'rtype':'sendmessage', 'errno':-3} #zero message
         
         
+        #phone_name: load from addresslist table or load from address fields
         if phone_type == self.PHONE_NAME :
             numbers = []
             names = address.split(";")
@@ -565,13 +572,15 @@ class smsd(object):
         else:
             return 0, {'rtype':'sendmessage', 'errno':-6} #error type
         
+        
         if l[len(l) - 1] == '':
             l.pop()
-        if len(l) > 1000:
+        if len(l) > 1000: #phone number less than 1000
             return 0, {'rtype':'sendmessage', 'errno':-5} #zero message
-
+        
         msg_postfix = u.msg_postfix.decode('utf8')
         print len(msgcontent)
+
         p = 0
         if len(msgcontent) == 0:
             p = 0
@@ -621,6 +630,7 @@ class smsd(object):
     def processor_userinfo(self, user, query):
         #{'q':'userinfo', 'sid': sid}
         #TODO
+        logger.debug("processor_userinfo | userinfo:%s" % user.to_json())
         return 0, {'rtype':'userinfo', 'user':user.to_json(), 'errno': 0}
     
     def processor_listchildren(self, u, query):
@@ -635,7 +645,7 @@ class smsd(object):
                     l.append(value.to_json_all())
         else:
             l.append( u.to_json_all())
-        
+        logger.debug("processor_listchildren | children:%s" % l)
         return 0, {'rtype':'listchildren', 'children': l, 'errno': 0}
 
     def is_parent(self, id1, id2):
@@ -661,11 +671,11 @@ class smsd(object):
     def processor_listmsg(self, u, query):
         #{'q':'listmsg', 'sid':sid, 'status':status}
         #TODO
-
         
         status = query['status']
         begin = query['begin'] / 1000.0
         end = query['end'] / 1000.0
+        
         pbegin = datetime.fromtimestamp(begin)
         pend = datetime.fromtimestamp(end) + timedelta(1)
         where = 'create_time between %s and %s' % (pbegin.strftime('%Y%m%d'), pend.strftime('%Y%m%d'))
@@ -685,6 +695,8 @@ class smsd(object):
                             except:
                                 pass
         
+        logger.debug("processor_listmsg | status:%d | begin:%d | end:%d | msg_cnt:%d" % (status, begin, end, len(l)))
+        
         return 0, {'rtype':'listmsg', 'msg':l, 'errno': 0}
     
     def processor_listcheckmsg(self, u, query):
@@ -702,11 +714,14 @@ class smsd(object):
                     msg_json['username'] = self.user_ids[k.user_uid].username
                 l.append(msg_json)
         
+        logger.debug("processor_listcheckmsg | list_checkmsg_cnt:%d" % len(l))
         return 0, {'rtype':'listcheckmsg', 'msg':l, 'errno': 0}
     
     def processor_msginfo(self, user, query):
         #{'q':'msginfo', 'sid':sid, 'id':msg_id}
         #TODO
+        
+        #cost too much
         self.reload_message()
         if 'id' not in query:
             return False
@@ -720,6 +735,7 @@ class smsd(object):
         if m.uid != user.id:
             return False
         
+        logger.debug("processor_msginfo | msg:%s" % m)
         return 0, {'rtype':'msginfo', 'msg':m, 'errno': 0} 
     
     def processor_setuserstatus(self, u, query):
@@ -769,9 +785,11 @@ class smsd(object):
         
         d = None
         if (ext != None and ext != ''):
+            logger.debug("processor_manageuser | username:%s | ext:%s" % (query['user'],ext))
             d = self.db.raw_sql_query('SELECT uid FROM user WHERE ext = %s' % (ext))
 
         if u.is_admin():
+            logger.debug("processor_manageuser | username:%s | percent:%d" % (query['user'],percent))
             pu.percent = percent
             try:
                 if d != None and len(d) >= 1:
@@ -790,8 +808,11 @@ class smsd(object):
                 else:
                     return 0, {'rtype':'manageuser', 'errno':-2} #ext is not number
         if query.get('pass'):
+            logger.debug("processor_manageuser | username:%s | change password:%s" % (query['user'],query['pass']))
             pu.change_password(query['pass'])
             
+        logger.debug("processor_manageuser | username:%s | desc:%s | flags:%d | can_weblogin:%d | can_post:%d | need_check:%d" 
+                     % (query['user'],desc, flags, can_weblogin, can_post, need_check))
         pu.change_info(desc, flags, can_weblogin, can_post, need_check)
 
         if not pu.is_admin():
@@ -809,6 +830,7 @@ class smsd(object):
     def processor_deleteuserlist(self, u, query):
         #TODO
         userlist = query['userlist']
+        logger.debug("processor_deleteuserlist | userlist_tobedel:%s" % str(userlist))
         for ui in userlist:
             pu = self.users[ui]
             
@@ -827,6 +849,7 @@ class smsd(object):
     def processor_deleteuser(self, u, query):
         #TODO
         username = query['user']
+        logger.debug("processor_deleteuser | user_tobedel:%s" % username)
         pu = self.users[username]
         
         if(not u.is_admin()) and (not u.uid == pu.parent_id):
@@ -852,6 +875,7 @@ class smsd(object):
         self.reload_message()
         mlist = query['mlist']
         status = query['status']
+        logger.debug("processor_managemsg | username:%s | msg_list:%s | change_status:%d" % (u.username, str(mlist), status))
         
         for mid in mlist:
             m = self.messages[mid]
@@ -923,7 +947,8 @@ class smsd(object):
         where = 'create_time between %s and %s' % (pbegin.strftime('%Y%m%d'), pend.strftime('%Y%m%d'))
         self.reload_message(where)
         pm = phonenumber.phonenumber()
-        
+        logger.debug("processor_queryreport | begin:%s | end:%s | query_msg_cnt:%d " 
+                     % (pbegin.strftime('%Y%m%d'), pend.strftime('%Y%m%d'), len(self.messages)))
         #send_user:send_num:success_num:fail_num:append_num
         l = []
         if username != None and username != "" and self.users.has_key(username):
@@ -1135,6 +1160,7 @@ class smsd(object):
         sql = '''select channel, status, sum(msg_num), sum(sub_num)  from message where %s  group by channel, status;
         ''' % where
         q = self.db.raw_sql_query(sql)
+ 
         msg_dict = {}
         total = {'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0, 'sub_num':0}
         for channel, status, msg_num, sub_num in q:
@@ -1144,27 +1170,31 @@ class smsd(object):
                 msg_json = {'send_num':0, 'success_num':0, 'fail_num':0, 'append_num':0, 'sub_num':0}
             else:
                 msg_json = msg_dict[channel]
-                
+            
             if status == message.F_SEND:
                 msg_json['success_num'] += int(msg_num)
                 msg_json['sub_num'] += int(sub_num)
-            elif status == message.F_FAIL:  
-                msg_json['fail_num'] += int(msg_num)   
+            elif status == message.F_FAIL:
+                msg_json['fail_num'] += int(msg_num)
             elif status == message.F_ADMIT:
                 msg_json['append_num'] +=  int(msg_num)
             msg_json['send_num'] += int(msg_num)
             msg_dict[channel] = msg_json
-            print msg_json 
+            print msg_json
+            
         for v in msg_dict.values():
             for key, value in v.iteritems():
                 total[key] += value
         msg_dict['total'] = total
         result = []
         for channel, msg_json in msg_dict.items():
+            print "channel:" + channel
+            print msg_json
             msg_json['channel'] = channel
             result.append(msg_json)
-        return 0, {'rtype':'channelqueryreport', 'result':result, 'errno': 0}
-       
+                                        
+        return 0, {'rtype':'channelqueryreport', 'result':result, 'errno': 0}     
+    
     def processor_addmsglog(self, u, query):
         #{q:'queryreport',sid:this.session, user:username, degin:start.time, end:end.time, type:type}
         #TODO 
@@ -1271,7 +1301,7 @@ class smsd(object):
         new_phonebook = phonebook()
         new_phonebook.new(uid, name, remark)        
         return 0, {'rtype':'addphonebook', 'errno' : 0} #成功
-
+    
     def processor_managephonebook(self, user, query):
         #{'q':'managephonebook', 'sid': sid, 'id':uid, 'name':name, 'remark':remark}  
         #TODO
@@ -1471,10 +1501,9 @@ class smsd(object):
     def processor_change_user_msg_postfix(self, u, query):
         if ('msg_postfix' not in query):
             return False
-             
         pu = self.users[query['user']]
         if(not u.is_admin() and not (u.is_agent()
-          and pu.parent_id == u.uid)):
+            and pu.parent_id == u.uid)):
             return 0, {'rtype':'change_user_msg_postfix', 'errno': 1}
         
         msg_postfix = query['msg_postfix']
@@ -1482,8 +1511,9 @@ class smsd(object):
             ret = pu.set_all_child_msg_postfix(msg_postfix)
         else:
             ret = pu.set_msg_postfix(msg_postfix)
-    
+            
         return 0, {'rtype':'change_user_msg_postfix', 'errno':ret}
+    
 def wsgiref_daemon():
     port = 8082
     from wsgiref.simple_server import make_server
