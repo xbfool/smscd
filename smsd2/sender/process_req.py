@@ -132,13 +132,8 @@ def process_req_honglian(http_pool, setting, msg):
     sub_num =  ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['addr'])
     msg['sub_num'] = sub_num
     print 'msg_num ', msg_num
-    pm = phonenumber()
 
-    
-    if pm.check_addr(msg['addr'][0]) == phonenumber.S_CM:
-        new_msg = string.replace(msg['content'], '%', '%25') 
-    else:
-        new_msg = msg['content']
+    new_msg = msg['content']
     
     send_msg = safe_utf8_2_gbk(new_msg)
 
