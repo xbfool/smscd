@@ -58,14 +58,15 @@ class zhttp(object):
         res = self.conn.getresponse()
         return res.status, res.reason, res.read()
     
-    def send_HONGLIAN(self, path=None, message=None, **args):
+    def send_HONGLIAN(self, path=None, **kargs):
         path = path or self.path
-        path = path + '?' + self.params + '&' + urlencode(kargs) + '&message=' + message
-        self.conn.request('GET', path)
+        data = urlencode(kargs) 
+        headers = {"Content-type": "application/x-www-form-urlencoded"}
+        self.conn.request('POST', path, data, headers)
         res = self.conn.getresponse()
-        print 'honglian resp:%s' % res
-        return res.status, res.reason, res.read()
-        
+        return res.status, res.reason, res.read(), res.getheaders()
+
+       
 class zhttp_wlock(zhttp):
     # use Lock as a member since Lock is a metaclass thus inherit from it is ugly
     def __init__(self, **kargs):
