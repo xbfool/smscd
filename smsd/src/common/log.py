@@ -51,7 +51,7 @@ def initLogger(loggername, dirname=".", level=DEBUG, backcnt=90):
     rfHandler.setLevel(logging.ERROR)
     
     #日志格式
-    formatter = logging.Formatter('%(asctime)s - %(name)s:%(lineno)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('%(asctime)s - %(filename)s:%(funcName)s:%(lineno)s - %(levelname)s - %(message)s')
     trfHandler.setFormatter(formatter)
     rfHandler.setFormatter(formatter)
     
@@ -63,9 +63,6 @@ def initLogger(loggername, dirname=".", level=DEBUG, backcnt=90):
     
     #TODO 如果创建logger失败需要如何?
     return logger
-
-smsd_log_path = os.path.dirname(__file__) + "/../log/"
-logger = initLogger("smsd", smsd_log_path)
 
 if __name__ == "__main__":
     logger = initLogger("test")
