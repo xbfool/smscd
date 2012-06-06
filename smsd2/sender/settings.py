@@ -296,6 +296,19 @@ class sender_settings():
             'process_ret': process_ret_qixintong2012,
             'process_req' : process_req_qixintong2012
         }
+        settings['qixintong2012_106da'] = {
+            'name': 'qixintong_106da',
+            'host': '202.85.221.191',
+            'path': '/mc/httpsendsms.php',
+            'port': '80',
+            'sub_mode': 'qixintong2012',
+            'ua': 'sdcjc',
+            'pw': '318340',
+            'mode': 'GET',
+            'process_ret': process_ret_qixintong2012,
+            'process_req' : process_req_qixintong2012
+        }
+        
         settings['default'] = settings['hb_ct_01']
         
         self.settings = settings
