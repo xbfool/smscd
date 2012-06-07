@@ -1188,8 +1188,6 @@ class smsd(object):
         msg_dict['total'] = total
         result = []
         for channel, msg_json in msg_dict.items():
-            print "channel:" + channel
-            print msg_json
             msg_json['channel'] = channel
             result.append(msg_json)
                                         
