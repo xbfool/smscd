@@ -21,5 +21,9 @@ def user_update_channel_list(context, **args):
     c = context.get_controller('user')
     user_id = args['user_id']
     channel_list_id = args['channel_list_id']
-    ret = c.update_channel_list(user_id, channel_list_id)
+    channel_cm = args['channel_cm']
+    channel_cu = args['channel_cu']
+    channel_ct = args['channel_ct']
+    ret = c.update_channel_list(user_id, channel_list_id, 
+    cm=channel_cm, cu=channel_cu, ct=channel_ct)
     return ret_util(ret)

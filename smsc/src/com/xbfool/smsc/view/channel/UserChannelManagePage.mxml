@@ -11,6 +11,8 @@
 			import mx.collections.ArrayCollection;
 			[Bindable]
 			public var myDP:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public var channelItemDP:ArrayCollection = new ArrayCollection();
 			
 			public function display_name(index:int):String{
 				for(var i:int = 0; i < myDP.source.length; i++){
@@ -28,6 +30,23 @@
 						return j;
 				}
 				return -1;
+			}
+			
+			private function get_channel_item_index(i:String):int{
+				for(var j:int; j < channelItemDP.length;j++){
+					if(channelItemDP[j].name == i)
+						return j;
+				}
+				return -1;
+			}
+			public function display_channel_name(index:String):String{
+				for(var i:int = 0; i < channelItemDP.source.length; i++){
+					if(channelItemDP.source[i].name == index){
+						return channelItemDP.source[i].desc;
+					}
+				}
+				
+				return "未指定";
 			}
 			
 			public function display_desc(index:int):String{
@@ -63,6 +82,27 @@
 						</fx:Component>
 					</mx:itemRenderer>
 				</mx:DataGridColumn>
+				<mx:DataGridColumn headerText="移动">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_channel_name(data.channel_cm)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>					
+				</mx:DataGridColumn>
+				<mx:DataGridColumn headerText="联通">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_channel_name(data.channel_cu)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>					
+				</mx:DataGridColumn>
+				<mx:DataGridColumn headerText="电信">
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{parentDocument.display_channel_name(data.channel_ct)}"/>	
+						</fx:Component>
+					</mx:itemRenderer>					
+				</mx:DataGridColumn>
 			</mx:columns>
 		</mx:DataGrid>
 		
@@ -93,6 +133,48 @@
 						</fx:Component>
 					</s:itemRenderer>
 					</s:DropDownList>
+			</mx:FormItem>
+			<mx:FormItem label="默认移动通道">
+				<s:DropDownList id="channel_list_cm" prompt="请选择通道"
+								dataProvider="{channelItemDP}"
+								labelField="desc"
+								selectedIndex="{get_channel_item_index(user_grid.selectedItem.channel_cm)}"
+								
+								>
+					<s:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{data.desc}"/>	
+						</fx:Component>
+					</s:itemRenderer>
+				</s:DropDownList>
+			</mx:FormItem>
+			<mx:FormItem label="默认联通通道">
+				<s:DropDownList id="channel_list_cu" prompt="请选择通道"
+								dataProvider="{channelItemDP}"
+								labelField="desc"
+								selectedIndex="{get_channel_item_index(user_grid.selectedItem.channel_cu)}"
+								
+								>
+					<s:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{data.desc}"/>	
+						</fx:Component>
+					</s:itemRenderer>
+				</s:DropDownList>
+			</mx:FormItem>
+			<mx:FormItem label="默认电信通道">
+				<s:DropDownList id="channel_list_ct" prompt="请选择通道"
+								dataProvider="{channelItemDP}"
+								labelField="desc"
+								selectedIndex="{get_channel_item_index(user_grid.selectedItem.channel_ct)}"
+								
+								>
+					<s:itemRenderer>
+						<fx:Component>
+							<mx:Label text="{data.desc}"/>	
+						</fx:Component>
+					</s:itemRenderer>
+				</s:DropDownList>
 			</mx:FormItem>
 			<mx:FormItem width="100%">
 				<mx:HBox width="100%">

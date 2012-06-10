@@ -33,6 +33,7 @@ package com.xbfool.smsc.view.channel
 			eventMap.mapListener(userChannelManagePage, ChannelPageEvent.USER_CHANNEL_LIST_USE_NONE, onUseNone);
 			eventMap.mapListener(eventDispatcher, CompRetEvent.COMP_RET, onQueryBack);
 			this.userChannelManagePage.myDP.source = user.channel_list_list;
+			this.userChannelManagePage.channelItemDP.source = user.channel_item_list;
 			this.user_list.source = user.user_channel_list;
 
 		}
@@ -44,11 +45,20 @@ package com.xbfool.smsc.view.channel
 		
 		private function onUpdate(e:ChannelPageEvent):void
 		{
-			var req_list:Array = [{
+			var req_obj:Object = {
 				command:'user_update_channel_list',
 				user_id:userChannelManagePage.user_grid.selectedItem.uid,
-				channel_list_id:userChannelManagePage.channel_list_id.selectedItem.uid},
-				{command:'user_query_all'}];
+				channe_cm:userChannelManagePage.channel_list_cm.selectedItem.name,
+				channe_cu:userChannelManagePage.channel_list_cu.selectedItem.name,
+				channe_ct:userChannelManagePage.channel_list_ct.selectedItem.name
+			};
+			
+			if(userChannelManagePage.channel_list_id.selectedItem.uid >= 0){
+				req_obj.channel_list_id = userChannelManagePage.channel_list_id.selectedItem.uid;
+			}
+			
+			var req_list:Array = [req_obj]
+				//{command:'user_query_all'}];
 			dispatch(new CompReqEvent(CompReqEvent.CompReq, req_list));
 		}
 		
