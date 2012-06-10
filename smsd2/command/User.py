@@ -60,15 +60,12 @@ class UserController(object):
         try:
             if not self.__channel_list_exist(channel_list_id) and channel_list_id != -1:
                 return False
-            if channel_list_id == -1:
-                up = self.user_t.update().where(self.user_t.c.uid == uid).values(\
-                channel_list_id = channel_list_id)
-            else:    
-                up = self.user_t.update().where(self.user_t.c.uid == uid).values(\
-                channel_list_id = channel_list_id,
-                channel_cm = cm,
-                channel_cu = cu,
-                channel_ct = ct)
+   
+            up = self.user_t.update().where(self.user_t.c.uid == uid).values(\
+            channel_list_id = channel_list_id,
+            channel_cm = cm,
+            channel_cu = cu,
+            channel_ct = ct)
             
             self.c.db.execute(up)
             return True
