@@ -1,12 +1,6 @@
-#!/usr/bin/env python
 # coding=utf-8
-"""
-@file timer.py
-@author hitzheng@tencent.com
-@version 1.0
-@date 2011-9-21
-@brief 定时器相关的封装，主要处理时间相关的操作
-"""
+#!/usr/bin/env python
+
 
 import time
 
@@ -15,17 +9,14 @@ class Timer:
 		self.tmBegin = time.time()
 	
 	def elapse(self):
-		"""过了多少毫秒"""
 		tmEnd = time.time()
 		return int((tmEnd - self.tmBegin)*10**3)
 		
 	def elapseUs(self):
-		"""过了多少微秒"""
 		tmEnd = time.time()
 		return int((tmEnd - self.tmBegin)*10**6)
 		
 	def elapseS(self):
-		"""过了多少秒"""
 		tmEnd = time.time()
 		return int(tmEnd - self.tmBegin)
 
