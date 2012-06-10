@@ -15,7 +15,7 @@ from loadcfg import loadcfg
 from dbsql import dbsql
 from dbobj import dbobj
 
-from common.log import logger
+from common.log import initLogger
 
 class user(dbobj):
     # dbobj need these
