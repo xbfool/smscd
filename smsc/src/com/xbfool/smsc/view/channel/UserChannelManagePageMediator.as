@@ -30,6 +30,7 @@ package com.xbfool.smsc.view.channel
 			userChannelManagePage.user_grid.dataProvider = user_list;
 			// view listeners
 			eventMap.mapListener(userChannelManagePage, ChannelPageEvent.USER_CHANNEL_LIST_UPDATE, onUpdate);
+			eventMap.mapListener(userChannelManagePage, ChannelPageEvent.USER_CHANNEL_LIST_USE_NONE, onUseNone);
 			eventMap.mapListener(eventDispatcher, CompRetEvent.COMP_RET, onQueryBack);
 			this.userChannelManagePage.myDP.source = user.channel_list_list;
 			this.user_list.source = user.user_channel_list;
@@ -51,5 +52,13 @@ package com.xbfool.smsc.view.channel
 			dispatch(new CompReqEvent(CompReqEvent.CompReq, req_list));
 		}
 		
+		private function onUseNone(e:ChannelPageEvent):void{
+			var req_list:Array = [{
+				command:'user_update_channel_list',
+				user_id:userChannelManagePage.user_grid.selectedItem.uid,
+				channel_list_id:-1},
+				{command:'user_query_all'}];
+			dispatch(new CompReqEvent(CompReqEvent.CompReq, req_list));
+		}
 	}
 }

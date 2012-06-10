@@ -90,7 +90,14 @@
 				<mx:Label text="{channel_item_grid.selectedItem.last_update}"/>
 			</mx:FormItem>
 			<mx:FormItem width="100%">
-				
+				<mx:VBox width="100%">
+					<mx:HBox width="100%">
+						<s:Button id="startButton" label="启动" 
+								  click="dispatchEvent(new ChannelPageEvent(ChannelPageEvent.CHANNEL_ITEM_START))"/>
+						<s:Button id="stopButton" label="停止"
+								  click="dispatchEvent(new ChannelPageEvent(ChannelPageEvent.CHANNEL_ITEM_STOP))"/>				
+					</mx:HBox>
+				</mx:VBox>
 				<mx:HBox width="100%">
 					<s:Button id="okButton" label="修改" click="{validateForm(event)}"/>
 					<s:Button label="删除当前项"

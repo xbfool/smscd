@@ -23,7 +23,8 @@ package com.xbfool.smsc.view.channel
 		[Inject]
 		public var user:UserProxy;
 		public var channel_item_list:ArrayCollection = new ArrayCollection();
-		
+		public const CHANNEL_START_TAG:int = 0;
+		public const CHANNEL_STOP_TAG:int = 273;
 		public function ChannelItemManagePageMediator()
 		{
 		}
@@ -37,6 +38,8 @@ package com.xbfool.smsc.view.channel
 			eventMap.mapListener(channelItemAddPage, ChannelPageEvent.CHANNEL_ITEM_ADD_ITEM, onAddItem);
 			eventMap.mapListener(channelItemManagePage, ChannelPageEvent.CHANNEL_ITEM_UPDATE, onUpdate);
 			eventMap.mapListener(channelItemManagePage, ChannelPageEvent.CHANNEL_ITEM_DELETE, onDelete);
+			eventMap.mapListener(channelItemManagePage, ChannelPageEvent.CHANNEL_ITEM_START, onStart);
+			eventMap.mapListener(channelItemManagePage, ChannelPageEvent.CHANNEL_ITEM_STOP, onStop);
 			eventMap.mapListener(eventDispatcher, CompRetEvent.COMP_RET, onQueryBack);
 			channel_item_list.source = user.channel_item_list;
 		}
@@ -89,5 +92,26 @@ package com.xbfool.smsc.view.channel
 			dispatch(new CompReqEvent(CompReqEvent.CompReq, req_list));
 		}
 		
+		private function onStart(e:ChannelPageEvent):void
+		{
+			var req_list:Array = [{
+				command:'channel_item_update',
+				uid:channelItemManagePage.channel_uid.text,
+				values:{
+					status:CHANNEL_START_TAG}},
+				{command:'channel_item_query_all'}];
+			dispatch(new CompReqEvent(CompReqEvent.CompReq, req_list));
+		}
+		
+		private function onStop(e:ChannelPageEvent):void
+		{
+			var req_list:Array = [{
+				command:'channel_item_update',
+				uid:channelItemManagePage.channel_uid.text,
+				values:{
+					status:CHANNEL_STOP_TAG}},
+				{command:'channel_item_query_all'}];
+			dispatch(new CompReqEvent(CompReqEvent.CompReq, req_list));
+		}
 	}
 }

@@ -98,6 +98,8 @@
 				<mx:HBox width="100%">
 					<s:Button id="okButton" label="修改" 
 							  click="dispatchEvent(new ChannelPageEvent(ChannelPageEvent.USER_CHANNEL_LIST_UPDATE))"/>
+					<s:Button id="useNoneButton" label="不使用通道列表" 
+							  click="dispatchEvent(new ChannelPageEvent(ChannelPageEvent.USER_CHANNEL_LIST_USE_NONE))"/>
 				</mx:HBox>
 			</mx:FormItem>
 		</mx:Form>

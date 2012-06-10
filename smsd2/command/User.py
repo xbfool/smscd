@@ -56,8 +56,9 @@ class UserController(object):
         return rlist
     
     def update_channel_list(self, uid, channel_list_id):
+        #chanel_list_id == -1 for use none of the id's
         try:
-            if not self.__channel_list_exist(channel_list_id):
+            if not self.__channel_list_exist(channel_list_id) and channel_list_id != -1:
                 return False
             up = self.user_t.update().where(self.user_t.c.uid == uid).values(channel_list_id = channel_list_id)
             self.c.db.execute(up)

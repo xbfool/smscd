@@ -36,7 +36,7 @@
 				if(status == 0)
 					return "正常";
 				else
-					return str_cm + str_cu + str_ct;
+					return "停止";
 
 			}
 		]]>
