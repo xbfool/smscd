@@ -53,10 +53,10 @@ package com.xbfool.smsc.view.channel
 				channel_ct:userChannelManagePage.channel_list_ct.selectedItem.name
 			};
 			
-			if(userChannelManagePage.channel_list_id.selectedItem.uid >= 0){
+			if(userChannelManagePage.channel_list_id.selectedItem != null && userChannelManagePage.channel_list_id.selectedItem.uid >= 0){
 				req_obj.channel_list_id = userChannelManagePage.channel_list_id.selectedItem.uid;
 			}else{
-				req_obj.channel_list_id = userChannelManagePage.user_grid.selectedItem.channel_list_id;
+				req_obj.channel_list_id = -1;
 			}
 			
 			var req_list:Array = [req_obj,
@@ -68,7 +68,10 @@ package com.xbfool.smsc.view.channel
 			var req_list:Array = [{
 				command:'user_update_channel_list',
 				user_id:userChannelManagePage.user_grid.selectedItem.uid,
-				channel_list_id:-1},
+				channel_list_id:-1,
+				channel_cm:userChannelManagePage.channel_list_cm.selectedItem.name,
+				channel_cu:userChannelManagePage.channel_list_cu.selectedItem.name,
+				channel_ct:userChannelManagePage.channel_list_ct.selectedItem.name},
 				{command:'user_query_all'}];
 			dispatch(new CompReqEvent(CompReqEvent.CompReq, req_list));
 		}
