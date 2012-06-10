@@ -9,8 +9,8 @@ from urllib import quote
 site_settings = {}
 
 site_settings['honglian'] = {
-    'host': '219.238.160.81',
-    'path': '/interface/limitnew.asp',
+    'host': '211.136.153.24',
+    'path': '/qxtinterface/',
     'port': '80',
     'mode': 'POST',
     'sender': 'honglian',
@@ -208,9 +208,8 @@ settings['honglian_tyd'] = {
     'site': site_settings['honglian'],
 
     'params':{
-            'username':'fdgg',
-            'password':'123456',
-            'epid':'6856',
+            'user':'fdgg',
+            'wd':'123456',
     },
     'config': config_settings['honglian_001'],
     'support': support_settings['all'],
@@ -245,15 +244,12 @@ settings['honglian_mock'] = {
 import string
 def send_honglian(addrs, msg, setting):
     s = setting
-    s['params']['phone']= ','.join(addrs)
-    #s['params']['message']= msg.decode('utf8').encode('gb2312')
+    s['params']['phone']= ';'.join(addrs)
+    s['params']['message']= msg.decode('utf8').encode('gb2312')
     headers = {"Content-type": "application/x-www-form-urlencoded",
                 "Accept": "text/plain"}
-    msg_uni = msg
 
-    new_msg = msg#string.replace(msg, '%', '%25')
-    print new_msg
-    params = urllib.urlencode(s['params'])+ '&message=%s' % quote(new_msg.decode('utf8').encode('gbk'))
+    params = urllib.urlencode(s['params'])
     #params = urllib.urlencode(s['params'])
     print params
     conn = httplib.HTTPConnection(host=s['site']['host'],port=s['site']['port'])
@@ -284,5 +280,5 @@ def process_ret(ret):
         print ret
 if __name__ == '__main__':
     args = parse_arg()
-    ret = send_honglian(args.addrs, args.msg[0], settings['honglian_ty'])
+    ret = send_honglian(args.addrs, args.msg[0], settings['honglian_tyd'])
     process_ret(ret)
