@@ -131,7 +131,6 @@ def process_req_honglian(http_pool, setting, msg):
     msg_num = ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['total_addr'])
     sub_num =  ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['addr'])
     msg['sub_num'] = sub_num
-    print 'msg_num ', msg_num
     pm = phonenumber.phonenumber()
 
     
@@ -141,7 +140,6 @@ def process_req_honglian(http_pool, setting, msg):
         new_msg = msg['content']
     
     send_msg = safe_utf8_2_gbk(new_msg)
-    print send_msg
     if not msg.get('ext') or msg.get('ext') == None  or msg.get('ext') == "":
         http_pool.req(msg['channel'],
                   {'user_uid':msg['user_uid'], 

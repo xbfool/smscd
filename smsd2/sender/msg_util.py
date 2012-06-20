@@ -239,9 +239,7 @@ class MsgController():
         sel = select([self.channel_item_t], self.channel_item_t.c.name == name)
         res = self.db.execute(sel)
         r = res.fetchone()
-        if not r:
-            print name
-        print r
+ 
         r_d = dict(r.items())
         self.channel_item_name_dict[name] = r_d
         r_d['setting'] = self.settings.get(name)

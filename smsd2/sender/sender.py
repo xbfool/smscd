@@ -122,7 +122,7 @@ class sms_sender(object):
                         pass
                     self.logger.debug('processing ret : msgid:%d channel:%s, ret:%s' %(param['uid'], 
                                                                                      param['setting']['name'],
-                                                                                     ret))
+                                                                                     fail_string))
                     pret = 0
                     try:
                         pret = process(self, param)
@@ -139,7 +139,7 @@ class sms_sender(object):
                         
                     elif pret == -1:
                         item = self.chanel_name_id_dict[param['setting']['name']]
-                        self.logger.debug('down channel :%s' %(item))
+                        self.logger.debug('down channel :%s' %(item['name']))
                         self.msg_controller.down_channel(item)
                         if not self.timeout_dict.get(item['uid']):
                             self.timeout_dict[item['uid']] = {'count':0, 

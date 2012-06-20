@@ -10,7 +10,6 @@ def process_ret_changshang_a(sender, param):
     result = 'message send fail'
     try:
         result = param['ret'][2] 
-        print result, type(result), len(result)
         if result[0] == '0':
             sender.msg_controller.send_success(param, result)
             return 1

@@ -34,7 +34,6 @@ def process_ret_qixintong2012(sender, param):
         resultDOM = parseString(param['ret'][2])
         result = resultDOM.firstChild.firstChild.firstChild.data
 
-        print param
         if result[0] == '1':
             sender.msg_controller.send_success(param, result)
             return 1
