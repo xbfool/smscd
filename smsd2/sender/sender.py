@@ -115,6 +115,11 @@ class sms_sender(object):
                     process = param['setting']['process_ret']
                     param['time'] = now
                     param['ret'] = ret
+                    fail_string = 'this message error'
+                    try:
+                        fail_string = param['ret'][2]
+                    except:
+                        pass
                     self.logger.debug('processing ret : msgid:%d channel:%s, ret:%s' %(param['uid'], 
                                                                                      param['setting']['name'],
                                                                                      ret))
@@ -140,9 +145,9 @@ class sms_sender(object):
                             self.timeout_dict[item['uid']] = {'count':0, 
                                                               'last_update':datetime.now()}
                     elif pret == -2:
-                        self.msg_controller.send_fail(param, '%s' % ret)
+                        self.msg_controller.send_fail(param, '%s' % fail_string)
                     else:
-                        self.msg_controller.send_fail(param, '%s' % ret)
+                        self.msg_controller.send_fail(param, '%s' % fail_string)
      
             except:
                 print_exc()
