@@ -104,7 +104,7 @@ class card_sender(object):
         while not self.__worker_exit_lock.acquire(False) and not self.kill_received:
             #print 'checking queue: ', datetime.now()
             if datetime.now().hour >= 20 or datetime.now().hour <= 8:
-                print 'now sleeping %s' % datetime.now()
+                #print 'now sleeping %s' % datetime.now()
                 sleep(60)
                 continue
             try:
