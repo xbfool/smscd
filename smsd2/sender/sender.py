@@ -118,6 +118,7 @@ class sms_sender(object):
                     fail_string = 'this message error'
                     try:
                         fail_string = param['ret'][2]
+                        fail_string = fail_string.decode('gbk').encode('utf8')
                     except:
                         pass
                     self.logger.debug('processing ret : msgid:%d channel:%s, ret:%s' %(param['uid'], 
@@ -201,6 +202,7 @@ class sms_sender(object):
                     self.process_req(item, msg)
                     #here just means our function not error, not means the channel not error
                     count += 1
+                    break
                 except:
                     if msg['uid'] in self.__pending:
                         try:

@@ -10,9 +10,7 @@ def process_ret_scp_0591(sender, param):
     rl = []
     try:
         result = param['ret'][2]
-        print result
         rl = result.split(';')
-        print rl[0]
         if rl[0] == 'ResultCode=0':
             sender.msg_controller.send_success(param, result)
             return 1
