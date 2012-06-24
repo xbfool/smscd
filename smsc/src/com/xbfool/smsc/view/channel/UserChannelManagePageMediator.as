@@ -31,6 +31,7 @@ package com.xbfool.smsc.view.channel
 			// view listeners
 			eventMap.mapListener(userChannelManagePage, ChannelPageEvent.USER_CHANNEL_LIST_UPDATE, onUpdate);
 			eventMap.mapListener(userChannelManagePage, ChannelPageEvent.USER_CHANNEL_LIST_USE_NONE, onUseNone);
+			eventMap.mapListener(userChannelManagePage, ChannelPageEvent.USER_UPLOAD_URL_UPDATE, onUpdateUrl);
 			eventMap.mapListener(eventDispatcher, CompRetEvent.COMP_RET, onQueryBack);
 			this.userChannelManagePage.myDP.source = user.channel_list_list;
 			this.userChannelManagePage.channelItemDP.source = user.channel_item_list;
@@ -73,6 +74,16 @@ package com.xbfool.smsc.view.channel
 				channel_cu:userChannelManagePage.channel_list_cu.selectedItem.name,
 				channel_ct:userChannelManagePage.channel_list_ct.selectedItem.name},
 				{command:'user_query_all'}];
+			dispatch(new CompReqEvent(CompReqEvent.CompReq, req_list));
+		}
+		
+		private function onUpdateUrl(e:ChannelPageEvent):void{
+			var req_list:Array = [{
+				command:'user_update_upload_url',
+				user_id:userChannelManagePage.user_grid.selectedItem.uid,
+				url:userChannelManagePage.upload_url.text
+				}
+				];
 			dispatch(new CompReqEvent(CompReqEvent.CompReq, req_list));
 		}
 	}

@@ -18,6 +18,7 @@ package com.xbfool.smsc.view.channel
 		public static const CHANNEL_LIST_UPDATE:String = 'channel_list_update';
 		public static const USER_CHANNEL_LIST_USE_NONE:String = 'user_channel_list_use_none';
 		public static const USER_CHANNEL_LIST_UPDATE:String = 'user_channel_list_update';
+		public static const USER_UPLOAD_URL_UPDATE:String = 'user_upload_url_update';
 		public function ChannelPageEvent(type:String)
 		{
 			super(type, true);

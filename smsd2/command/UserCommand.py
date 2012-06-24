@@ -27,3 +27,11 @@ def user_update_channel_list(context, **args):
     ret = c.update_channel_list(user_id, channel_list_id, 
     cm=channel_cm, cu=channel_cu, ct=channel_ct)
     return ret_util(ret)
+
+def user_update_upload_url(context, **args):
+    c = context.get_controller('user')
+    user_id = args['user_id']
+    url = args['url']
+    ret = c.update_upload_url(user_id, url)
+    return ret_util(ret)
+    

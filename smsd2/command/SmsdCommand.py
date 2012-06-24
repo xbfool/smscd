@@ -32,6 +32,7 @@ class SmsdCommand(Command):
                         user_login,
                         user_query_all,
                         user_update_channel_list,
+                        user_update_upload_url,
                         card_item_add,
                         card_item_delete,
                         card_item_query,

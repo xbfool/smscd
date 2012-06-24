@@ -184,6 +184,13 @@
 							  click="dispatchEvent(new ChannelPageEvent(ChannelPageEvent.USER_CHANNEL_LIST_USE_NONE))"/>
 				</mx:HBox>
 			</mx:FormItem>
+			<mx:FormItem label="上行通知地址" width="100%">
+				<mx:VBox width="100%">
+					<mx:TextInput id="upload_url" text="{user_grid.selectedItem.upload_url}"/>
+						<s:Button label="修改" 
+								  click="dispatchEvent(new ChannelPageEvent(ChannelPageEvent.USER_UPLOAD_URL_UPDATE))"/>
+				</mx:VBox>
+			</mx:FormItem>
 		</mx:Form>
 	</s:VGroup>	
 </s:Group>

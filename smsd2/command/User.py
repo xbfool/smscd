@@ -72,3 +72,15 @@ class UserController(object):
         except:
             print_exc()
             return False
+        
+    def update_upload_url(self, uid, url):
+        try:
+            sql = "insert into upload_url set url = '%s', user_uid = %s on duplicate key update url = '%s'" %\
+                (url, uid, url)
+            self.c.db.execute(sql)
+            return True
+        except:
+            print_exc()
+            return False
+        
+
