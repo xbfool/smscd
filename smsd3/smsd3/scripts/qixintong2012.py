@@ -94,7 +94,7 @@ def process_ret(ret):
 if __name__ == '__main__':
     args = parse_arg()
     if  args.addrs != None and len(args.addrs) > 0 and len(args.msg[0]):
-        ret = send_qixintong2012(args.addrs, args.msg[0], settings['qixintong2012_02'])
+        ret = send_qixintong2012(args.addrs, args.msg[0], settings['qixintong2012_01'])
         process_ret(ret)
     else:
         print args

@@ -284,5 +284,5 @@ def process_ret(ret):
         print ret
 if __name__ == '__main__':
     args = parse_arg()
-    ret = send_honglian(args.addrs, args.msg[0], settings['honglian_ty'])
+    ret = send_honglian(args.addrs, args.msg[0], settings['honglian_bjyh'])
     process_ret(ret)
