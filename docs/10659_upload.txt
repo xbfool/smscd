@@ -1,6 +1,7 @@
 10659通道的上行接口协议 v1.0
 
 1.用户通知系统管理员设置给定的上行地址url
+
 2.如果有上行短信出现，系统将立刻向用户指定的url发送HTTP GET请求,
   格式如下:
   http://url?mobile=18612345678&content=bbb&receivetime=cccc
@@ -9,4 +10,5 @@
   mobile是上行的手机号
   content是上行内容，utf8编码
   receivetime为上行时间，仅供参考
+  
 3.若系统尝试发送上行短信时，用户指定的url无法连接，系统则抛弃此上行短信，不再发送
