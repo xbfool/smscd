@@ -434,7 +434,7 @@ class smsd(object):
                 new_message = message()        
                 new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel, len(addr_list), seed)
                 self.messages[new_message.uid] = new_message  
-        elif channel in ('shangxintong_01', 'card_send_a'):
+        elif channel in ('shangxintong_01', ):
             addr = []
             for i in xrange(0, len(addr_list), 1):
                 addr.append(addr_list[i: min(i + 1, len(addr_list))])
