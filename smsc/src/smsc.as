@@ -80,7 +80,8 @@ public var channel_select_data:ArrayCollection = new ArrayCollection(
 		{label:"电信0728b", data:'hb_ct_05'},
 		{label:"移动106ctyd", data:'honglian_tyd'},
 		{label:"移动106d", data:'qixintong2012_01'},
-		{label:"移动106da", data:'qixintong2012_02'}
+		{label:"移动106da", data:'qixintong2012_02'},
+		{label:"电信10659c", data:'sd_ct_02'}
 	]);
 [Bindable]
 public var user_percent_list:ArrayCollection = new ArrayCollection([
@@ -630,6 +631,8 @@ private function get_channel_index(channel:String):int{
 		case "qixintong2012_01":
 			return 22;
 		case "qixintong2012_02":
+			return 23;
+		case "sd_ct_02":
 			return 23;
 		default:
 			return 0;

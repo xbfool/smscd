@@ -28,6 +28,17 @@ class sender_settings():
             'process_ret': process_ret_sd_ct,
             'process_req': process_req_sd_ct
         }
+        settings['sd_ct_02'] = {
+            'name': 'sd_ct_01',
+            'host': '219.146.6.117',
+            'path': '/AIS/HTTPService/SendSMS.aspx',
+            'mode': 'POST',
+            'sub_mode': 'sd_ct',
+            'uid': 'lyzx',
+            'pwd': '123456',
+            'process_ret': process_ret_sd_ct,
+            'process_req': process_req_sd_ct
+        }
         settings['hb_ct_01'] = {
             'name': 'hb_ct_01', #0712a
             'host': '58.53.194.80',
