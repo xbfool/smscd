@@ -29,7 +29,7 @@ class sender_settings():
             'process_req': process_req_sd_ct
         }
         settings['sd_ct_02'] = {
-            'name': 'sd_ct_01',
+            'name': 'sd_ct_02',
             'host': '219.146.6.117',
             'path': '/AIS/HTTPService/SendSMS.aspx',
             'mode': 'POST',
