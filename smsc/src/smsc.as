@@ -633,7 +633,7 @@ private function get_channel_index(channel:String):int{
 		case "qixintong2012_02":
 			return 23;
 		case "sd_ct_02":
-			return 23;
+			return 24;
 		default:
 			return 0;
 	}
