@@ -26,10 +26,10 @@ def dump(path, username):
     ct = open(path+username+'_ct.csv', 'w')
     f = ct
     c = msg_util.MsgController()
-    sel =  select([c.msg_t], and_(c.msg_t.c.status == 7, \
+    sel =  select([c.msg_t], and_(c.msg_t.c.status == 2, \
                                   c.msg_t.c.user_uid == c.user_t.c.uid,\
                                   c.user_t.c.username == username,\
-                                  c.msg_t.c.create_time >= '20120605'
+                                  c.msg_t.c.create_time >= '20120624'
                                   ))
 
     res = c.db.execute(sel)
@@ -44,4 +44,4 @@ def dump(path, username):
             f.write(t)    
                                              
 if __name__ == '__main__':
-    dump('/tmp/', '10028')
+    dump('/tmp/', '99997')

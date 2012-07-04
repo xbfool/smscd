@@ -36,6 +36,7 @@ def dump(path, username):
                                   c.msg_t.c.user_uid == c.user_t.c.uid,\
                                   c.user_t.c.username == username,\
                                   c.channel_item_t.c.name == c.msg_t.c.channel,\
+				  c.msg_t.c.create_time >= '20120629'
                                   ))
 
     res = c.db.execute(sel)
@@ -70,7 +71,7 @@ def dump(path, username):
                                              i.desc,\
                                              0,\
                                              i.msg.decode('utf8').encode('gbk'))
-            f.write(t1)
+    #        f.write(t1)
         
         seed(i.uid + len(i.msg) * my_seed + len(addr))
         for addr_s in ret2:
@@ -83,8 +84,8 @@ def dump(path, username):
                                              addr_s,\
                                              i.desc,\
                                              s,\
-                                             i.msg.decode('utf8').encode('gbk'))
+                                             i.msg)
             f.write(t2)            
                                              
 if __name__ == '__main__':
-    dump('/tmp/', '00001')
+    dump('/tmp/', '99997')
