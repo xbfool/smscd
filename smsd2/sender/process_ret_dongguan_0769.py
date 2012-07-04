@@ -14,11 +14,11 @@ def process_ret_dongguan_0769(sender, param):
             sender.msg_controller.send_success(param, result)
             return 1
         else:
-            return 0
+            return -2
         
     except:
         print_exc()
         sender.msg_controller.send_fail(param, result)
-        return 0
+        return -2
   
     return 1  

@@ -121,9 +121,7 @@ class sms_sender(object):
                         fail_string = fail_string.decode('gbk').encode('utf8')
                     except:
                         pass
-                    self.logger.debug('processing ret : msgid:%d channel:%s, ret:%s' %(param['uid'], 
-                                                                                     param['setting']['name'],
-                                                                                     fail_string))
+
                     pret = 0
                     try:
                         pret = process(self, param)
@@ -147,8 +145,14 @@ class sms_sender(object):
                                                               'last_update':datetime.now()}
                     elif pret == -2:
                         self.msg_controller.send_fail(param, '%s' % fail_string)
+                    elif pret == 0:
+                        #do nothing
+                        pass
                     else:
                         self.msg_controller.send_fail(param, '%s' % fail_string)
+                    self.logger.debug('processing ret : msgid:%d channel:%s, ret:%d, retstring:%s' %(param['uid'], 
+                                                                                     param['setting']['name'], pret,
+                                                                                     fail_string))
      
             except:
                 print_exc()

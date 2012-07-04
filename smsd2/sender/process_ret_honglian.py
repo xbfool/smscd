@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# vim:fileencoding=utf-8
+
 '''
 Created on 2011-10-18
 
@@ -22,9 +25,13 @@ def process_ret_honglian(sender, param):
         return 1
     elif param['ret'][2] == 'error:\xd3\xe0\xb6\xee\xb2\xbb\xd7\xe30': #no money
         return -1
+    elif param['ret'][2].find('error') >=0
+        return -1
     elif result in ('001', '010', '100', '101', '110', '011', '111'):
         return -2
-    else:
+    elif result.find('没有权限') >= 0:
         return 0
+    else:
+        return -2
         
     return 1

@@ -24,6 +24,6 @@ def process_ret_changshang_a(sender, param):
     except:
         print_exc()
         sender.msg_controller.send_fail(param, result)
-        return 0
+        return -2
         
     return 1  
