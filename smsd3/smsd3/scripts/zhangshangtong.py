@@ -47,7 +47,7 @@ settings['zhangshangtong_01'] = {
             'ececcid':'305555004',
             'password':'abc123',
             'msgtype':'5',
-            'longcode':'111'
+            'longcode':'',
     },
 }
 
