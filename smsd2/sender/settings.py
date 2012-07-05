@@ -330,7 +330,7 @@ class sender_settings():
             'ececcid':'305555004',
             'password':'abc123',
             'msgtype':'5',
-            'longcode':'111'
+            'longcode':'111',
             'mode': 'POST',
             'process_ret': process_ret_zhangshangtong,
             'process_req' : process_req_zhangshangtong
