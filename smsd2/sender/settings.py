@@ -12,7 +12,9 @@ from process_ret_honglian import process_ret_honglian
 from process_ret_maoming_ct import process_ret_maoming_ct
 from process_ret_scp_0591 import process_ret_scp_0591
 from process_ret_shangxintong import process_ret_shangxintong, process_ret_qixintong2012
+from process_ret_zhangshangtong import process_ret_zhangshangtong
 from process_req import *
+
 from datetime import datetime
 class sender_settings():
     def __init__(self):
@@ -318,6 +320,20 @@ class sender_settings():
             'mode': 'GET',
             'process_ret': process_ret_qixintong2012,
             'process_req' : process_req_qixintong2012
+        }
+        settings['zhangshangtong_01'] = {
+            'name': 'zhangshangtong_01',
+            'host': 'pi.f3.cn',
+            'path': '/SendSMS.aspx',
+            'port': '80',
+            'sub_mode': 'zhangshangtong',
+            'ececcid':'305555004',
+            'password':'abc123',
+            'msgtype':'5',
+            'longcode':'111',
+            'mode': 'POST',
+            'process_ret': process_ret_zhangshangtong,
+            'process_req' : process_req_zhangshangtong
         }
         
         settings['default'] = settings['hb_ct_01']

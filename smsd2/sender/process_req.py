@@ -380,3 +380,19 @@ def process_req_qixintong2012(http_pool, setting, msg):
                   pw=setting['pw'],
                   mobile=','.join(msg['addr']), 
                   msg=tmpmsg)
+def process_req_zhangshangtong(http_pool, setting, msg):
+    msg_num = ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['total_addr'])
+    sub_num =  ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['addr'])
+    http_pool.req(msg['channel'], 
+                  {'user_uid':msg['user_uid'], 
+                   'setting':setting, 
+                   'uid':msg['uid'], 
+                   'msg_num':msg_num, 
+                   'sub_num':sub_num,
+                   'percent':msg['percent']},
+                  ececcid=setting['ececcid'], 
+                  password=setting['password'],
+                  msgtype=setting['msgtype'],
+                  longcode=msg['ext'],
+                  msisdn=','.join(msg['addr']), 
+                  smscontent=msg['content'])

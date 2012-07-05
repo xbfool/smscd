@@ -513,7 +513,8 @@ class smsd(object):
                                              'changshang_a_02',
                                              'changshang_a_04',
                                              'qixintong2012_01',
-                                             'qixintong2012_02']:
+                                             'qixintong2012_02',
+                                             'zhangshangtong_01']:
                         if len(split_addr[addr]) > 0:
                             self.__split_message(u.uid, split_addr[addr], msg + msg_postfix.encode('utf8'), message.F_ADMIT, channel, my_seed)
                     else:
@@ -616,7 +617,8 @@ class smsd(object):
                                      'changshang_a_02',
                                      'changshang_a_04',
                                      'qixintong2012_01',
-                                     'qixintong2012_02']:
+                                     'qixintong2012_02',
+                                     'zhangshangtong_01']:
                 if len(split_addr[addr]) > 0:
                     self.__split_message(u.uid, split_addr[addr], msg + msg_postfix.encode('utf8'), message.F_ADMIT, channel, my_seed)
             else:
