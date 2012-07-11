@@ -180,7 +180,7 @@ class sender_settings():
             'host': '219.238.160.81',
             'path': '/SmsHandler.ashx',
             'mode': 'GET',
-            'port': '8081'
+            'port': '8081',
             'sub_mode': 'honglian',
             'username':'jnfd',
             'password':'647185',
@@ -194,7 +194,7 @@ class sender_settings():
             'host': '219.238.160.81',
             'path': '/SmsHandler.ashx',
             'mode': 'GET',
-            'port': '8081'
+            'port': '8081',
             'sub_mode': 'honglian',
             'username':'jnfdbjyh',
             'password':'123456',
@@ -208,7 +208,7 @@ class sender_settings():
             'host': '219.238.160.81',
             'path': '/SmsHandler.ashx',
             'mode': 'GET',
-            'port': '8081'
+            'port': '8081',
             'sub_mode': 'honglian',
             'username':'fdjtyh',
             'password':'123456',
@@ -222,7 +222,7 @@ class sender_settings():
             'host': '219.238.160.81',
             'path': '/SmsHandler.ashx',
             'mode': 'GET',
-            'port': '8081'
+            'port': '8081',
             'sub_mode': 'honglian',
             'username':'fdzxyy',
             'password':'123456',
@@ -236,7 +236,7 @@ class sender_settings():
             'host': '219.238.160.81',
             'path': '/SmsHandler.ashx',
             'mode': 'GET',
-            'port': '8081'
+            'port': '8081',
             'sub_mode': 'honglian',
             'username':'fdhz',
             'password':'123456',
@@ -249,7 +249,7 @@ class sender_settings():
             'host': '219.238.160.81',
             'path': '/SmsHandler.ashx',
             'mode': 'GET',
-            'port': '8081'
+            'port': '8081',
             'sub_mode': 'honglian',
             'username':'fdgg',
             'password':'123456',
