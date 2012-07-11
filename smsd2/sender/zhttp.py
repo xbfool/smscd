@@ -53,8 +53,9 @@ class zhttp(object):
     def send_GET(self, path=None, **kargs):
         # deprecated since url length is limited
         path = path or self.path
-        path = path + '?' + self.params + '&' + urlencode(kargs)
+        path = path + '?' + urlencode(kargs)
         self.conn.request('GET', path)
+	print path
         res = self.conn.getresponse()
         return res.status, res.reason, res.read()
     
