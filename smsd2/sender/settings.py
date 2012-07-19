@@ -333,7 +333,7 @@ class sender_settings():
             'path': '/SendSMS.aspx',
             'port': '80',
             'sub_mode': 'zhangshangtong',
-            'ececcid':'305555004',
+            'ececcid':'305555002',
             'password':'abc123',
             'msgtype':'5',
             'longcode':'111',
