@@ -27,9 +27,9 @@ def process_ret_honglian(sender, param):
         return -1
     elif param['ret'][2].find('error') >=0:
         return -1
-    elif result in ('001', '010', '100', '101', '110', '011', '111'):
+    elif result in ('001', '010', '100', '101', '110', '011', '111', '4'):
         return -2
-    elif result in ('2', '3', '4', '5', '6'):
+    elif result in ('2', '3', '5', '6'):
         return -1
     elif result[0:6] == ' <font':
         return 0
