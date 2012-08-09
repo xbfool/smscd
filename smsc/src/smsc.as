@@ -311,7 +311,7 @@ private function request(param:Object):void {
 	var req:URLRequest = new URLRequest(this.smsd_url);
 	req.method = URLRequestMethod.POST;
 	req.contentType = 'application/json';
-	req.data = JSON.encode(param);
+	req.data = com.adobe.serialization.json.JSON.encode(param);
 	
 	loader.load(req);
 }
@@ -324,7 +324,7 @@ private function data_arrive(evt:Event):void
 	var data:Object = null;
 	this.removeChild(requestProgressBar);
 	try{
-		data = JSON.decode(raw_data);
+		data = com.adobe.serialization.json.JSON.decode(raw_data);
 	}
 	catch(err:JSONParseError){
 		trace('JSONParseError');

@@ -46,7 +46,7 @@ package com.xbfool.smsc.services
 			
 			req.method = URLRequestMethod.POST;
 			req.contentType = 'application/json';
-			req.data = JSON.encode(param);
+			req.data = com.adobe.serialization.json.JSON.encode(param);
 			trace(req.data)
 			this.is_requesting = true;
 			
@@ -63,7 +63,7 @@ package com.xbfool.smsc.services
 			var data:Object = null;
 
 			try{
-				data = JSON.decode(raw_data);
+				data = com.adobe.serialization.json.JSON.decode(raw_data);
 			}
 			catch(err:JSONParseError){
 				trace('JSONParseError');
