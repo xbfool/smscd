@@ -1,0 +1,8 @@
+div#sidebar {
+    width: 200px;
+    float: left;
+    height: 100%;
+}
+div.sidebar_button{
+    width:100%;
+}

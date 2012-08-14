@@ -8,6 +8,7 @@
     <script src ="js/jquery/jquery.form.js"></script>
     <script src ="js/jquery/jquery.sha1.js"></script>
     <link rel=stylesheet type=text/css href=css/ui-lightness/jquery-ui-1.8.22.custom.css />
+    <link rel=stylesheet type=text/css href=css/smsc.css />
 </head>
 <body>
 
@@ -25,8 +26,10 @@
 <script>
     $(document).ready(function() {
         $.smsc = {};
-        $.smsc.smsd_url = "/smsd";
+        $.smsd_url = "/smsd";
         smsc_login_ui();
+        smsc_main_ui();
+        $("#main").show();
     });
 
 </script>

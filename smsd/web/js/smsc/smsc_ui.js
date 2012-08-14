@@ -13,9 +13,59 @@ var smsc_login_ui = function() {
         });
         $("#dialog").dialog();
     });
-    $("#main").hide();
+    //$("#main").hide();
 };
 
 var smsc_main_ui = function() {
-    $("#main").show();
+    $("#sidebar").load("sidebar.html", function(){
+        //$("#sidebar").accordion('destory');
+        $("#sidebar").accordion();
+        $("#message_send").button().bind('click',
+            function() {smsc_message_send_ui();}
+        );
+        $("#special_send").button().bind('click',
+            function() {smsc_special_send_ui();}
+        );
+        $("#special_send2").button().bind('click',
+            function() {smsc_special_send_ui();}
+        );
+        $("#message_send_status").button().bind('click',
+            function() {smsc_special_send_ui();}
+        );
+        $("#statics_all").button().bind('click',
+            function() {smsc_special_send_ui();}
+        );
+        $("#add_money_record").button().bind('click',
+            function() {smsc_special_send_ui();}
+        );
+        $("#contact_manage").button().bind('click',
+            function() {smsc_special_send_ui();}
+        );
+        $("#uplod_message_record").button().bind('click',
+            function() {smsc_special_send_ui();}
+        );
+        $("#channel_report").button().bind('click',
+            function() {smsc_special_send_ui();}
+        );
+        $("#user_manage").button().bind('click',
+            function() {smsc_special_send_ui();}
+        );
+        $("#change_password").button().bind('click',
+            function() {smsc_special_send_ui();}
+        );
+        $("#admin_page").button().bind('click',
+            function() {smsc_special_send_ui();}
+        );
+        $("#logout").button().bind('click',
+            function() {smsc_logout();}
+        );
+    })
+};
+
+var smsc_message_send_ui = function() {
+    alert("message_send");
+};
+
+var smsc_special_send_ui = function() {
+    alert("special_send");
 };
