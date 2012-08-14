@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<head>
+    <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src ="js/jquery/jquery-1.7.2.min.js"></script>
+    <script src ="js/jquery/jquery-ui-1.8.22.custom.min.js"></script>
+    <script src ="js/smsc/login.js"></script>
+    <script src ="js/smsc/smsc_ui.js"></script>
+    <script src ="js/jquery/jquery.form.js"></script>
+    <script src ="js/jquery/jquery.sha1.js"></script>
+    <link rel=stylesheet type=text/css href=css/ui-lightness/jquery-ui-1.8.22.custom.css />
+</head>
+<body>
+
+</body>
+
+<div id="dialog" title="登录">
+
+</div>
+
+<div id="main">
+    <div id="sidebar">测试</div>
+    <div id="main_panel">测试1</div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $.smsc = {};
+        $.smsc.smsd_url = "/smsd";
+        smsc_login_ui();
+    });
+
+</script>

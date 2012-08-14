@@ -9,3 +9,5 @@ smsd/.*
 */bin-debug/history
 */bin-debug/smsc*
 */bin-debug/*.js
+.DS_Store
+*/.idea/
