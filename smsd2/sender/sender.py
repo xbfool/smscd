@@ -81,6 +81,10 @@ class sms_sender(object):
             now = datetime.now()
             # process returns
             self.__process_ret(now)
+
+            if len(self.__pending) >= 10:
+                print 'pending list len more than 10, waiting'
+                continue
             # process pending queue from database
             if self.__process_queue_new() == 0:
                 #print '%s: no pending queue, sleep for %d seconds' % (self.__class__.__name__, self.__chk_interval)
