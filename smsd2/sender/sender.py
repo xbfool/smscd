@@ -187,8 +187,14 @@ class sms_sender(object):
         for msg in messages:
             if msg['uid'] in self.__pending:
                 continue
+
+            user_msg_num = self.msg_controller.get_user_msg_num(msg['user_uid'])
+            if user_msg_num  <= 0 or user_msg_num < msg['msg_num']:
+                break
             msg['addr'] = msg['address'].split(';')
             channel_list = self.msg_controller.get_channel_list(msg)
+
+
             if len(channel_list) == 0:
                 continue
             
