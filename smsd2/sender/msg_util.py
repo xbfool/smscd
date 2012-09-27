@@ -72,7 +72,7 @@ class MsgController():
                 yield ret
                 
     def get_messages(self):
-        sel =  select([self.msg_t], and_(self.msg_t.c.status == msg_status.F_ADMIT, self.msg_t.c.channel != 'card_send_a')).limit(100)
+        sel =  select([self.msg_t], and_(self.msg_t.c.status == msg_status.F_ADMIT, self.msg_t.c.channel != 'card_send_a')).limit(10)
         res = self.db.execute(sel)
         
         for r in res:
@@ -282,7 +282,7 @@ class MsgController():
             update_args['msg_num'] = param['msg_num']
             update_args['channel'] = param['setting']['name']
             up = self.msg_t.update().where(self.msg_t.c.uid == param['uid']).values(**update_args)
-            self.db.execute(up).execution_options(autocommit=True)
+            self.db.execute(up)
         except:
             print_exc()
             
@@ -290,7 +290,7 @@ class MsgController():
             update_args = {}
             update_args['msg_num'] = self.user_t.c.msg_num - param['msg_num']
             up = self.user_t.update().where(self.user_t.c.uid == param['user_uid']).values(**update_args)
-            self.db.execute(up).execution_options(autocommit=True)
+            self.db.execute(up)
             return True
         except:
             print_exc()
