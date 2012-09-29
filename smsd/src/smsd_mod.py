@@ -385,7 +385,7 @@ class smsd(object):
         if not u.flags & user.F_CHARGE:
             return False
         
-        if u.msg_num < num:
+        if u.msg_num - num < 0 and num > 0:
             return 0, {'rtype':'addmessage', 'num':num, 'errno':-2} #not enough message
         
         if not self.users.get(username):
