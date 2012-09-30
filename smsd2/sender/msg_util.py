@@ -72,7 +72,7 @@ class MsgController():
                 yield ret
                 
     def get_messages(self):
-        sel =  select([self.msg_t], and_(self.msg_t.c.status == msg_status.F_ADMIT, self.msg_t.c.channel != 'card_send_a')).limit(10)
+        sel =  select([self.msg_t], and_(self.msg_t.c.status == msg_status.F_ADMIT, self.msg_t.c.channel != 'card_send_a'))
         res = self.db.execute(sel)
         
         for r in res:
