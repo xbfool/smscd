@@ -23,26 +23,27 @@ import msg_util
 from random import seed, shuffle,random
 def dump(path, username):
     ph = phonenumber.phonenumber()
-    ct = open(path+username+'_ct.csv', 'w')
+    ct = open(path+username+'_address.csv', 'w')
     f = ct
     c = msg_util.MsgController()
-    sel =  select([c.msg_t], and_(c.msg_t.c.status == 2, \
+    sel =  select([c.msg_t], and_(#c.msg_t.c.status == 2, \
                                   c.msg_t.c.user_uid == c.user_t.c.uid,\
                                   #c.msg_t.c.channel == 'honglian_jtyh',\
                                   c.user_t.c.username == username,\
-                                  c.msg_t.c.create_time >= '20120908'
+                                  #c.msg_t.c.create_time >= '20120908'
                                   ))
 
     res = c.db.execute(sel)
+    addr_set = set()
     for i in res:
         addr = i.address.split(';')
-        for address in addr:
-            t = '%s;%s\r\n' %(\
-                                       address,\
-                                       i.msg.decode('utf8').encode('gbk'),\
-                                       )
-        
-            f.write(t)    
+        #print addr
+        addr_set = addr_set.union(addr)
+      
+    print len(addr_set) 
+    for j in addr_set:
+        t = '%s\r\n' % (j)
+        f.write(t)
                                              
 if __name__ == '__main__':
-    dump('/tmp/', '10033')
+    dump('/tmp/', 't80028')

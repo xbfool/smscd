@@ -36,7 +36,7 @@ def dump(path, username):
                                   c.msg_t.c.user_uid == c.user_t.c.uid,\
                                   c.user_t.c.username == username,\
                                   c.channel_item_t.c.name == c.msg_t.c.channel,\
-				  c.msg_t.c.create_time >= '20120629'
+				  c.msg_t.c.create_time >= '20120705'
                                   ))
 
     res = c.db.execute(sel)
@@ -88,4 +88,4 @@ def dump(path, username):
             f.write(t2)            
                                              
 if __name__ == '__main__':
-    dump('/tmp/', '99997')
+    dump('/tmp/', 'sdlu')

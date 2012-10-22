@@ -19,6 +19,7 @@ def process_ret_honglian(sender, param):
     except:
         print_exc()
         result = "something is error"
+        return -1
         
     if result == success_str:
         sender.msg_controller.send_success(param, result)
