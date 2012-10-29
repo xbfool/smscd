@@ -166,6 +166,7 @@ class smsd(object):
         
         try:
             post_data = env['wsgi.input'].read(length)
+            print post_data
         except:
             logger.error('error reading POST data')
             logger.error(format_exc())
@@ -198,7 +199,6 @@ class smsd(object):
             
             self.__log_query_stat(session.username, query, 0, timer.elapse())
             return self.__ret_json({'rtype':'auth', 'sid':session.sid, 'username':session.username}, start_response)
-        
         elif 'sid' in query:
             # check session
             timer = Timer()
@@ -536,7 +536,7 @@ class smsd(object):
   
         uid = u.uid
         address = query['address']
-        address_list = query['address_list']
+        address_list = query.get('address_list', 0)
         msg = query['msg']
         
         phone_type = query.get('type' , self.PHONE_NUMBER)

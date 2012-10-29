@@ -20,7 +20,12 @@ from dbsql import dbsql
 
 from message import message
 import logging
+import httplib, urllib
 import logging.handlers
+import json
+smsd_url = 'fudaduanxin.com'
+smsd_port = '81'
+from traceback import print_exc
 class sendsms2(object):
     def __init__(self, conf = 'smsd.ini', using_wsgiref = False):
         if not using_wsgiref:
@@ -29,9 +34,9 @@ class sendsms2(object):
         self.num_req = 0
         self.cfg = loadcfg(conf)
         self.db = dbsql(**self.cfg.database.raw_dict)
-        LOG_FILENAME = '/var/log/smscd/sendsms.log'
+        LOG_FILENAME = '/var/log/smscd/sendsms2.log'
                
-        my_logger = logging.getLogger('smsd.sendsms')
+        my_logger = logging.getLogger('smsd.sendsms2')
         my_logger.setLevel(logging.DEBUG)
         # Add the log message handler to the logger
 
@@ -54,77 +59,101 @@ class sendsms2(object):
     def __del__(self):
         print '%s instance 0x%08x destroyed, %d request(s) processed' % \
             (self.__class__.__name__, id(self), self.num_req)
-        
+
     def __call__(self, env, start_response):
-        # request handler
         self.logger.debug('request: %s' % env)
         self.num_req += 1
-        if env['REQUEST_METHOD'] != 'POST' or 'CONTENT_LENGTH' not in env:
-            return self.__ret(env, start_response, -99, 'invalid query, not POST or invalid POST length')
-        length = int(env['CONTENT_LENGTH'])
-        if length <= 0:
-            return self.__ret(env, start_response, -99, 'error, empty POST body')
-        try:
-            post_data = env['wsgi.input'].read(length)
-            print 'post_data:\n%s' % post_data
-        except:
-            print 'error reading POST data'
-            print_exc()
-            return self.__ret(env, start_response, -99, 'unknown error')
-        try:
-            query = urldecode(post_data)
-        except:
-            print 'error parsing query: %s' % post_data
-            print_exc()
-            return self.__ret(env, start_response, -99, 'invalid query, error parsing')
-        
-        username = query.get('user')
-        password = query.get('pass')
-        recv = query.get('recv')
-        msg = query.get('msg')
-        passtype = query.get('passtype')
-        try:
-            msgdecode = msg.decode('utf8')
-        except:
-            try:
-                msg = msg.decode('gbk').encode('utf8')
-            except:
-                return self.__ret(env, start_response, -99, 'unknown message encoding neither utf-8 nor gbk')
-            
-        if username == None or username == '':
-            return self.__ret(env, start_response, -99, 'invalid query, no user')
-        if password == None or password == '':
-            return self.__ret(env, start_response, -99, 'invalid query, no pass')
-        if recv == None or recv == '':
-            return self.__ret(env, start_response, -99, 'invalid query, no recv')
-        if msg == None or msg == '':
-            return self.__ret(env, start_response, -99, 'invalid query, no msg')
-        if passtype == None or passtype == '':
-            passtype = 'normal'
-        elif passtype == 'sha1':
-            passtype = 'sha1'
-        else:
-            passtype = 'normal'
-        user_uid, remain, postfix = self.__check_user(username, password, passtype)
-        if user_uid == None:
-            return self.__ret(env, start_response, -1, 'user not exist or wrong pass; your input user id:\'%s\', pass :\'%s\'' % (username, password))
-        elif remain < 1:
-            return self.__ret(env, start_response, -2, 'not enough credit')
-        else:
-            if len(recv.split(';')) > 1000:
-                ret_str = '''not support more than 1000 address
-                your phone numbers is %d,
-                phone number is %s
-                ''' % ( len(recv.split(';')), recv)
-                return self.__ret(env, start_response, -3, ret_str);
-            for addr in recv.split(';'):
-                if len(addr) != 11:
-                    return self.__ret(env, start_response, -4, 'some address error, use \';\' to split address number');
-            new_msg = msg + postfix
-            ret = self.__send(user_uid, recv, new_msg)
-            return self.__ret(env, start_response, ret)
+        if env['REQUEST_METHOD'] != 'GET':
+            return self.__ret(env, start_response, 99, 'Error: please send via GET method')
 
-        
+        data = env['QUERY_STRING']
+        query = urldecode(data)
+
+        username = query.get('username')
+        password = query.get('password')
+        phone = query.get('phone')
+        message = query.get('message')
+        if username is None:
+            return self.__ret(env, start_response, 4, 'Error: username is empty')
+        if password is None:
+            return self.__ret(env, start_response, 5, 'Error: password is empty')
+        if phone is None:
+            return self.__ret(env, start_response, 2, 'Error: phone is empty')
+        if message is None:
+            return self.__ret(env, start_response, 3, 'Error: message is empty')
+
+        user_pass_ret = self.check_user_pass(username, password)
+        if user_pass_ret == -1:
+            return self.__ret(env, start_response, 6, 'Error: username and password not match')
+        elif user_pass_ret == -2:
+            return self.__ret(env, start_response, 8, 'Error: your account have not enough money')
+
+
+        try:
+            auth_ret = self.auth(username, password)
+            sid = auth_ret['sid']
+            print sid
+            send_ret = self.send(sid, phone, message)
+            print send_ret
+            ret_id = int(send_ret['errno'])
+            print ret_id
+            if ret_id == 0:
+                return self.__ret(env, start_response, 0, 'Message Commit ok')
+            elif ret_id == -1:
+                return self.__ret(env, start_response, 9, 'Error: Unknow message encoding')
+            elif ret_id == -2:
+                return self.__ret(env, start_response, 8, 'Error: your account have not enough money')
+            elif ret_id == -3:
+                return self.__ret(env, start_response, 10, 'Error: No message to send')
+            elif ret_id == -4:
+                return self.__ret(env, start_response, 11, 'Error: Message char count is too large')
+            elif ret_id == -5:
+                return self.__ret(env, start_response, 12, 'Error: The phone number count is larger than 1000')
+
+        except:
+            print_exc();
+            return self.__ret(env, start_response, 1, 'Error: send error')
+    def check_user_pass(self, user, password):
+        user_uid, remain, postfix = self.__check_user(user, password, 'normal')
+        if user_uid == None:
+            return -1
+        elif remain < 1:
+            return -2
+        return 0
+
+
+    def send(self, sid, phone, message):
+        params = json.dumps({'q': 'sendmessage',
+                                   'sid':sid,
+                                   'address':phone,
+                                   'msg':message
+        })
+        headers = {"Content-type": "application/x-www-form-urlencoded",
+                           "Accept": "text/plain"}
+        conn = httplib.HTTPConnection(smsd_url, smsd_port)
+        conn.request("POST", "", params, headers)
+        res = conn.getresponse()
+        data = res.read()
+        conn.close()
+        d = json.loads(data)
+        return d
+
+    def auth(self, username, password):
+        params = json.dumps({'q': 'auth',
+                                   'user': username,
+                                   'pass': sha1(password).hexdigest(),
+
+        })
+        headers = {"Content-type": "application/x-www-form-urlencoded",
+               "Accept": "text/plain"}
+        conn = httplib.HTTPConnection(smsd_url, smsd_port)
+        conn.request("POST", "", params, headers)
+        res = conn.getresponse()
+        data = res.read()
+        d = json.loads(data)
+        conn.close()
+        return d
+
     def __ret(self, env, start_response, errno, message = None):
         self.logger.debug('return: %d, %s' % (errno, message))
         start_response('200 OK', [('Content-type', 'text/plain')])
@@ -135,19 +164,7 @@ class sendsms2(object):
         else :
             return ['%d' % (errno)]
     
-    def __get_user_channel(self, u, addr):
-        pm = phonenumber.phonenumber()
-        ret = None
-        addr_channel = pm.check_addr(addr)
-        if  addr_channel == pm.S_CM:
-            ret = self.db.raw_sql_query('SELECT channel_cm FROM user WHERE uid = %s', (u))
-        elif addr_channel == pm.S_CU:
-            ret = self.db.raw_sql_query('SELECT channel_cu FROM user WHERE uid = %s', (u))
-        elif addr_channel == pm.S_CT:
-            ret = self.db.raw_sql_query('SELECT channel_ct FROM user WHERE uid = %s', (u))
-        else:
-            return None
-        return ret[0][0]
+
     def __check_user(self, u, p,type):
         password = p
         if type == 'normal':
@@ -156,42 +173,22 @@ class sendsms2(object):
         ret = self.db.raw_sql_query('SELECT uid,msg_num,msg_postfix FROM user WHERE username = %s AND password = %s AND can_post = TRUE AND need_check = FALSE',
                                     (u, password))
         if len(ret) == 0:
-            return None, None
+            return None, None, None
         user_uid, msg_num, msg_postfix = ret[0]
         pending = self.db.raw_sql_query('SELECT SUM(msg_num) FROM message WHERE user_uid = %s AND status = %s',
                                         (user_uid, message.F_ADMIT))[0][0]
         return user_uid, msg_num - (pending or 0), msg_postfix
-    
-    def common_message_num(self, msg):
-        l = len(msg.decode('utf8'))
-        if l <= 70:
-            return 1
-        else:
-            return (l - 1) / 64 + 1
-            
-    def __send(self, u, recv, msg):
-        ret = 0
-        try:
-            recv_list = recv.split(';')
-            for addr in recv_list:
-                channel = self.__get_user_channel(u, addr)
-                msg_num = self.common_message_num(msg)
-                self.db.raw_sql('INSERT INTO message(user_uid,address,msg,msg_num,status,create_time,channel) VALUES(%s,%s,%s,%s,%s,%s,%s)',
-                                (u, addr, msg, msg_num, message.F_ADMIT, datetime.now(), channel))
-
-                ret += msg_num
-        except:
-            pass
-        return ret
 
 def wsgiref_daemon():
-    port = 8080
+    port = 8081
     from wsgiref.simple_server import make_server
     httpd = make_server('', port, sendsms2(using_wsgiref = True))
     print 'running wsgiref daemon on port: %d' % port
     httpd.serve_forever()
 
 if __name__ == '__main__':
+    smsd_url = 'localhost'
+    smsd_port = '8082'
     wsgiref_daemon()
 else:
     application = sendsms2(conf = smsd_path + '/smsd.ini')
