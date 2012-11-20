@@ -9,6 +9,7 @@ Created on 2011-10-4
 from sqlalchemy import create_engine
 from sqlalchemy import MetaData
 
+
 def create_db(cfg):
     if(cfg.database.engine == 'mysql+mysqldb'):
         db = create_engine('%s://%s:%s@%s/%s' % 

@@ -1,13 +1,16 @@
 __author__ = 'xbfool'
 
 import cherrypy
-
+import db.db
 
 class Smsd4:
+    def __init__(self):
+        self.db = db.db.create_db()
 
     @cherrypy.expose
     def auth(self):
-        return 'auth'
+        user = self.db.user.first();
+        return str(user)
 
 
     @cherrypy.expose
