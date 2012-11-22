@@ -2,17 +2,18 @@ __author__ = 'xbfool'
 
 import cherrypy
 import db.db
+import handler.handle_auth
 
 class Smsd4:
     def __init__(self):
         self.db = db.db.create_db()
 
     @cherrypy.expose
-    def auth(self):
-        user = self.db.user.first();
-        return str(user)
-
-
+    def auth(self, type='plain', rettype='json', *args, **kargs):
+        print args
+        print kargs
+        ret =  handler.handle_auth.handle_auth(self, kargs)
+        return ret
     @cherrypy.expose
     def echo(self):
         return 'echo'

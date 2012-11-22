@@ -10,4 +10,4 @@ smsd/.*
 */bin-debug/smsc*
 */bin-debug/*.js
 .DS_Store
-*/.idea/
+.idea/workspace.xml
