@@ -14,9 +14,6 @@ class Smsd4:
         print kargs
         ret =  handler.handle_auth.handle_auth(self, kargs)
         return ret
-    @cherrypy.expose
-    def echo(self):
-        return 'echo'
 
     @cherrypy.expose
     def changepwd(self):

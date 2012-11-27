@@ -40,5 +40,16 @@ def session_create(context, username):
 
     db.commit()
 
-    return session.sid
+    return session
+
+def session_get_user(context, sid):
+    db = context.db
+    s = db.sessions.filter(db.sessions.sid == sid).first()
+    if s is None:
+        return None
+
+    user = db.user.filter(db.user.username == s.username).first()
+
+    return user
+
 
