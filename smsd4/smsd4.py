@@ -3,7 +3,7 @@ __author__ = 'xbfool'
 import cherrypy
 import db.db
 import handler.handle_auth
-
+import handler.handle_user
 class Smsd4:
     def __init__(self):
         self.db = db.db.create_db()
@@ -16,8 +16,9 @@ class Smsd4:
         return ret
 
     @cherrypy.expose
-    def changepwd(self):
-        return 'changepwd'
+    def changepwd(self, type='plain', rettype='json', *args, **kargs):
+        ret = handler.handle_user.handle_changepwd(self, kargs)
+        return ret
 
     @cherrypy.expose
     def add_user(self):
