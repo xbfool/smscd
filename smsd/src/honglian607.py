@@ -65,7 +65,7 @@ class sendsms(object):
     def __call__(self, env, start_response):
         # request handler
 
-        self.logger.debug('%s', env)
+        self.logger.debug('%s', env['QUERY_STRING'])
 
         ret = 0
         return self.__ret(env, start_response, ret)
