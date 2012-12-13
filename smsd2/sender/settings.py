@@ -184,7 +184,7 @@ class sender_settings():
             'sub_mode': 'honglian',
             'username':'jnfd',
             'password':'647185',
-            'epid':'372',
+            'epid':'10372',
             'process_ret': process_ret_honglian,
             'process_req': process_req_honglian,
         }
@@ -198,7 +198,7 @@ class sender_settings():
             'sub_mode': 'honglian',
             'username':'jnfdbjyh',
             'password':'123456',
-            'epid':'606',
+            'epid':'10606',
             'process_ret': process_ret_honglian,
             'process_req': process_req_honglian,
         }
@@ -212,7 +212,7 @@ class sender_settings():
             'sub_mode': 'honglian',
             'username':'fdjtyh',
             'password':'123456',
-            'epid':'607',
+            'epid':'10607',
             'process_ret': process_ret_honglian,
             'process_req': process_req_honglian,
         }
@@ -226,7 +226,7 @@ class sender_settings():
             'sub_mode': 'honglian',
             'username':'fdzxyy',
             'password':'123456',
-            'epid':'6101',
+            'epid':'106101',
             'process_ret': process_ret_honglian,
             'process_req': process_req_honglian,
         }
@@ -253,7 +253,7 @@ class sender_settings():
             'sub_mode': 'honglian',
             'username':'fdgg',
             'password':'123456',
-            'epid':'6856',
+            'epid':'106856',
             'process_ret': process_ret_honglian,
             'process_req': process_req_honglian,
         }
