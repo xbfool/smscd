@@ -177,10 +177,10 @@ class sender_settings():
         
         settings['honglian_01'] = {
             'name': 'honglian_01',
-            'host': '219.238.160.81',
-            'path': '/SmsHandler.ashx',
+            'host': 'q.hl95.com',
+            'path': '/',
             'mode': 'GET',
-            'port': '8081',
+            'port': '8061',
             'sub_mode': 'honglian',
             'username':'jnfd',
             'password':'647185',
@@ -191,10 +191,10 @@ class sender_settings():
         
         settings['honglian_bjyh'] = {
             'name': 'honglian_bjyh',
-            'host': '219.238.160.81',
-            'path': '/SmsHandler.ashx',
+            'host': 'q.hl95.com',
+            'path': '/',
             'mode': 'GET',
-            'port': '8081',
+            'port': '8061',
             'sub_mode': 'honglian',
             'username':'jnfdbjyh',
             'password':'123456',
@@ -205,10 +205,10 @@ class sender_settings():
         
         settings['honglian_jtyh'] = {
             'name': 'honglian_jtyh',
-            'host': '219.238.160.81',
-            'path': '/SmsHandler.ashx',
+            'host': 'q.hl95.com',
+            'path': '/',
             'mode': 'GET',
-            'port': '8081',
+            'port': '8061',
             'sub_mode': 'honglian',
             'username':'fdjtyh',
             'password':'123456',
@@ -219,10 +219,10 @@ class sender_settings():
                 
         settings['honglian_ty'] = {
             'name': 'honglian_ty',
-            'host': '219.238.160.81',
-            'path': '/SmsHandler.ashx',
+            'host': 'q.hl95.com',
+            'path': '/',
             'mode': 'GET',
-            'port': '8081',
+            'port': '8061',
             'sub_mode': 'honglian',
             'username':'fdzxyy',
             'password':'123456',
@@ -233,10 +233,10 @@ class sender_settings():
         
         settings['honglian_tyb'] = {
             'name': 'honglian_tyb',
-            'host': '219.238.160.81',
-            'path': '/SmsHandler.ashx',
+            'host': 'q.hl95.com',
+            'path': '/',
             'mode': 'GET',
-            'port': '8081',
+            'port': '8061',
             'sub_mode': 'honglian',
             'username':'fdhz',
             'password':'123456',
@@ -246,10 +246,10 @@ class sender_settings():
         }
         settings['honglian_tyd'] = {
             'name': 'honglian_tyd',
-            'host': '219.238.160.81',
-            'path': '/SmsHandler.ashx',
+            'host': 'q.hl95.com',
+            'path': '/',
             'mode': 'GET',
-            'port': '8081',
+            'port': '8061',
             'sub_mode': 'honglian',
             'username':'fdgg',
             'password':'123456',
