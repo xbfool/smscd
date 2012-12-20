@@ -396,8 +396,8 @@ def process_req_maoming_ct(http_pool, setting, msg):
     
 def process_req_scp_0591(http_pool, setting, msg):
     address_shu = '|'.join(msg['addr'])
-    #tmpmsg = safe_utf8_2_gbk(msg['content'])
-    tmpmsg = msg['content']
+    tmpmsg = safe_utf8_2_gbk(msg['content'])
+    #tmpmsg = msg['content']
     http_pool.req(msg['channel'], 
                   {'user_uid':msg['user_uid'], 
                    'setting':setting, 
@@ -411,7 +411,8 @@ def process_req_scp_0591(http_pool, setting, msg):
 def process_req_qixintong2012(http_pool, setting, msg):
     msg_num = ((len(msg['content'].decode('utf8')) - 1) / 66 + 1) * len(msg['total_addr'])
     sub_num =  ((len(msg['content'].decode('utf8')) - 1) / 66 + 1) * len(msg['addr'])
-    tmpmsg = safe_utf8_2_gbk(msg['content'])
+    #tmpmsg = safe_utf8_2_gbk(msg['content'])
+    tmpmsg = msg['content']
     http_pool.req(msg['channel'], 
                   {'user_uid':msg['user_uid'], 
                    'setting':setting, 
