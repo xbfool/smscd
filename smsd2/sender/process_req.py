@@ -418,9 +418,9 @@ def process_req_qixintong2012(http_pool, setting, msg):
                    'msg_num':msg_num, 
                    'sub_num':sub_num,
                    'percent':msg['percent']},
-                  ua=setting['ua'], 
-                  pw=setting['pw'],
-                  mobile=','.join(msg['addr']), 
+                  uid=setting['uid'],
+                  pwd=setting['pwd'],
+                  mobiles=','.join(msg['addr']),
                   msg=tmpmsg)
 def process_req_zhangshangtong(http_pool, setting, msg):
     #msg_num = ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['total_addr'])

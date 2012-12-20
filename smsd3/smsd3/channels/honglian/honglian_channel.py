@@ -8,10 +8,10 @@ import httplib, urllib
 
 honglian_real_setting = {
     'site':{
-        'host': '219.238.160.81',
-        'path': '/interface/limitnew.asp',
-        'port': '80',
-        'mode': 'POST',
+        'host': 'q.hl95.com',
+        'path': '/',
+        'port': '8061',
+        'mode': 'GET',
     },
     'params':{
             'username':'fdzxyy',
