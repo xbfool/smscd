@@ -37,7 +37,7 @@ def process_ret_qixintong2012(sender, param):
         if result[0] == '1':
             sender.msg_controller.send_success(param, result)
             return 1
-        elif result[0] in ('0', '-2', '-3', '-20', '1007'):
+        elif result[0] in ('0', '-2', '-3', '-20', '1007', '-1007'):
             return -2
         elif result[0] in ('-1', '-10', '-11', '-17', '-18', '-19', '-99'):
             return -1
