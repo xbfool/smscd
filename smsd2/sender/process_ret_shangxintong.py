@@ -42,7 +42,7 @@ def process_ret_qixintong2012(sender, param):
         elif result[0] in ('-1', '-10', '-11', '-17', '-18', '-19', '-99'):
             return -1
         else:
-            return -1
+            return -2
             
     except:
         import string
