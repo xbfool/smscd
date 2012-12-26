@@ -341,7 +341,32 @@ class sender_settings():
             'process_ret': process_ret_zhangshangtong,
             'process_req' : process_req_zhangshangtong
         }
-        
+
+        settings['106f_95559'] = {
+            'name': '106f_95559',
+            'host': '221.179.180.158',
+            'path': '/QxtSms/QxtFirewall',
+            'port': '9002',
+            'sub_mode': '106f',
+            'OperID':'fuda',
+            'OperPass':'72afw54e',
+            'mode': 'GET',
+            'process_ret': process_ret_106f,
+            'process_req' : process_req_106f
+        }
+
+        settings['106f_95559'] = {
+            'name': '106f_95559',
+            'host': '221.179.180.158',
+            'path': '/QxtSms/QxtFirewall',
+            'port': '9002',
+            'sub_mode': '106f',
+            'OperID':'fuda1',
+            'OperPass':'daf236w9',
+            'mode': 'GET',
+            'process_ret': process_ret_106f,
+            'process_req' : process_req_106f
+        }
         settings['default'] = settings['hb_ct_01']
         
         self.settings = settings

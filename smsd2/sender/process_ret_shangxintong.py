@@ -56,3 +56,28 @@ def process_ret_qixintong2012(sender, param):
         return -2
     
     return 1
+
+def process_ret_106f(sender, param):
+    result = "something is error"
+    try:
+        resultDOM = parseString(param['ret'][2])
+        result = resultDOM.firstChild.firstChild.firstChild.data
+
+        if result[0] in ('00', '01', '03'):
+            sender.msg_controller.send_success(param, result)
+            return 1
+        elif result[0] in ('07', '08', '09', '10', '97', '98', '99'):
+            return -2
+        elif result[0] in ('02', '04', '05', '06'):
+            return -1
+        else:
+            return -2
+
+    except:
+
+        print_exc()
+        sender.msg_controller.send_fail(param, result)
+        return -2
+
+    return 1
+

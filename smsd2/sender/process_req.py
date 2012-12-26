@@ -442,3 +442,20 @@ def process_req_zhangshangtong(http_pool, setting, msg):
                   longcode=msg['ext'],
                   msisdn=','.join(msg['addr']), 
                   smscontent=msg['content'])
+
+def process_req_106f(http_pool, setting, msg):
+    msg_num = ((len(msg['content'].decode('utf8')) - 1) / 67 + 1) * len(msg['total_addr'])
+    sub_num =  ((len(msg['content'].decode('utf8')) - 1) / 67 + 1) * len(msg['addr'])
+    tmpmsg = safe_utf8_2_gbk(msg['content'])
+    http_pool.req(msg['channel'],
+        {'user_uid':msg['user_uid'],
+         'setting':setting,
+         'uid':msg['uid'],
+         'msg_num':msg_num,
+         'sub_num':sub_num,
+         'percent':msg['percent']},
+        OperID=setting['OperID'],
+        OperPass=setting['OperPass'],
+        DesMobile=','.join(msg['addr']),
+        Content=tmpmsg,
+        ContentType=8)
