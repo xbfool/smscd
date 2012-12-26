@@ -34,12 +34,12 @@ def process_ret_qixintong2012(sender, param):
         resultDOM = parseString(param['ret'][2])
         result = resultDOM.firstChild.firstChild.firstChild.data
 
-        if result[0] == '1':
+        if result == '1':
             sender.msg_controller.send_success(param, result)
             return 1
-        elif result[0] in ('0', '-2', '-3', '-20', '1007', '-1007'):
+        elif result in ('0', '-2', '-3', '-20', '1007', '-1007'):
             return -2
-        elif result[0] in ('-1', '-10', '-11', '-17', '-18', '-19', '-99'):
+        elif result in ('-1', '-10', '-11', '-17', '-18', '-19', '-99'):
             return -1
         else:
             return -2
@@ -63,12 +63,12 @@ def process_ret_106f(sender, param):
         resultDOM = parseString(param['ret'][2])
         result = resultDOM.firstChild.firstChild.firstChild.data
 
-        if result[0] in ('00', '01', '03'):
+        if result in ('00', '01', '03'):
             sender.msg_controller.send_success(param, result)
             return 1
-        elif result[0] in ('07', '08', '09', '10', '97', '98', '99'):
+        elif result in ('07', '08', '09', '10', '97', '98', '99'):
             return -2
-        elif result[0] in ('02', '04', '05', '06'):
+        elif result in ('02', '04', '05', '06'):
             return -1
         else:
             return -2
