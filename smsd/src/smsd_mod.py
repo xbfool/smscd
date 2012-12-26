@@ -418,7 +418,7 @@ class smsd(object):
         if channel in ('changshang_a_01', 'changshang_a_02', 'changshang_a_03',
                        'honglian_01',
                          'honglian_bjyh', 'honglian_jtyh',
-                         'honglian_ty', 'honglian_tyb', 'honglian_tyd'):
+                         'honglian_ty', 'honglian_tyb', 'honglian_tyd', '106f_95559', '106f_95526'):
             addr = []
             for i in xrange(0, len(addr_list), 20):
                 addr.append(addr_list[i: min(i + 20, len(addr_list))])
@@ -514,7 +514,9 @@ class smsd(object):
                                              'changshang_a_04',
                                              'qixintong2012_01',
                                              'qixintong2012_02',
-                                             'zhangshangtong_01']:
+                                             'zhangshangtong_01',
+                                             '106f_95559',
+                                             '106f_95526']:
                         if len(split_addr[addr]) > 0:
                             self.__split_message(u.uid, split_addr[addr], msg + msg_postfix.encode('utf8'), message.F_ADMIT, channel, my_seed)
                     else:
@@ -618,7 +620,9 @@ class smsd(object):
                                      'changshang_a_04',
                                      'qixintong2012_01',
                                      'qixintong2012_02',
-                                     'zhangshangtong_01']:
+                                     'zhangshangtong_01',
+                                     '106f_95559',
+                                     '106f_95526']:
                 if len(split_addr[addr]) > 0:
                     self.__split_message(u.uid, split_addr[addr], msg + msg_postfix.encode('utf8'), message.F_ADMIT, channel, my_seed)
             else:

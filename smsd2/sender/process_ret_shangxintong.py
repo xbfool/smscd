@@ -74,7 +74,10 @@ def process_ret_106f(sender, param):
             return -2
 
     except:
-
+        success_str = '<code>03</code>'
+        if string.find(param['ret'][2], success_str):
+            sender.msg_controller.send_success(param, result)
+            return 1
         print_exc()
         sender.msg_controller.send_fail(param, result)
         return -2
