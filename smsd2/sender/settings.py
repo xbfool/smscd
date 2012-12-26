@@ -11,8 +11,8 @@ from process_ret_hlyd import process_ret_hlyd
 from process_ret_honglian import process_ret_honglian
 from process_ret_maoming_ct import process_ret_maoming_ct
 from process_ret_scp_0591 import process_ret_scp_0591
-from process_ret_shangxintong import process_ret_shangxintong, process_ret_qixintong2012
-from process_ret_zhangshangtong import process_ret_zhangshangtong
+from process_ret_shangxintong import *
+from process_ret_zhangshangtong import *
 from process_req import *
 
 from datetime import datetime
