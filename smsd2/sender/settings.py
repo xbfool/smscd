@@ -327,6 +327,8 @@ class sender_settings():
             'process_ret': process_ret_qixintong2012,
             'process_req' : process_req_qixintong2012
         }
+
+        #106e
         settings['zhangshangtong_01'] = {
             'name': 'zhangshangtong_01',
             'host': 'pi.f3.cn',
@@ -342,6 +344,21 @@ class sender_settings():
             'process_req' : process_req_zhangshangtong
         }
 
+        #106ea
+        settings['zhangshangtong_02'] = {
+            'name': 'zhangshangtong_02',
+            'host': 'pi.f3.cn',
+            'path': '/SendSMS.aspx',
+            'port': '80',
+            'sub_mode': 'zhangshangtong',
+            'ececcid':'305990001',
+            'password':'jnfd123',
+            'msgtype':'5',
+            'longcode':'111',
+            'mode': 'POST',
+            'process_ret': process_ret_zhangshangtong,
+            'process_req' : process_req_zhangshangtong
+        }
         settings['106f_95559'] = {
             'name': '106f_95559',
             'host': '221.179.180.158',

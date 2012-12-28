@@ -425,10 +425,15 @@ def process_req_qixintong2012(http_pool, setting, msg):
                   mobiles=','.join(msg['addr']),
                   msg=tmpmsg)
 def process_req_zhangshangtong(http_pool, setting, msg):
-    #msg_num = ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['total_addr'])
-    #sub_num =  ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['addr'])
-    msg_num = msg['msg_num']
-    sub_num = msg['sub_num']
+    msg_str_len = len(msg['content'].decode('utf8'))
+
+    if msg_str_len <= 70:
+        msg_num =  len(msg['total_addr'])
+        sub_num = len(msg['addr'])
+    else:
+        msg_num = ((msg_str_len - 1) / 67 + 1) * len(msg['total_addr'])
+        sub_num = ((msg_str_len - 1) / 67 + 1) * len(msg['addr'])
+
     http_pool.req(msg['channel'], 
                   {'user_uid':msg['user_uid'], 
                    'setting':setting, 
