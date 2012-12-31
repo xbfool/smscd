@@ -395,7 +395,7 @@ class smsd(object):
         if pu.uid == u.uid:
             return 0, {'rtype':'addmessage', 'num':num, 'errno':-3} #cannot be negetive
         
-        if pu.parent_id != u.uid:
+        if pu.parent_id != u.uid and not u.is_admin():
             return 0, {'rtype':'addmessage', 'num':num, 'errno':-4} #cannot be negetive
         
         if pu.msg_num + num >= 0:
