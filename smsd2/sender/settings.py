@@ -11,8 +11,8 @@ from process_ret_hlyd import process_ret_hlyd
 from process_ret_honglian import process_ret_honglian
 from process_ret_maoming_ct import process_ret_maoming_ct
 from process_ret_scp_0591 import process_ret_scp_0591
-from process_ret_shangxintong import process_ret_shangxintong, process_ret_qixintong2012
-from process_ret_zhangshangtong import process_ret_zhangshangtong
+from process_ret_shangxintong import *
+from process_ret_zhangshangtong import *
 from process_req import *
 
 from datetime import datetime
@@ -327,21 +327,63 @@ class sender_settings():
             'process_ret': process_ret_qixintong2012,
             'process_req' : process_req_qixintong2012
         }
+
+        #106e
         settings['zhangshangtong_01'] = {
             'name': 'zhangshangtong_01',
             'host': 'pi.f3.cn',
             'path': '/SendSMS.aspx',
             'port': '80',
             'sub_mode': 'zhangshangtong',
-            'ececcid':'305555002',
-            'password':'abc123',
+            'ececcid':'305990',
+            'password':'fddx123',
             'msgtype':'5',
             'longcode':'111',
             'mode': 'POST',
             'process_ret': process_ret_zhangshangtong,
             'process_req' : process_req_zhangshangtong
         }
-        
+
+        #106ea
+        settings['zhangshangtong_02'] = {
+            'name': 'zhangshangtong_02',
+            'host': 'pi.f3.cn',
+            'path': '/SendSMS.aspx',
+            'port': '80',
+            'sub_mode': 'zhangshangtong',
+            'ececcid':'305990001',
+            'password':'jnfd123',
+            'msgtype':'5',
+            'longcode':'111',
+            'mode': 'POST',
+            'process_ret': process_ret_zhangshangtong,
+            'process_req' : process_req_zhangshangtong
+        }
+        settings['106f_95559'] = {
+            'name': '106f_95559',
+            'host': '221.179.180.158',
+            'path': '/QxtSms/QxtFirewall',
+            'port': '9002',
+            'sub_mode': '106f',
+            'OperID':'fuda',
+            'OperPass':'72afw54e',
+            'mode': 'GET',
+            'process_ret': process_ret_106f,
+            'process_req' : process_req_106f
+        }
+
+        settings['106f_95526'] = {
+            'name': '106f_95526',
+            'host': '221.179.180.158',
+            'path': '/QxtSms/QxtFirewall',
+            'port': '9002',
+            'sub_mode': '106f',
+            'OperID':'fuda1',
+            'OperPass':'daf236w9',
+            'mode': 'GET',
+            'process_ret': process_ret_106f,
+            'process_req' : process_req_106f
+        }
         settings['default'] = settings['hb_ct_01']
         
         self.settings = settings

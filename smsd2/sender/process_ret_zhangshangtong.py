@@ -6,7 +6,7 @@ def process_ret_zhangshangtong(sender, param):
     result = 'message send fail'
     rl = []
     msg_err = ('3016', '3017', '3018', '4004', '3011', \
-    	'3042', '3012', '3000', '3003')
+    	'3042', '3012', '3000', '3003', '3032')
     channel_err = ('1006', '1003', '1008', '1004', '1007', '3014', '3091')
     try:
         result = param['ret'][2]

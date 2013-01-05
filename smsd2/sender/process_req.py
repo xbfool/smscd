@@ -397,6 +397,7 @@ def process_req_maoming_ct(http_pool, setting, msg):
 def process_req_scp_0591(http_pool, setting, msg):
     address_shu = '|'.join(msg['addr'])
     tmpmsg = safe_utf8_2_gbk(msg['content'])
+    #tmpmsg = msg['content']
     http_pool.req(msg['channel'], 
                   {'user_uid':msg['user_uid'], 
                    'setting':setting, 
@@ -406,11 +407,12 @@ def process_req_scp_0591(http_pool, setting, msg):
                    'percent':msg['percent']},
                   Mobile=address_shu, 
                   MsgContent=tmpmsg)
-    
+from urllib import urlencode
 def process_req_qixintong2012(http_pool, setting, msg):
     msg_num = ((len(msg['content'].decode('utf8')) - 1) / 66 + 1) * len(msg['total_addr'])
     sub_num =  ((len(msg['content'].decode('utf8')) - 1) / 66 + 1) * len(msg['addr'])
-    tmpmsg = safe_utf8_2_gbk(msg['content'])
+    #tmpmsg = safe_utf8_2_gbk(msg['content'])
+    tmpmsg = msg['content']
     http_pool.req(msg['channel'], 
                   {'user_uid':msg['user_uid'], 
                    'setting':setting, 
@@ -423,10 +425,15 @@ def process_req_qixintong2012(http_pool, setting, msg):
                   mobiles=','.join(msg['addr']),
                   msg=tmpmsg)
 def process_req_zhangshangtong(http_pool, setting, msg):
-    #msg_num = ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['total_addr'])
-    #sub_num =  ((len(msg['content'].decode('utf8')) - 1) / 64 + 1) * len(msg['addr'])
-    msg_num = msg['msg_num']
-    sub_num = msg['sub_num']
+    msg_str_len = len(msg['content'].decode('utf8'))
+
+    if msg_str_len <= 70:
+        msg_num =  len(msg['total_addr'])
+        sub_num = len(msg['addr'])
+    else:
+        msg_num = ((msg_str_len - 1) / 67 + 1) * len(msg['total_addr'])
+        sub_num = ((msg_str_len - 1) / 67 + 1) * len(msg['addr'])
+
     http_pool.req(msg['channel'], 
                   {'user_uid':msg['user_uid'], 
                    'setting':setting, 
@@ -440,3 +447,20 @@ def process_req_zhangshangtong(http_pool, setting, msg):
                   longcode=msg['ext'],
                   msisdn=','.join(msg['addr']), 
                   smscontent=msg['content'])
+
+def process_req_106f(http_pool, setting, msg):
+    msg_num = ((len(msg['content'].decode('utf8')) - 1) / 67 + 1) * len(msg['total_addr'])
+    sub_num =  ((len(msg['content'].decode('utf8')) - 1) / 67 + 1) * len(msg['addr'])
+    tmpmsg = safe_utf8_2_gbk(msg['content'])
+    http_pool.req(msg['channel'],
+        {'user_uid':msg['user_uid'],
+         'setting':setting,
+         'uid':msg['uid'],
+         'msg_num':msg_num,
+         'sub_num':sub_num,
+         'percent':msg['percent']},
+        OperID=setting['OperID'],
+        OperPass=setting['OperPass'],
+        DesMobile=','.join(msg['addr']),
+        Content=tmpmsg,
+        ContentType=8)
