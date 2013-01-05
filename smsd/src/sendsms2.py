@@ -25,6 +25,7 @@ import logging.handlers
 import json
 smsd_url = 'fudaduanxin.com'
 smsd_port = '81'
+smsd_sub_url = '/smsd'
 from traceback import print_exc
 class sendsms2(object):
     def __init__(self, conf = 'smsd.ini', using_wsgiref = False):
@@ -131,7 +132,7 @@ class sendsms2(object):
         headers = {"Content-type": "application/x-www-form-urlencoded",
                            "Accept": "text/plain"}
         conn = httplib.HTTPConnection(smsd_url, smsd_port)
-        conn.request("POST", "", params, headers)
+        conn.request("POST", smsd_sub_url, params, headers)
         res = conn.getresponse()
         data = res.read()
         conn.close()
@@ -147,7 +148,7 @@ class sendsms2(object):
         headers = {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "text/plain"}
         conn = httplib.HTTPConnection(smsd_url, smsd_port)
-        conn.request("POST", "", params, headers)
+        conn.request("POST", smsd_sub_url, params, headers)
         res = conn.getresponse()
         data = res.read()
         d = json.loads(data)
