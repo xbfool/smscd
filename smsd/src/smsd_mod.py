@@ -515,6 +515,7 @@ class smsd(object):
                                              'qixintong2012_01',
                                              'qixintong2012_02',
                                              'zhangshangtong_01',
+                                             'zhangshangtong_02',
                                              '106f_95559',
                                              '106f_95526']:
                         if len(split_addr[addr]) > 0:
@@ -621,6 +622,7 @@ class smsd(object):
                                      'qixintong2012_01',
                                      'qixintong2012_02',
                                      'zhangshangtong_01',
+                                     'zhangshangtong_02',
                                      '106f_95559',
                                      '106f_95526']:
                 if len(split_addr[addr]) > 0:
