@@ -81,6 +81,7 @@ class MsgController():
             ret['percent'] = self.get_user_percent(ret['user_uid'])
             ret['ext'] = self.get_user_ext(ret['user_uid'])
             msg_num = self.get_user_msg_num(ret['user_uid'])
+            print 'getting msg: %s' % ret['uid']
             if msg_num >= max(ret['msg_num'], 1):
                 yield ret
     def get_user_percent(self, user_uid):

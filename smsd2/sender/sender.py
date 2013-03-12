@@ -186,6 +186,7 @@ class sms_sender(object):
         count = 0
         self.msg_controller.clean_dict()
         for msg in messages:
+            print 'processing msg %s' % msg['uid']
             if msg['uid'] in self.__pending:
                 continue
 
