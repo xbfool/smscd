@@ -197,6 +197,7 @@ class sms_sender(object):
 
 
             if len(channel_list) == 0:
+                self.logger.debug('msg_uid%s has no channel to send' % msg['uid'])
                 continue
             
             for item in channel_list:
