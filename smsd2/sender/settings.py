@@ -225,7 +225,7 @@ class sender_settings():
             'port': '8061',
             'sub_mode': 'honglian',
             'username':'fdzxyy',
-            'password':'123456',
+            'password':'abc123',
             'epid':'106101',
             'process_ret': process_ret_honglian,
             'process_req': process_req_honglian,
