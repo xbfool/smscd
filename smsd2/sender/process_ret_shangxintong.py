@@ -66,9 +66,9 @@ def process_ret_106f(sender, param):
         if result in ('00', '01', '03'):
             sender.msg_controller.send_success(param, result)
             return 1
-        elif result in ('07', '08', '09', '10', '97', '98', '99'):
+        elif result in ('06', '07', '08', '09', '10', '97', '98', '99'):
             return -2
-        elif result in ('02', '04', '05', '06'):
+        elif result in ('02', '04', '05'):
             return -1
         else:
             return -2
