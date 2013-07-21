@@ -476,7 +476,7 @@ def process_req_cmpp_web(http_pool, setting, msg):
          'msg_num':msg_num,
          'sub_num':sub_num,
          'percent':msg['percent']},
-        useranme=setting['username'],
+        username=setting['username'],
         password=setting['password'],
         msg_id=msg['uid'],
         phone_numbers=','.join(msg['addr']),

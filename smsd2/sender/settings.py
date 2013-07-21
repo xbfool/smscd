@@ -394,7 +394,8 @@ class sender_settings():
             'sub_mode': 'cmpp_web',
             'username': 'fudaduanxin',
             'password': 'test1234',
-            'proecss_ret': process_ret_cmpp_web,
+            'mode': 'GET',
+            'process_ret': process_ret_cmpp_web,
             'process_req': process_req_cmpp_web
         }
         settings['default'] = settings['hb_ct_01']

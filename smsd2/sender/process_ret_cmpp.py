@@ -7,8 +7,7 @@ def process_ret_cmpp_web(sender, param):
 
     try:
         result = param['ret'][2]
-        rl = result.split('|')
-        if rl[0] == '0':
+        if result == '0':
             sender.msg_controller.send_success(param, result)
             return 1
         else:
