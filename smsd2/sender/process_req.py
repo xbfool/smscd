@@ -464,3 +464,20 @@ def process_req_106f(http_pool, setting, msg):
         DesMobile=','.join(msg['addr']),
         Content=tmpmsg,
         ContentType=8)
+
+def process_req_cmpp_web(http_pool, setting, msg):
+    msg_num = ((len(msg['content'].decode('utf8')) - 1) / 67 + 1) * len(msg['total_addr'])
+    sub_num =  ((len(msg['content'].decode('utf8')) - 1) / 67 + 1) * len(msg['addr'])
+
+    http_pool.req(msg['channel'],
+        {'user_uid':msg['user_uid'],
+         'setting':setting,
+         'uid':msg['uid'],
+         'msg_num':msg_num,
+         'sub_num':sub_num,
+         'percent':msg['percent']},
+        useranme=setting['username'],
+        password=setting['password'],
+        msg_id=msg['uid'],
+        phone_numbers=','.join(msg['addr']),
+        content=msg['content'])
