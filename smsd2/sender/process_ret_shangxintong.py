@@ -60,7 +60,9 @@ def process_ret_qixintong2012(sender, param):
 def process_ret_106f(sender, param):
     result = "something is error"
     try:
-        resultDOM = parseString(param['ret'][2])
+        xmlString = param['ret'][2]
+        xmlStringNoEncoding = xmlString.replace('encoding="gbk"', ' ')
+        resultDOM = parseString(xmlStringNoEncoding)
         result = resultDOM.firstChild.firstChild.firstChild.data
 
         if result in ('00', '01', '03'):
@@ -86,13 +88,16 @@ def process_ret_106f(sender, param):
     return -2
 
 if __name__ == '__main__':
-    x = parseString('<?xml version="1.0" encoding="gbk" ?><response><code>06</code></response>')
-    result =  x.firstChild.firstChild.firstChild.data
-    if result in ('00', '01', '03'):
-        print 1
-    elif result in ('06', '07', '08', '09', '10', '97', '98', '99'):
-        print 2
-    elif result in ('02', '04', '05'):
-        print 3
-    else:
-        print 4
+    for i in range(1, 100000):
+        xmlString = '<?xml version="1.0" encoding="gbk" ?><response><code>01</code></response>'
+        xmlStringNoEncoding = xmlString.replace('encoding="gbk"', ' ')
+        x = parseString(xmlStringNoEncoding)
+        result =  x.firstChild.firstChild.firstChild.data
+        if result in ('00', '01', '03'):
+            print 1
+        elif result in ('06', '07', '08', '09', '10', '97', '98', '99'):
+            print 2
+        elif result in ('02', '04', '05'):
+            print 3
+        else:
+            print 4
