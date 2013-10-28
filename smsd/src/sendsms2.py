@@ -136,6 +136,7 @@ class sendsms2(object):
         conn.request("POST", smsd_sub_url, params, headers)
         res = conn.getresponse()
         data = res.read()
+        self.logger.debug('return data: %s' % data)
         conn.close()
         d = json.loads(data)
         return d
