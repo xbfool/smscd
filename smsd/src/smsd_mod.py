@@ -516,6 +516,7 @@ class smsd(object):
                                              'qixintong2012_02',
                                              'zhangshangtong_01',
                                              'zhangshangtong_02',
+                                             'zhangshangtong_03',
                                              '106f_95559',
                                              '106f_95526',
                                              'cmpp_beijing_1']:
@@ -624,6 +625,7 @@ class smsd(object):
                                      'qixintong2012_02',
                                      'zhangshangtong_01',
                                      'zhangshangtong_02',
+                                     'zhangshangtong_03',
                                      '106f_95559',
                                      '106f_95526',
                                      'cmpp_beijing_1']:
