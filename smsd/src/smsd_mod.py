@@ -2,6 +2,7 @@
 # vim:fileencoding=utf-8
 
 import sys
+import re
 print sys.path
 from hashlib import sha1
 from datetime import datetime, timedelta
@@ -413,8 +414,18 @@ class smsd(object):
         else:
             return 0, {'rtype':'addmessage', 'num':num, 'errno':-1} #cannot be negetive
        
-    
+    def check_message_content(self, msg):
+        pattern = re.compile('.*【.*】$')
+        if pattern.match(msg) == None:
+            return False
+        else:
+            return True
+
     def __split_message(self, uid, addr_list, msg, status, channel, seed):
+        msg_status = message.F_FAIL
+        if self.check_message_content(msg):
+            msg_status = message.F_ADMIT
+
         if channel in ('changshang_a_01', 'changshang_a_02', 'changshang_a_03',
                        'honglian_01',
                          'honglian_bjyh', 'honglian_jtyh',
@@ -424,7 +435,7 @@ class smsd(object):
                 addr.append(addr_list[i: min(i + 20, len(addr_list))])
             for item in addr:
                 new_message = message()        
-                new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel, len(addr_list), seed)
+                new_message.new(uid, ';'.join(item), 0, msg, msg_status, channel, len(addr_list), seed)
                 self.messages[new_message.uid] = new_message
         elif channel in ('hb_ct_01', 'hb_ct_02', 'hb_ct_03', 'hb_ct_04', 'hb_ct_05', 'maoming_ct_01'):
             addr = []
@@ -432,7 +443,7 @@ class smsd(object):
                 addr.append(addr_list[i: min(i + 20, len(addr_list))])
             for item in addr:
                 new_message = message()        
-                new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel, len(addr_list), seed)
+                new_message.new(uid, ';'.join(item), 0, msg, msg_status, channel, len(addr_list), seed)
                 self.messages[new_message.uid] = new_message  
         elif channel in ('shangxintong_01', ):
             addr = []
@@ -440,7 +451,7 @@ class smsd(object):
                 addr.append(addr_list[i: min(i + 1, len(addr_list))])
             for item in addr:
                 new_message = message()        
-                new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel, len(addr_list), seed)
+                new_message.new(uid, ';'.join(item), 0, msg, msg_status, channel, len(addr_list), seed)
                 self.messages[new_message.uid] = new_message     
         else:
             addr = []
@@ -448,7 +459,7 @@ class smsd(object):
                 addr.append(addr_list[i: min(i + 20, len(addr_list))])
             for item in addr:
                 new_message = message()        
-                new_message.new(uid, ';'.join(item), 0, msg, message.F_ADMIT, channel, len(addr_list), seed)
+                new_message.new(uid, ';'.join(item), 0, msg, msg_status, channel, len(addr_list), seed)
                 self.messages[new_message.uid] = new_message
      
     def processor_sendmessagelist(self, u, query): 
