@@ -26,7 +26,7 @@ def process_ret_shangxintong(sender, param):
         sender.msg_controller.send_fail(param, result)
         return -2
   
-    return 1
+    return -2
 
 def process_ret_qixintong2012(sender, param):
     result = "something is error"
@@ -55,20 +55,22 @@ def process_ret_qixintong2012(sender, param):
         sender.msg_controller.send_fail(param, result)
         return -2
     
-    return 1
+    return -2
 
 def process_ret_106f(sender, param):
     result = "something is error"
     try:
-        resultDOM = parseString(param['ret'][2])
+        xmlString = param['ret'][2]
+        xmlStringNoEncoding = xmlString.replace('encoding="gbk"', ' ')
+        resultDOM = parseString(xmlStringNoEncoding)
         result = resultDOM.firstChild.firstChild.firstChild.data
 
         if result in ('00', '01', '03'):
             sender.msg_controller.send_success(param, result)
             return 1
-        elif result in ('07', '08', '09', '10', '97', '98', '99'):
+        elif result in ('06', '07', '08', '09', '10', '97', '98', '99'):
             return -2
-        elif result in ('02', '04', '05', '06'):
+        elif result in ('02', '04', '05'):
             return -1
         else:
             return -2
@@ -83,5 +85,19 @@ def process_ret_106f(sender, param):
         sender.msg_controller.send_fail(param, result)
         return -2
 
-    return 1
+    return -2
 
+if __name__ == '__main__':
+    for i in range(1, 100000):
+        xmlString = '<?xml version="1.0" encoding="gbk" ?><response><code>01</code></response>'
+        xmlStringNoEncoding = xmlString.replace('encoding="gbk"', ' ')
+        x = parseString(xmlStringNoEncoding)
+        result =  x.firstChild.firstChild.firstChild.data
+        if result in ('00', '01', '03'):
+            print 1
+        elif result in ('06', '07', '08', '09', '10', '97', '98', '99'):
+            print 2
+        elif result in ('02', '04', '05'):
+            print 3
+        else:
+            print 4

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # vim:fileencoding=utf-8
 
-from traceback import print_exc
+from traceback import *
 from hashlib import sha1
 from datetime import datetime
 import phonenumber
@@ -113,6 +113,7 @@ class sendsms2(object):
 
         except:
             print_exc();
+            self.logger.debug('exception: %s' % format_exc())
             return self.__ret(env, start_response, 1, 'Error: send error')
     def check_user_pass(self, user, password):
         user_uid, remain, postfix = self.__check_user(user, password, 'normal')
@@ -135,6 +136,7 @@ class sendsms2(object):
         conn.request("POST", smsd_sub_url, params, headers)
         res = conn.getresponse()
         data = res.read()
+        self.logger.debug('return data: %s' % data)
         conn.close()
         d = json.loads(data)
         return d

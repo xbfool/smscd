@@ -13,6 +13,7 @@ from process_ret_maoming_ct import process_ret_maoming_ct
 from process_ret_scp_0591 import process_ret_scp_0591
 from process_ret_shangxintong import *
 from process_ret_zhangshangtong import *
+from process_ret_cmpp import *
 from process_req import *
 
 from datetime import datetime
@@ -359,6 +360,21 @@ class sender_settings():
             'process_ret': process_ret_zhangshangtong,
             'process_req' : process_req_zhangshangtong
         }
+        #106eb
+        settings['zhangshangtong_03'] = {
+            'name': 'zhangshangtong_03',
+            'host': 'pi.f3.cn',
+            'path': '/SendSMS.aspx',
+            'port': '80',
+            'sub_mode': 'zhangshangtong',
+            'ececcid':'305990002',
+            'password':'jtyh888',
+            'msgtype':'5',
+            'longcode':'111',
+            'mode': 'POST',
+            'process_ret': process_ret_zhangshangtong,
+            'process_req' : process_req_zhangshangtong
+        }
         settings['106f_95559'] = {
             'name': '106f_95559',
             'host': '221.179.180.158',
@@ -383,6 +399,19 @@ class sender_settings():
             'mode': 'GET',
             'process_ret': process_ret_106f,
             'process_req' : process_req_106f
+        }
+
+        settings['cmpp_beijing_1'] = {
+            'name': 'cmpp_beijing_1',
+            'host': '127.0.0.1',
+            'path': '/api/submitapi',
+            'port': '7778',
+            'sub_mode': 'cmpp_web',
+            'username': 'fudaduanxin',
+            'password': 'test1234',
+            'mode': 'GET',
+            'process_ret': process_ret_cmpp_web,
+            'process_req': process_req_cmpp_web
         }
         settings['default'] = settings['hb_ct_01']
         
