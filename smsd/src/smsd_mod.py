@@ -422,10 +422,10 @@ class smsd(object):
             return True
 
     def check_addr(self, addr_list):
-        pm = phonenumber()
+        pm = phonenumber.phonenumber()
         if len(addr_list) == 0:
             return False
-        if pm.check_addr(addr_list[0]) == phonenumber.S_CT:
+        if pm.check_addr(addr_list[0]) == phonenumber.phonenumber.S_CT:
             return False
         else:
             return True
@@ -435,7 +435,7 @@ class smsd(object):
             msg_status = message.F_ADMIT
         if not self.check_addr(addr_list):
             msg_status = message.F_FAIL
-            
+
         if channel in ('changshang_a_01', 'changshang_a_02', 'changshang_a_03',
                        'honglian_01',
                          'honglian_bjyh', 'honglian_jtyh',
