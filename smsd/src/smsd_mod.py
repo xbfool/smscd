@@ -522,8 +522,9 @@ class smsd(object):
                 seed(time.time())
                 my_seed = randint(0, 10000)
                 for channel, addr in [(u.channel_cm, pm.S_CM),
-                                       (u.channel_cu, pm.S_CU),
-                                       (u.channel_ct, pm.S_CT)]:
+                                       ,(u.channel_cu, pm.S_CU),
+                                    #   ,(u.channel_ct, pm.S_CT)
+                                       ]:
                     if p == 1 or channel in ['shangxintong_01', 'honglian_01',
                                              'honglian_bjyh',
                                              'honglian_jtyh',
@@ -631,8 +632,9 @@ class smsd(object):
         seed(time.time())
         my_seed = randint(0, 10000)
         for channel, addr in [(u.channel_cm, pm.S_CM),
-                               (u.channel_cu, pm.S_CU),
-                               (u.channel_ct, pm.S_CT)]:
+                               ,(u.channel_cu, pm.S_CU)
+                               #,(u.channel_ct, pm.S_CT)
+                               ]:
             if p == 1 or channel in ['shangxintong_01', 'honglian_01',
                                      'honglian_bjyh',
                                      'honglian_jtyh',
