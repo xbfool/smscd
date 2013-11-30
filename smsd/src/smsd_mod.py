@@ -521,8 +521,8 @@ class smsd(object):
                 split_addr = pm.split_addr([address])
                 seed(time.time())
                 my_seed = randint(0, 10000)
-                for channel, addr in [(u.channel_cm, pm.S_CM),
-                                       ,(u.channel_cu, pm.S_CU),
+                for channel, addr in [(u.channel_cm, pm.S_CM)
+                                       ,(u.channel_cu, pm.S_CU)
                                     #   ,(u.channel_ct, pm.S_CT)
                                        ]:
                     if p == 1 or channel in ['shangxintong_01', 'honglian_01',
@@ -631,7 +631,7 @@ class smsd(object):
         split_addr = pm.split_addr(l)
         seed(time.time())
         my_seed = randint(0, 10000)
-        for channel, addr in [(u.channel_cm, pm.S_CM),
+        for channel, addr in [(u.channel_cm, pm.S_CM)
                                ,(u.channel_cu, pm.S_CU)
                                #,(u.channel_ct, pm.S_CT)
                                ]:
