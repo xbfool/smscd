@@ -88,6 +88,9 @@ public var channel_select_data:ArrayCollection = new ArrayCollection(
 		{label:"移动106ea", data:'zhangshangtong_02'},
 		{label:"移动北京直连1", data:'cmpp_beijing_1'},
 		{label:"移动106eb", data:'zhangshangtong_03'},
+		{label:"移动106g", data:'106g'},
+		{label:"移动106ha", data:'106ha'},
+		{label:"移动106hb", data:'106hb'}
 	]);
 [Bindable]
 public var user_percent_list:ArrayCollection = new ArrayCollection([
@@ -657,6 +660,12 @@ private function get_channel_index(channel:String):int{
 			return 29;
 		case "zhangshangtong_03":
 			return 30;
+		case "106g":
+			return 31;
+		case "106ha":
+			return 32;
+		case "106hb":
+			return 33;
 		default:
 			return 0;
 	}
