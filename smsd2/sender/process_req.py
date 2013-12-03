@@ -503,7 +503,7 @@ def process_req_106g(http_pool, setting, msg):
          'sub_num':sub_num,
          'percent':msg['percent']},
         Account=setting['account'],
-        Password=setting['Password'],
+        Password=setting['password'],
         Phones=','.join(msg['addr']),
         Channel=setting['channel'],
         Content=sendmsg)
