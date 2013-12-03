@@ -4,7 +4,7 @@ Created on 2011-10-18
 @author: xbfool
 '''
 from process_ret_sd_ct import process_ret_sd_ct
-from process_ret_changshang_a import process_ret_changshang_a
+from process_ret_changshang_a import process_ret_changshang_a, process_ret_106g, process_ret_106h
 from process_ret_dongguan_0769 import process_ret_dongguan_0769
 from process_ret_hb_ct import process_ret_hb_ct, process_ret_hb_ct_2
 from process_ret_hlyd import process_ret_hlyd
@@ -412,6 +412,48 @@ class sender_settings():
             'mode': 'GET',
             'process_ret': process_ret_cmpp_web,
             'process_req': process_req_cmpp_web
+        }
+
+        settings['106g'] = {
+            'name': '106g',
+            'host': '112.2.36.53',
+            'path': '/SendSms.asp',
+            'port': '8091',
+            'sub_mode': '106g',
+            'account': 'jnfd',
+            'password': '123456789',
+            'channel':'5',
+            'mode': 'POST',
+            'process_ret': process_ret_106g,
+            'process_req': process_req_106g
+        }
+
+        settings['106ha'] = {
+            'name': '106ha',
+            'host': '115.29.177.224',
+            'path': '/Service.asmx/sendsms',
+            'port': '8089',
+            'sub_mode': '106h',
+            'zh': 'jnfd',
+            'mm': 'jnfd123',
+            'dxlbid': '13',
+            'mode': 'POST',
+            'process_ret': process_ret_106h,
+            'process_req': process_req_106ha
+        }
+
+        settings['106hb'] = {
+            'name': '106hb',
+            'host': '115.29.177.224',
+            'path': '/Service.asmx/sendsms',
+            'port': '8089',
+            'sub_mode': '106h',
+            'zh': 'fddxgg',
+            'mm': 'fddxgg123',
+            'dxlbid': '24',
+            'mode': 'POST',
+            'process_ret': process_ret_106h,
+            'process_req': process_req_106hb
         }
         settings['default'] = settings['hb_ct_01']
         

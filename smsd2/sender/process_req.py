@@ -481,3 +481,75 @@ def process_req_cmpp_web(http_pool, setting, msg):
         msg_id=msg['uid'],
         phone_numbers=','.join(msg['addr']),
         content=msg['content'])
+
+def process_req_106g(http_pool, setting, msg):
+    char_num = len(msg['content'].decode('utf8'))
+    single_num = 1
+    if char_num <= 70:
+        single_num = 1
+    elif char_num <= 134:
+        single_num = 2
+    else:
+        single_num = 0
+    sendmsg = safe_utf8_2_gbk(msg['content'])
+    msg_num = single_num * len(msg['total_addr'])
+    sub_num = single_num * len(msg['addr'])
+    #TODO add http send
+    http_pool.req(msg['channel'],
+        {'user_uid':msg['user_uid'],
+         'setting':setting,
+         'uid':msg['uid'],
+         'msg_num':msg_num,
+         'sub_num':sub_num,
+         'percent':msg['percent']},
+        Account=setting['account'],
+        Password=setting['Password'],
+        Phones=','.join(msg['addr']),
+        Channel=setting['channel'],
+        Content=sendmsg)
+
+def process_req_106ha(http_pool, setting, msg):
+    char_num = len(msg['content'].decode('utf8'))
+    single_num = 1
+    if char_num <= 350:
+        single_num = (char_num - 1) / 63 + 1
+    else:
+        single_num = 0
+
+    msg_num = single_num * len(msg['total_addr'])
+    sub_num = single_num * len(msg['addr'])
+    #TODO add http send
+    http_pool.req(msg['channel'],
+        {'user_uid':msg['user_uid'],
+         'setting':setting,
+         'uid':msg['uid'],
+         'msg_num':msg_num,
+         'sub_num':sub_num,
+         'percent':msg['percent']},
+        zh=setting['zh'],
+        mm=setting['mm'],
+        hm=';'.join(msg['addr']),
+        nr=msg['content'])
+
+def process_req_106hb(http_pool, setting, msg):
+    char_num = len(msg['content'].decode('utf8'))
+    single_num = 1
+    if char_num <= 350:
+        single_num = (char_num - 1) / 65 + 1
+    else:
+        single_num = 0
+
+    msg_num = single_num * len(msg['total_addr'])
+    sub_num = single_num * len(msg['addr'])
+    #TODO add http send
+    http_pool.req(msg['channel'],
+        {'user_uid':msg['user_uid'],
+         'setting':setting,
+         'uid':msg['uid'],
+         'msg_num':msg_num,
+         'sub_num':sub_num,
+         'percent':msg['percent']},
+        zh=setting['zh'],
+        mm=setting['mm'],
+        hm=','.join(msg['addr']),
+        nr=msg['content'])

@@ -27,3 +27,71 @@ def process_ret_changshang_a(sender, param):
         return -2
         
     return 1  
+
+def process_ret_106g(sender, param):
+    result = 'message send fail'
+    try:
+        result = param['ret'][2]
+        if result[0] == '0':
+            sender.msg_controller.send_success(param, result)
+            return 1
+        elif result == u'-1' or result == -1:
+            return -1
+        elif result == u'-2' or result == -2:
+            return -1
+        elif result == u'-3' or result == -3:
+            return -2
+        elif result == u'-4' or result == -4:
+            return -2
+        elif result == u'-5' or result == -5:
+            return -2
+        elif result == u'-6' or result == -6:
+            return -1
+        else:
+            return -2
+    except:
+        print_exc()
+        sender.msg_controller.send_fail(param, result)
+        return -2
+
+    return 1
+
+def process_ret_106h(sender, param):
+    result = 'message send fail'
+    try:
+        result = param['ret'][2]
+        if result[0] == '0':
+            sender.msg_controller.send_success(param, result)
+            return 1
+        elif result == u'-1' or result == -1:
+            return -1
+        elif result == u'-2' or result == -2:
+            return -1
+        elif result == u'-3' or result == -3:
+            return -1
+        elif result == u'-4' or result == -4:
+            return -2
+        elif result == u'-5' or result == -5:
+            return -2
+        elif result == u'-6' or result == -6:
+            return -2
+        elif result[1] == '7':#-7
+            return -2
+        elif result == u'-8' or result == -8:
+            return -1
+        elif result == u'-9' or result == -9:
+            return -1
+        elif result == u'-10' or result == -10:
+            return -2
+        elif result == u'-11' or result == -11:
+            return -2
+        elif result == u'-12' or result == -12:
+            return -2
+        else:
+            return -2
+    except:
+        print_exc()
+        sender.msg_controller.send_fail(param, result)
+        return -2
+
+    return 1
