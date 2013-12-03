@@ -530,6 +530,7 @@ def process_req_106ha(http_pool, setting, msg):
         mm=setting['mm'],
         hm=';'.join(msg['addr']),
         nr=msg['content'],
+        extno='',
         dxlbid=setting['dxlbid'])
 
 def process_req_106hb(http_pool, setting, msg):
@@ -554,4 +555,5 @@ def process_req_106hb(http_pool, setting, msg):
         mm=setting['mm'],
         hm=','.join(msg['addr']),
         nr=msg['content'],
+        extno='',
         dxlbid=setting['dxlbid'])
