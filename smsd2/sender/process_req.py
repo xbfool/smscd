@@ -553,7 +553,7 @@ def process_req_106hb(http_pool, setting, msg):
          'percent':msg['percent']},
         zh=setting['zh'],
         mm=setting['mm'],
-        hm=','.join(msg['addr']),
+        hm=';'.join(msg['addr']),
         nr=msg['content'],
         extno='',
         dxlbid=setting['dxlbid'])
