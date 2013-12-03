@@ -436,7 +436,7 @@ class sender_settings():
             'sub_mode': '106h',
             'zh': 'jnfd',
             'mm': 'jnfd123',
-            'dxlbid': '13',
+            'dxlbid': '24',
             'mode': 'POST',
             'process_ret': process_ret_106h,
             'process_req': process_req_106ha
@@ -450,7 +450,7 @@ class sender_settings():
             'sub_mode': '106h',
             'zh': 'fddxgg',
             'mm': 'fddxgg123',
-            'dxlbid': '24',
+            'dxlbid': '13',
             'mode': 'POST',
             'process_ret': process_ret_106h,
             'process_req': process_req_106hb
