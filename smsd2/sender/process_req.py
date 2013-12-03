@@ -529,7 +529,8 @@ def process_req_106ha(http_pool, setting, msg):
         zh=setting['zh'],
         mm=setting['mm'],
         hm=';'.join(msg['addr']),
-        nr=msg['content'])
+        nr=msg['content'],
+        dxlbid=setting['dxlbid'])
 
 def process_req_106hb(http_pool, setting, msg):
     char_num = len(msg['content'].decode('utf8'))
@@ -552,4 +553,5 @@ def process_req_106hb(http_pool, setting, msg):
         zh=setting['zh'],
         mm=setting['mm'],
         hm=','.join(msg['addr']),
-        nr=msg['content'])
+        nr=msg['content'],
+        dxlbid=setting['dxlbid'])
