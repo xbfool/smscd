@@ -420,7 +420,7 @@ class sender_settings():
             'path': '/SendSms.asp',
             'port': '8091',
             'sub_mode': '106g',
-            'account': 'jnfd',
+            'account': 'jnfd8',
             'password': '123456789',
             'channel':'5',
             'mode': 'POST',
