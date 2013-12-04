@@ -5,6 +5,7 @@ Created on 2011-10-18
 '''
 
 from traceback import print_exc
+from xml.dom.minidom import parseString
 
 def process_ret_changshang_a(sender, param):
     result = 'message send fail'
@@ -60,7 +61,10 @@ def process_ret_106h(sender, param):
     result = 'message send fail'
     try:
         result = param['ret'][2]
-        if result[0] == '0':
+        x = parseString(result)
+        result = int(x.firstChild.firstChild.data)
+
+        if result == '0' or result == 0:
             sender.msg_controller.send_success(param, result)
             return 1
         elif result == '-1' or result == -1:
@@ -95,3 +99,18 @@ def process_ret_106h(sender, param):
         return -2
 
     return 1
+
+if __name__ == '__main__':
+    for i in range(1, 10):
+        xmlString = '<?xml version="1.0" encoding="utf-8"?><string xmlns="http://tempuri.org/">-2</string>'
+        x = parseString(xmlString)
+        result =  x.firstChild.firstChild.data
+        print int(result)
+        if result in ('00', '01', '03'):
+            print 1
+        elif result in ('06', '07', '08', '09', '10', '97', '98', '99'):
+            print 2
+        elif result in ('02', '04', '05'):
+            print 3
+        else:
+            print 4
