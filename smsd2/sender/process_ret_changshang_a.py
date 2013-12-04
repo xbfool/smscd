@@ -102,15 +102,44 @@ def process_ret_106h(sender, param):
 
 if __name__ == '__main__':
     for i in range(1, 10):
-        xmlString = '<?xml version="1.0" encoding="utf-8"?><string xmlns="http://tempuri.org/">-2</string>'
-        x = parseString(xmlString)
-        result =  x.firstChild.firstChild.data
-        print int(result)
-        if result in ('00', '01', '03'):
-            print 1
-        elif result in ('06', '07', '08', '09', '10', '97', '98', '99'):
-            print 2
-        elif result in ('02', '04', '05'):
-            print 3
-        else:
-            print 4
+        xmlString = '''<?xml version="1.0" encoding="utf-8"?>
+<string xmlns="http://tempuri.org/">0</string>
+'''
+        try:
+            print xmlString
+            x = parseString(xmlString)
+            result = int(x.firstChild.firstChild.data)
+            print result
+
+            if result == '0' or result == 0:
+                print 1
+            elif result == '-1' or result == -1:
+                print -1
+            elif result == '-2' or result == -2:
+                print -1
+            elif result == '-3' or result == -3:
+                print -1
+            elif result == '-4' or result == -4:
+                print -2
+            elif result == '-5' or result == -5:
+                print -2
+            elif result == '-6' or result == -6:
+                print -2
+            elif result[1] == '7':#-7
+                print -2
+            elif result == '-8' or result == -8:
+                print -1
+            elif result == '-9' or result == -9:
+                print -1
+            elif result == '-10' or result == -10:
+                print -2
+            elif result == '-11' or result == -11:
+                print -2
+            elif result == '-12' or result == -12:
+                print -2
+            else:
+                print -2
+        except:
+            print_exc()
+            print -2
+
