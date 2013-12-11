@@ -557,3 +557,33 @@ def process_req_106hb(http_pool, setting, msg):
         nr=msg['content'],
         extno='',
         dxlbid=setting['dxlbid'])
+
+def process_req_106j(http_pool, setting, msg):
+    char_num = len(msg['content'].decode('utf8'))
+    single_num = 1
+    if char_num <= 350:
+        if char_num <= 70:
+            single_num = 1
+        else:
+            single_num = (char_num - 1) / 67 + 1
+    else:
+        single_num = 0
+
+    msg_num = single_num * len(msg['total_addr'])
+    sub_num = single_num * len(msg['addr'])
+
+    http_pool.req(msg['channel'],
+        {'user_uid':msg['user_uid'],
+         'setting':setting,
+         'uid':msg['uid'],
+         'msg_num':msg_num,
+         'sub_num':sub_num,
+         'percent':msg['percent']},
+        userid=setting['userid'],
+        account=setting['account'],
+        password=setting['password'],
+        mobile=','.join(msg['addr']),
+        content=msg['content'],
+        extno='',
+        action='send',
+        sendTime='')

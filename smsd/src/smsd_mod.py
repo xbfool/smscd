@@ -439,7 +439,7 @@ class smsd(object):
         if channel in ('changshang_a_01', 'changshang_a_02', 'changshang_a_03',
                         'honglian_01',
                         'honglian_bjyh', 'honglian_jtyh',
-                        '106g', '106ha', '106hb',
+                        '106g', '106ha', '106hb', '106j',
                         'honglian_ty', 'honglian_tyb', 'honglian_tyd', '106f_95559', '106f_95526'):
             addr = []
             for i in xrange(0, len(addr_list), 20):
@@ -545,6 +545,7 @@ class smsd(object):
                                              '106g',
                                              '106ha',
                                              '106hb',
+                                             '106j',
                                              'cmpp_beijing_1']:
                         if len(split_addr[addr]) > 0:
                             self.__split_message(u.uid, split_addr[addr], msg + msg_postfix.encode('utf8'), message.F_ADMIT, channel, my_seed)
@@ -658,6 +659,7 @@ class smsd(object):
                                      '106g',
                                      '106ha',
                                      '106hb',
+                                     '106j',
                                      'cmpp_beijing_1']:
                 if len(split_addr[addr]) > 0:
                     self.__split_message(u.uid, split_addr[addr], msg + msg_postfix.encode('utf8'), message.F_ADMIT, channel, my_seed)

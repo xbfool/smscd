@@ -4,7 +4,7 @@ Created on 2011-10-18
 @author: xbfool
 '''
 from process_ret_sd_ct import process_ret_sd_ct
-from process_ret_changshang_a import process_ret_changshang_a, process_ret_106g, process_ret_106h
+from process_ret_changshang_a import process_ret_changshang_a, process_ret_106g, process_ret_106h, process_ret_106j
 from process_ret_dongguan_0769 import process_ret_dongguan_0769
 from process_ret_hb_ct import process_ret_hb_ct, process_ret_hb_ct_2
 from process_ret_hlyd import process_ret_hlyd
@@ -454,6 +454,20 @@ class sender_settings():
             'mode': 'POST',
             'process_ret': process_ret_106h,
             'process_req': process_req_106hb
+        }
+
+        settings['106j'] = {
+            'name': '106j',
+            'host': 'www.qyqq.cn',
+            'path': '/sms.aspx',
+            'port': '8888',
+            'sub_mode': '106j',
+            'userid': 'jnfd',
+            'account': '',
+            'password': 'a123456',
+            'mode': 'POST',
+            'process_ret': process_ret_106j,
+            'process_req': process_req_106j
         }
         settings['default'] = settings['hb_ct_01']
         

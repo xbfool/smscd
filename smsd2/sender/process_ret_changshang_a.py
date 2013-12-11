@@ -100,6 +100,19 @@ def process_ret_106h(sender, param):
 
     return 1
 
+def process_ret_106j(sender, param):
+    result = 'message send fail'
+    try:
+        result = param['ret'][2]
+        x = parseString(result)
+        result = int(x.firstChild.firstChild.data)
+    except:
+        print_exc()
+        sender.msg_controller.send_fail(param, result)
+        return -2
+
+    return 1
+
 if __name__ == '__main__':
     for i in range(1, 10):
         xmlString = '''<?xml version="1.0" encoding="utf-8"?>
