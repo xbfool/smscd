@@ -100,45 +100,39 @@ def process_ret_106h(sender, param):
 
     return 1
 
+def process_ret_106j(sender, param):
+    result = 'message send fail'
+    try:
+        result = param['ret'][2]
+        x = parseString(result)
+        result = x.getElementsByTagName('returnstatus')[0]
+        if result == 'Success':
+            sender.msg_controller.send_success(param, result)
+            return 1
+        else:
+            return -2
+    except:
+        print_exc()
+        sender.msg_controller.send_fail(param, result)
+        return -2
+
+    return -2
+
 if __name__ == '__main__':
-    for i in range(1, 10):
-        xmlString = '''<?xml version="1.0" encoding="utf-8"?>
-<string xmlns="http://tempuri.org/">0</string>
+    for i in range(1, 2):
+        xmlString = '''<?xml version="1.0" encoding="utf-8" ?><returnsms>
+ <returnstatus>Success</returnstatus>
+ <message>ok</message>
+ <remainpoint>19439</remainpoint>
+ <taskID>618381</taskID>
+ <successCounts>1</successCounts></returnsms>
 '''
         try:
             print xmlString
             x = parseString(xmlString)
-            result = int(x.firstChild.firstChild.data)
-            print result
+            result = x.getElementsByTagName('returnstatus')[0]
+            print result.firstChild.data
 
-            if result == '0' or result == 0:
-                print 1
-            elif result == '-1' or result == -1:
-                print -1
-            elif result == '-2' or result == -2:
-                print -1
-            elif result == '-3' or result == -3:
-                print -1
-            elif result == '-4' or result == -4:
-                print -2
-            elif result == '-5' or result == -5:
-                print -2
-            elif result == '-6' or result == -6:
-                print -2
-            elif result[1] == '7':#-7
-                print -2
-            elif result == '-8' or result == -8:
-                print -1
-            elif result == '-9' or result == -9:
-                print -1
-            elif result == '-10' or result == -10:
-                print -2
-            elif result == '-11' or result == -11:
-                print -2
-            elif result == '-12' or result == -12:
-                print -2
-            else:
-                print -2
         except:
             print_exc()
             print -2
