@@ -5,5 +5,5 @@ database:
   user: root
   password: ftp3*8*ing
   db: smsd
-  host: 117.79.84.27 
+  host: localhost
   engine: mysql+mysqldb
