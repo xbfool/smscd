@@ -91,7 +91,7 @@ public var channel_select_data:ArrayCollection = new ArrayCollection(
 		{label:"移动106g", data:'106g'},
 		{label:"移动106ha", data:'106ha'},
 		{label:"移动106hb", data:'106hb'},
-		{label:"易懂106j", data:'106j'},
+		{label:"移动106j", data:'106j'},
 	]);
 [Bindable]
 public var user_percent_list:ArrayCollection = new ArrayCollection([
