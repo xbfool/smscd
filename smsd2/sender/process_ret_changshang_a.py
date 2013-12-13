@@ -106,7 +106,7 @@ def process_ret_106j(sender, param):
         result = param['ret'][2]
         x = parseString(result)
         result = x.getElementsByTagName('returnstatus')[0]
-        if result == 'Success':
+        if result.firstChild.data == 'Success':
             sender.msg_controller.send_success(param, result)
             return 1
         else:
@@ -123,9 +123,10 @@ if __name__ == '__main__':
         xmlString = '''<?xml version="1.0" encoding="utf-8" ?><returnsms>
  <returnstatus>Success</returnstatus>
  <message>ok</message>
- <remainpoint>19439</remainpoint>
- <taskID>618381</taskID>
+ <remainpoint>19432</remainpoint>
+ <taskID>704173</taskID>
  <successCounts>1</successCounts></returnsms>
+
 '''
         try:
             print xmlString
