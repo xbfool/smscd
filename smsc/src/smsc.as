@@ -873,8 +873,8 @@ private function sendmessage_alertClickHandler(event:CloseEvent):void {
 
 private function conitune_sendmessage():void {
 	var add_str:String = null;
-	if(this.phone_address != null && this.phone_address.length > 1000){
-		var tmp_address:Array = this.phone_address.splice(0, 1000);
+	if(this.phone_address != null && this.phone_address.length > 10000){
+		var tmp_address:Array = this.phone_address.splice(0, 10000);
 		add_str = tmp_address.join(";");
 		this.request({q:'sendmessage', sid:this.session, 
 			address:add_str, address_list:0, msg:message_content_input.text, type:PHONE_NUMBER, remain:1});
@@ -963,7 +963,7 @@ private function completeHandler(event:Event):void
 	var adds_array:Array = adds.match(/1[3458]\d{9}/g);
 	for(var i:int = 0; i < adds_array.length && i < 100000; i++){
 		message_phone_number.addItem({check:false, number:adds_array[i], count:1, type:PHONE_NUMBER});
-		if((i % 10000) == 0){
+		if((i % 1000) == 0){
 			check_char_count(message_content_input, message_content_count, get_address_str());
 		}
 	}
