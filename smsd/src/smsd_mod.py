@@ -616,7 +616,7 @@ class smsd(object):
         
         if l[len(l) - 1] == '':
             l.pop()
-        if len(l) > 1000: #phone number less than 1000
+        if len(l) > 10000: #phone number less than 1000
             return 0, {'rtype':'sendmessage', 'errno':-5} #zero message
         
         msg_postfix = u.msg_postfix.decode('utf8')
