@@ -439,13 +439,21 @@ class smsd(object):
         if channel in ('changshang_a_01', 'changshang_a_02', 'changshang_a_03',
                         'honglian_01',
                         'honglian_bjyh', 'honglian_jtyh',
-                        '106g', '106ha', '106hb', '106j',
+                        '106g', '106ha', '106hb',
                         'honglian_ty', 'honglian_tyb', 'honglian_tyd', '106f_95559', '106f_95526'):
             addr = []
             for i in xrange(0, len(addr_list), 20):
                 addr.append(addr_list[i: min(i + 20, len(addr_list))])
             for item in addr:
                 new_message = message()        
+                new_message.new(uid, ';'.join(item), 0, msg, msg_status, channel, len(addr_list), seed)
+                self.messages[new_message.uid] = new_message
+        elif channel in ('106j',):
+            addr = []
+            for i in xrange(0, len(addr_list), 1000):
+                addr.append(addr_list[i: min(i + 1000, len(addr_list))])
+            for item in addr:
+                new_message = message()
                 new_message.new(uid, ';'.join(item), 0, msg, msg_status, channel, len(addr_list), seed)
                 self.messages[new_message.uid] = new_message
         elif channel in ('hb_ct_01', 'hb_ct_02', 'hb_ct_03', 'hb_ct_04', 'hb_ct_05', 'maoming_ct_01'):
