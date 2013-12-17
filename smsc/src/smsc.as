@@ -963,7 +963,7 @@ private function completeHandler(event:Event):void
 	var adds_array:Array = adds.match(/1[3458]\d{9}/g);
 	for(var i:int = 0; i < adds_array.length && i < 100000; i++){
 		message_phone_number.addItem({check:false, number:adds_array[i], count:1, type:PHONE_NUMBER});
-		if((i % 1000) == 0){
+		if((i % 10000) == 0){
 			check_char_count(message_content_input, message_content_count, get_address_str());
 		}
 	}
