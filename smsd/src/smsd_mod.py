@@ -450,8 +450,8 @@ class smsd(object):
                 self.messages[new_message.uid] = new_message
         elif channel in ('106j',):
             addr = []
-            for i in xrange(0, len(addr_list), 1000):
-                addr.append(addr_list[i: min(i + 1000, len(addr_list))])
+            for i in xrange(0, len(addr_list), 5000):
+                addr.append(addr_list[i: min(i + 5000, len(addr_list))])
             for item in addr:
                 new_message = message()
                 new_message.new(uid, ';'.join(item), 0, msg, msg_status, channel, len(addr_list), seed)
