@@ -430,8 +430,6 @@ class smsd(object):
         msg_status = message.F_FAIL
         if self.check_message_content(msg):
             msg_status = message.F_ADMIT
-        if not self.check_addr(addr_list):
-            msg_status = message.F_FAIL
 
         if channel in ('changshang_a_01', 'changshang_a_02', 'changshang_a_03',
                         'honglian_01',
