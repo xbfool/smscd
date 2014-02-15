@@ -425,10 +425,7 @@ class smsd(object):
         pm = phonenumber.phonenumber()
         if len(addr_list) == 0:
             return False
-        if pm.check_addr(addr_list[0]) == phonenumber.phonenumber.S_CT:
-            return False
-        else:
-            return True
+
     def __split_message(self, uid, addr_list, msg, status, channel, seed):
         msg_status = message.F_FAIL
         if self.check_message_content(msg):
@@ -532,7 +529,7 @@ class smsd(object):
                 my_seed = randint(0, 10000)
                 for channel, addr in [(u.channel_cm, pm.S_CM)
                                        ,(u.channel_cu, pm.S_CU)
-                                    #   ,(u.channel_ct, pm.S_CT)
+                                       ,(u.channel_ct, pm.S_CT)
                                        ]:
                     if p == 1 or channel in ['shangxintong_01', 'honglian_01',
                                              'honglian_bjyh',
@@ -646,7 +643,7 @@ class smsd(object):
         my_seed = randint(0, 10000)
         for channel, addr in [(u.channel_cm, pm.S_CM)
                                ,(u.channel_cu, pm.S_CU)
-                               #,(u.channel_ct, pm.S_CT)
+                               ,(u.channel_ct, pm.S_CT)
                                ]:
             if p == 1 or channel in ['shangxintong_01', 'honglian_01',
                                      'honglian_bjyh',
