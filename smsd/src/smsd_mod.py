@@ -451,6 +451,14 @@ class smsd(object):
                 new_message = message()
                 new_message.new(uid, ';'.join(item), 0, msg, msg_status, channel, len(addr_list), seed)
                 self.messages[new_message.uid] = new_message
+        elif channel in ('qixintong2012_01', 'qixintong2012_02'):
+            addr = []
+            for i in xrange(0, len(addr_list), 100):
+                addr.append(addr_list[i: min(i + 100, len(addr_list))])
+            for item in addr:
+                new_message = message()
+                new_message.new(uid, ';'.join(item), 0, msg, msg_status, channel, len(addr_list), seed)
+                self.messages[new_message.uid] = new_message
         elif channel in ('hb_ct_01', 'hb_ct_02', 'hb_ct_03', 'hb_ct_04', 'hb_ct_05', 'maoming_ct_01'):
             addr = []
             for i in xrange(0, len(addr_list), 20):
