@@ -4,7 +4,7 @@ Created on 2011-10-18
 @author: xbfool
 '''
 from process_ret_sd_ct import process_ret_sd_ct
-from process_ret_changshang_a import process_ret_changshang_a, process_ret_106g, process_ret_106h, process_ret_106j
+from process_ret_changshang_a import process_ret_changshang_a, process_ret_106g, process_ret_106h, process_ret_106j, process_ret_106k
 from process_ret_dongguan_0769 import process_ret_dongguan_0769
 from process_ret_hb_ct import process_ret_hb_ct, process_ret_hb_ct_2
 from process_ret_hlyd import process_ret_hlyd
@@ -469,6 +469,20 @@ class sender_settings():
             'process_ret': process_ret_106j,
             'process_req': process_req_106j
         }
+
+        settings['106k'] = {
+            'name': '106k',
+            'host': '211.147.239.62',
+            'path': '/cgi-bin/sendsms',
+            'port': '9050',
+            'sub_mode': '106k',
+            'username': '001@bjjnfd',
+            'password': '123456',
+            'mode': 'GET',
+            'process_ret': process_ret_106k,
+            'process_req': process_req_106k
+        }
+
         settings['default'] = settings['hb_ct_01']
         
         self.settings = settings
