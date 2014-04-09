@@ -473,12 +473,12 @@ class sender_settings():
         settings['106k'] = {
             'name': '106k',
             'host': '211.147.239.62',
-            'path': '/cgi-bin/sendsms',
+            'path': '/cgi-bin/sendsms?username=001@bjjnfd',
             'port': '9050',
             'sub_mode': '106k',
             'username': '001@bjjnfd',
             'password': '123456',
-            'mode': 'GET',
+            'mode': '106K',
             'process_ret': process_ret_106k,
             'process_req': process_req_106k
         }

@@ -607,7 +607,6 @@ def process_req_106k(http_pool, setting, msg):
                    'msg_num':msg['msg_num'],
                    'sub_num':msg['sub_num'],
                    'percent':msg['percent']},
-                  username=setting['username'],
                   password=setting['password'],
                   to=' '.join(msg['addr']),
                   text=tmpmsg,
