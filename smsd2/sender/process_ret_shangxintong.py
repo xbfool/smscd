@@ -47,10 +47,13 @@ def process_ret_qixintong2012(sender, param):
     except:
         import string
         success_str = '<Result>1</Result>'
-        if string.find(param['ret'][2], success_str):
-            sender.msg_controller.send_success(param, result)
-            return 1
-            
+        try:
+            if string.find(param['ret'][2], success_str):
+                sender.msg_controller.send_success(param, result)
+                return 1
+        except:
+            print_exc()
+ 
         print_exc()
         sender.msg_controller.send_fail(param, result)
         return -2
@@ -78,9 +81,12 @@ def process_ret_106f(sender, param):
     except:
         import string
         success_str = '<code>03</code>'
-        if string.find(param['ret'][2], success_str):
-            sender.msg_controller.send_success(param, result)
-            return 1
+        try:
+            if string.find(param['ret'][2], success_str):
+                sender.msg_controller.send_success(param, result)
+                return 1
+        except:
+            print_exc() 
         print_exc()
         sender.msg_controller.send_fail(param, result)
         return -2
