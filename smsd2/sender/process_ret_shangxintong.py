@@ -34,7 +34,7 @@ def process_ret_qixintong2012(sender, param):
         result = param['ret'][2]
         rl = result.split(',')
 
-        if rl[0] == '0':
+        if rl[1] == '0':
             sender.msg_controller.send_success(param, result)
             return 1
         elif result in ('1', '2', '3', '4', '5', '6', '7', '8'):
