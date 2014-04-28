@@ -307,24 +307,24 @@ class sender_settings():
         settings['qixintong2012_01'] = {
             'name': 'qixintong2012_01',
             'host': '202.85.214.57',
-            'path': '/API/GET/SendSMS.aspx',
-            'port': '8089',
+            'path': '/service/sms/text/SendSms.ashx',
+            'port': '8087',
             'sub_mode': 'qixintong2012',
-            'uid': 'cjcsd',
-            'pwd': '1234',
-            'mode': 'GET',
+            'uid': 'cjc106d',
+            'pwd': '123456',
+            'mode': 'POST',
             'process_ret': process_ret_qixintong2012,
             'process_req' : process_req_qixintong2012
         }
         settings['qixintong2012_02'] = {
             'name': 'qixintong2012_02',
             'host': '202.85.214.57',
-            'path': '/API/GET/SendSMS.aspx',
-            'port': '8089',
+            'path': '/service/sms/text/SendSms.ashx',
+            'port': '8087',
             'sub_mode': 'qixintong2012',
-            'uid': 'sdcjc',
-            'pwd': '318340',
-            'mode': 'GET',
+            'uid': 'cjc106da',
+            'pwd': '123456',
+            'mode': 'POST',
             'process_ret': process_ret_qixintong2012,
             'process_req' : process_req_qixintong2012
         }

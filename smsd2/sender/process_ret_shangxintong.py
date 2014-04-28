@@ -31,29 +31,20 @@ def process_ret_shangxintong(sender, param):
 def process_ret_qixintong2012(sender, param):
     result = "something is error"
     try:
-        resultDOM = parseString(param['ret'][2])
-        result = resultDOM.firstChild.firstChild.firstChild.data
+        result = param['ret'][2]
+        rl = result.split(',')
 
-        if result == '1':
+        if rl[0] == '0':
             sender.msg_controller.send_success(param, result)
             return 1
-        elif result in ('0', '-2', '-3', '-20', '1007', '-1007', '-99', '99'):
+        elif result in ('1', '2', '3', '4', '5', '6', '7', '8'):
             return -2
-        elif result in ('-1', '-10', '-11', '-17', '-18', '-19', '-99'):
+        elif result in ('9', '11', '15', '16', '17', '21', '99'):
             return -2
         else:
             return -2
             
     except:
-        import string
-        success_str = '<Result>1</Result>'
-        try:
-            if not param['ret']:
-                sender.msg_controller.send_success(param, result)
-                return 1
-        except:
-            print_exc()
- 
         print_exc()
         sender.msg_controller.send_fail(param, result)
         return -2
