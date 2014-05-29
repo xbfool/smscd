@@ -415,7 +415,7 @@ class smsd(object):
             return 0, {'rtype':'addmessage', 'num':num, 'errno':-1} #cannot be negetive
        
     def check_message_content(self, msg):
-        pattern = re.compile('.*【.*】$')
+        pattern = re.compile('.*【.*】.*')
         if pattern.match(msg) == None:
             return False
         else:
