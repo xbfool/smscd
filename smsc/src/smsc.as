@@ -151,6 +151,7 @@ private var cm_list:ArrayCollection = new ArrayCollection(
 		{label:"182", data:15},
 		{label:"183", data:16},
 		{label:"184", data:17},
+		{label:"178", data:18},
 	]);
 
 private var cu_list:ArrayCollection = new ArrayCollection(
@@ -162,6 +163,7 @@ private var cu_list:ArrayCollection = new ArrayCollection(
 		{label:"186", data:5},
 		{label:"145", data:6},
 		{label:"185", data:7},
+		{label:"176", data:8},
 	]);
 private var ct_list:ArrayCollection = new ArrayCollection(
 	[ {label:"133", data:0},
@@ -169,6 +171,7 @@ private var ct_list:ArrayCollection = new ArrayCollection(
 		{label:"189", data:2},
 		{label:"180", data:3},
 		{label:"181", data:4},
+		{label:"177", data:5},
 	]);
 
 [Bindable]
@@ -919,7 +922,8 @@ private function add_phonenumber(number:String):void{
 		|| (number.charAt(1) != '3' &&
 			number.charAt(1) != '4' &&
 			number.charAt(1) != '5' &&
-			number.charAt(1) != '8'
+			number.charAt(1) != '8' &&
+			number.charAt(1) != '7'
 		))
 	{
 		Alert.show("不是有效的电话号码");	
