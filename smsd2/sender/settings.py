@@ -491,7 +491,7 @@ class sender_settings():
             'sub_mode': '106i',
             'username': 'JNFD',
             'password': '888888',
-            'mode': '106i',
+            'mode': 'GET',
             'ext': '1151',
             'process_ret': process_ret_106i,
             'process_req': process_req_106i
