@@ -55,12 +55,16 @@ class zhttp(object):
         path = path or self.path
         path = path + '?' + urlencode(kargs)
         self.conn.request('GET', path)
+        res = self.conn.getresponse()
+        return res.status, res.reason, res.read()
 
     def send_106K(self, path=None, **kargs):
         # deprecated since url length is limited
         path = path or self.path
         path = path + '&' + urlencode(kargs)
         self.conn.request('GET', path)
+        res = self.conn.getresponse()
+        return res.status, res.reason, res.read()
 
 	print path
         res = self.conn.getresponse()
