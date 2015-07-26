@@ -677,7 +677,7 @@ private function get_channel_index(channel:String):int{
 		case "106k":
 			return 35;
 		case "106i":
-			return 35;
+			return 36;
 		default:
 			return 0;
 	}
