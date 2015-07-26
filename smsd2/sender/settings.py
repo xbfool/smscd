@@ -484,7 +484,7 @@ class sender_settings():
         }
 
         settings['106i'] = {
-            'name': '106h',
+            'name': '106i',
             'host': '211.151.85.133',
             'path': '/sendsms.asp',
             'port': '8080',
