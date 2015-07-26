@@ -122,6 +122,7 @@ class sms_sender(object):
                     param['ret'] = ret
                     fail_string = 'this message error'
                     try:
+                        print ret
                         fail_string = param['ret'][2]
                         fail_string = fail_string.decode('gbk').encode('utf8')
                     except:
