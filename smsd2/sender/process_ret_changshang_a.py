@@ -152,7 +152,7 @@ def process_ret_106k(sender, param):
 def process_ret_106i(sender, param):
     result = 'message send fail'
     try:
-        result = param['ret'][2].split('\n')[0]
+        result = param['ret'][2]
         if result[0] != '-':
             sender.msg_controller.send_success(param, result)
             return 1
