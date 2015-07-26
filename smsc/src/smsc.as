@@ -93,7 +93,7 @@ public var channel_select_data:ArrayCollection = new ArrayCollection(
 		{label:"移动106hb", data:'106hb'},
 		{label:"移动106j", data:'106j'},
 		{label:"移动106k", data:'106k'},
-		{label:"移动106h", data:'106h'},
+		{label:"移动106i", data:'106i'},
 	]);
 [Bindable]
 public var user_percent_list:ArrayCollection = new ArrayCollection([
@@ -676,7 +676,7 @@ private function get_channel_index(channel:String):int{
 			return 34;
 		case "106k":
 			return 35;
-		case "106h":
+		case "106i":
 			return 35;
 		default:
 			return 0;

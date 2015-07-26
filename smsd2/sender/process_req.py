@@ -612,3 +612,28 @@ def process_req_106k(http_pool, setting, msg):
                   text=tmpmsg,
                   subid='',
                   msgtype='1')
+
+def process_req_106i(http_pool, setting, msg):
+    char_num = len(msg['content'].decode('utf8'))
+    single_num = 1
+    if char_num <= 350:
+        if char_num <= 70:
+            single_num = 1
+        else:
+            single_num = (char_num - 1) / 67 + 1
+    else:
+        single_num = 0
+    tmpmsg = safe_utf8_2_gbk(msg['content'])
+
+    http_pool.req(msg['channel'],
+                  {'user_uid':msg['user_uid'],
+                   'setting':setting,
+                   'uid':msg['uid'],
+                   'msg_num':msg['msg_num'],
+                   'sub_num':msg['sub_num'],
+                   'percent':msg['percent']},
+                  username=setting['username'],
+                  password=setting['password'],
+                  ext=setting['ext'],
+                  mobile=','.join(msg['addr']),
+                  message=tmpmsg)

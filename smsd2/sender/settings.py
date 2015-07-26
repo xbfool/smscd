@@ -4,7 +4,7 @@ Created on 2011-10-18
 @author: xbfool
 '''
 from process_ret_sd_ct import process_ret_sd_ct
-from process_ret_changshang_a import process_ret_changshang_a, process_ret_106g, process_ret_106h, process_ret_106j, process_ret_106k
+from process_ret_changshang_a import process_ret_changshang_a, process_ret_106g, process_ret_106h, process_ret_106j, process_ret_106k, process_ret_106i
 from process_ret_dongguan_0769 import process_ret_dongguan_0769
 from process_ret_hb_ct import process_ret_hb_ct, process_ret_hb_ct_2
 from process_ret_hlyd import process_ret_hlyd
@@ -481,6 +481,20 @@ class sender_settings():
             'mode': '106K',
             'process_ret': process_ret_106k,
             'process_req': process_req_106k
+        }
+
+        settings['106i'] = {
+            'name': '106h',
+            'host': '211.151.85.133',
+            'path': '/sendsms.asp',
+            'port': '8080',
+            'sub_mode': '106i',
+            'username': 'JNFD',
+            'password': '888888',
+            'mode': '106i',
+            'ext': '1151',
+            'process_ret': process_ret_106i,
+            'process_req': process_req_106i
         }
 
         settings['default'] = settings['hb_ct_01']
