@@ -485,11 +485,11 @@ class sender_settings():
 
         settings['106i'] = {
             'name': '106i',
-            'host': '211.151.85.133',
-            'path': '/sendsms.asp',
+            'host': '139.129.107.247',
+            'path': '/sms/xml/send',
             'port': '8080',
             'sub_mode': '106i',
-            'username': 'JNFD',
+            'username': 'JNFDH',
             'password': '888888',
             'mode': 'GET',
             'ext': '1151',

@@ -623,7 +623,7 @@ def process_req_106i(http_pool, setting, msg):
             single_num = (char_num - 1) / 67 + 1
     else:
         single_num = 0
-    tmpmsg = safe_utf8_2_gbk(msg['content'])
+    tmpmsg = msg['content']
 
     http_pool.req(msg['channel'],
                   {'user_uid':msg['user_uid'],
