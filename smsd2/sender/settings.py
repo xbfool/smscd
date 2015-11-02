@@ -487,12 +487,12 @@ class sender_settings():
             'name': '106i',
             'host': '139.129.107.247',
             'path': '/sms/xml/send',
-            'port': '8080',
+            'port': '80',
             'sub_mode': '106i',
             'username': 'JNFDH',
             'password': '888888',
             'mode': 'GET',
-            'ext': '1151',
+            'ext': '124',
             'process_ret': process_ret_106i,
             'process_req': process_req_106i
         }
