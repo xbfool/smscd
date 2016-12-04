@@ -116,6 +116,7 @@ class sender_settings():
             'path': '/qxt/smssenderv2',
             'mode': 'GET',
             'user': 'jnfd',
+            'sub_mode': 'hlyd',
             'password': 'jnfd123',
             'process_ret' : process_ret_hlyd,
             'process_req' : process_req_hlyd
