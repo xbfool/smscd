@@ -272,7 +272,10 @@ class user(dbobj):
         
         l = []
         for i in self.children.itervalues():
-            l.append(i.to_json_all())
+            try:
+            	l.append(i.to_json_all())
+            except:
+                pass
         d['children'] = l
         # d['commit_times'] = len(self.commits)
         return d
