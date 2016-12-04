@@ -562,7 +562,7 @@ class smsd(object):
                                              '106j',
                                              '106i',
                                              'cmpp_beijing_1',
-                                             'hlyd']:
+                                             'hlyd_01']:
                         if len(split_addr[addr]) > 0:
                             self.__split_message(u.uid, split_addr[addr], msg + msg_postfix.encode('utf8'), message.F_ADMIT, channel, my_seed)
                     else:
@@ -678,7 +678,7 @@ class smsd(object):
                                      '106j',
                                      '106i',
                                      'cmpp_beijing_1',
-                                     'hlyd']:
+                                     'hlyd_01']:
                 if len(split_addr[addr]) > 0:
                     self.__split_message(u.uid, split_addr[addr], msg + msg_postfix.encode('utf8'), message.F_ADMIT, channel, my_seed)
             else:
