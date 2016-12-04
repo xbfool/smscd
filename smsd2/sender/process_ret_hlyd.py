@@ -16,9 +16,9 @@ def process_ret_hlyd(sender, param):
         if rl[0] == 'ok':
             sender.msg_controller.send_success(param, result)
             return 1
-        elif rl[0] == 'error'
+        elif rl[0] == 'error':
             return -2
-        elif rl[0] == 'fail'
+        elif rl[0] == 'fail':
             return -2
         else:
             return -2
