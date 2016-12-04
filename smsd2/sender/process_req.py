@@ -214,7 +214,7 @@ def process_req_honglian1(http_pool, setting, msg):
         )
 def process_req_hlyd(http_pool, setting, msg):
     from hashlib import md5
-    p = md5('%s' % (setting['password'], t)).hexdigest()
+    p = md5(setting['password']).hexdigest()
     char_num = len(msg['content'].decode('utf8'))
     single_num = 1
     if char_num <= 350:
