@@ -235,7 +235,6 @@ def process_req_hlyd(http_pool, setting, msg):
                    'percent':msg['percent']},
                   user=setting['user'],
                   password=p,
-                  ext=setting['ext'],
                   tele=','.join(msg['addr']),
                   msg=tmpmsg) 
     
