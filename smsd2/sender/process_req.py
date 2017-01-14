@@ -213,37 +213,30 @@ def process_req_honglian1(http_pool, setting, msg):
             subcode=msg['ext'],
         )
 def process_req_hlyd(http_pool, setting, msg):
-    soap = \
-        '''
-        <soap:Envelope
-            xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-            <soap:Body>
-                <sendSmsAsNormal xmlns="http://trust.me.nobody/cares/this/">
-                    <phone>%s</phone>
-                    <msgcont>%s</msgcont>
-                    <spnumber>%s</spnumber>
-                    <chid>%s</chid>
-                    <cpid>%s</cpid>
-                    <cppwd>%s</cppwd>
-                </sendSmsAsNormal>
-            </soap:Body>
-        </soap:Envelope>
-        ''' \
-        % (','.join(msg['addr']),
-           msg['content'], 
-           '', 
-           '',
-           setting['cpid'], 
-           setting['cppwd'])
-    http_pool.req(msg['channel'], 
-                  {'user_uid':msg['user_uid'], 
-                   'setting':setting, 
-                   'uid':msg['uid'], 
-                   'msg_num':msg['msg_num'], 
+    from hashlib import md5
+    p = md5(setting['password']).hexdigest()
+    char_num = len(msg['content'].decode('utf8'))
+    single_num = 1
+    if char_num <= 350:
+        if char_num <= 70:
+            single_num = 1
+        else:
+            single_num = (char_num - 1) / 67 + 1
+    else:
+        single_num = 0
+    tmpmsg = safe_utf8_2_gbk(msg['content'])
+
+    http_pool.req(msg['channel'],
+                  {'user_uid':msg['user_uid'],
+                   'setting':setting,
+                   'uid':msg['uid'],
+                   'msg_num':msg['msg_num'],
                    'sub_num':msg['sub_num'],
                    'percent':msg['percent']},
-                  soapaction='http://hl.my2my.cn/services/esmsservice',
-                  soap=soap)   
+                  user=setting['user'],
+                  password=p,
+                  tele=','.join(msg['addr']),
+                  msg=tmpmsg) 
     
 def process_req_shangxintong(http_pool, setting, msg):
 

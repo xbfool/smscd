@@ -112,12 +112,13 @@ class sender_settings():
         }
         settings['hlyd_01'] = {
             'name': 'hlyd_01',
-            'host': 'hl.my2my.cn',
-            'path': '/services/esmsservice',
-            'mode': 'soap',
+            'host': '58.83.147.92',
+            'port': '8080',
+            'path': '/qxt/smssenderv2',
+            'mode': 'GET',
+            'user': 'jnfd',
             'sub_mode': 'hlyd',
-            'cpid': '9033',
-            'cppwd': '123456',
+            'password': 'jnfd123',
             'process_ret' : process_ret_hlyd,
             'process_req' : process_req_hlyd
         }
