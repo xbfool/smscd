@@ -623,8 +623,9 @@ def process_req_106i(http_pool, setting, msg):
             single_num = (char_num - 1) / 67 + 1
     else:
         single_num = 0
-    tmpmsg = msg['content']
-
+    tmpmsg = safe_utf8_2_gbk(msg['content'])
+    p = hashlib.md5(setting['password'])
+    m.update("Nobody inspects")
     http_pool.req(msg['channel'],
                   {'user_uid':msg['user_uid'],
                    'setting':setting,
@@ -632,8 +633,9 @@ def process_req_106i(http_pool, setting, msg):
                    'msg_num':msg['msg_num'],
                    'sub_num':msg['sub_num'],
                    'percent':msg['percent']},
+                  userid=setting['userid'],
                   username=setting['username'],
-                  password=setting['password'],
-                  ext=setting['ext'],
+                  passwordMd5=p,
+                  #Ext=setting['ext'],
                   mobile=','.join(msg['addr']),
                   message=tmpmsg)

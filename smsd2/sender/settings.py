@@ -15,6 +15,7 @@ from process_ret_shangxintong import *
 from process_ret_zhangshangtong import *
 from process_ret_cmpp import *
 from process_req import *
+import hashlib
 
 from datetime import datetime
 class sender_settings():
@@ -485,12 +486,13 @@ class sender_settings():
 
         settings['106i'] = {
             'name': '106i',
-            'host': '139.129.107.247',
-            'path': '/sms/xml/send',
-            'port': '80',
+            'host': '42.96.248.183',
+            'path': '/sendsms.php',
+            'port': '8080',
             'sub_mode': '106i',
+            'userid': '100565',
             'username': 'JNFDH',
-            'password': '888888',
+            'password': 'CyfpI*l9',
             'mode': 'GET',
             'ext': '124',
             'process_ret': process_ret_106i,
