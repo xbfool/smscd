@@ -617,7 +617,7 @@ def process_req_106i(http_pool, setting, msg):
     else:
         single_num = 0
     tmpmsg = safe_utf8_2_gbk(msg['content'])
-    p = hashlib.md5(setting['password'])
+    p = hashlib.md5(setting['password']).hexdigest()
     m.update("Nobody inspects")
     http_pool.req(msg['channel'],
                   {'user_uid':msg['user_uid'],
