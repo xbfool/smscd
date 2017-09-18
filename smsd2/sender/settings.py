@@ -112,7 +112,7 @@ class sender_settings():
         }
         settings['hlyd_01'] = {
             'name': 'hlyd_01',
-            'host': '58.83.147.92',
+            'host': '58.83.147.85',
             'port': '8080',
             'path': '/qxt/smssenderv2',
             'mode': 'GET',
