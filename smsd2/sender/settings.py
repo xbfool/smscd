@@ -4,7 +4,7 @@ Created on 2011-10-18
 @author: xbfool
 '''
 from process_ret_sd_ct import process_ret_sd_ct
-from process_ret_changshang_a import process_ret_changshang_a, process_ret_106g, process_ret_106h, process_ret_106j, process_ret_106k, process_ret_106i
+from process_ret_changshang_a import process_ret_changshang_a, process_ret_106g, process_ret_106h, process_ret_106j, process_ret_106k, process_ret_106i, process_ret_lanjing
 from process_ret_dongguan_0769 import process_ret_dongguan_0769
 from process_ret_hb_ct import process_ret_hb_ct, process_ret_hb_ct_2
 from process_ret_hlyd import process_ret_hlyd
@@ -500,6 +500,18 @@ class sender_settings():
             'process_req': process_req_106i
         }
 
+        setttings['lanjing_01'] = {
+            'name': 'lanjing_01',
+            'host': '117.122.225.52',
+            'path': '/eums/sms/utf8/send.do',
+            'port': '8080',
+            'sub_mode': 'lanjing',
+            'name': 'jnfdhy',
+            'password': 'wdrjnp0c',
+            'mode': 'POST',
+            'process_ret': process_ret_lanjing,
+            'process_req': process_req_lanjing
+        }
         settings['default'] = settings['hb_ct_01']
         
         self.settings = settings

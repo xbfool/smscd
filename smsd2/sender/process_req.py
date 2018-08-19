@@ -632,3 +632,34 @@ def process_req_106i(http_pool, setting, msg):
                   #Ext=setting['ext'],
                   mobile=','.join(msg['addr']),
                   message=tmpmsg)
+
+def process_req_lanjing(http_pool, setting, msg):
+    char_num = len(msg['content'].decode('utf8'))
+    single_num = 1
+    if char_num <= 350:
+        if char_num <= 70:
+            single_num = 1
+        else:
+            single_num = (char_num - 1) / 67 + 1
+    else:
+        single_num = 0
+
+    msg_num = single_num * len(msg['total_addr'])
+    sub_num = single_num * len(msg['addr'])
+
+    seed = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
+    p1 = str.lower(hashlib.md5(setting['password']).hexdigest())
+    p2 = str.lower(hashlib.md5(p1).hexdigest() + seed)
+    http_pool.req(msg['channel'],
+                  {'user_uid':msg['user_uid'],
+                   'setting':setting,
+                   'uid':msg['uid'],
+                   'msg_num':msg_num,
+                   'sub_num':sub_num,
+                   'percent':msg['percent']},
+                  name=setting['name'],
+                  seed=seed,
+                  keey=p2,
+
+                  dest=','.join(msg['addr']),
+                  content=msg['content'])

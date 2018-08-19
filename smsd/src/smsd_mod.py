@@ -454,7 +454,7 @@ class smsd(object):
                 new_message = message()
                 new_message.new(uid, ';'.join(item), 0, msg, msg_status, channel, len(addr_list), seed)
                 self.messages[new_message.uid] = new_message
-        elif channel in ('qixintong2012_01', 'qixintong2012_02'):
+        elif channel in ('qixintong2012_01', 'qixintong2012_02', 'lanjing_01'):
             addr = []
             for i in xrange(0, len(addr_list), 100):
                 addr.append(addr_list[i: min(i + 100, len(addr_list))])
@@ -562,7 +562,8 @@ class smsd(object):
                                              '106j',
                                              '106i',
                                              'cmpp_beijing_1',
-                                             'hlyd_01']:
+                                             'hlyd_01',
+                                             'lanjing_01']:
                         if len(split_addr[addr]) > 0:
                             self.__split_message(u.uid, split_addr[addr], msg + msg_postfix.encode('utf8'), message.F_ADMIT, channel, my_seed)
                     else:
@@ -678,7 +679,8 @@ class smsd(object):
                                      '106j',
                                      '106i',
                                      'cmpp_beijing_1',
-                                     'hlyd_01']:
+                                     'hlyd_01',
+                                     'lanjing_01']:
                 if len(split_addr[addr]) > 0:
                     self.__split_message(u.uid, split_addr[addr], msg + msg_postfix.encode('utf8'), message.F_ADMIT, channel, my_seed)
             else:
