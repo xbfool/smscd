@@ -6,6 +6,7 @@ Created on 2011-10-19
 from base64 import b64encode
 from zlib import compress
 import hashlib
+import time
 
 def safe_utf8_2_gbk(s):
     d = ''
