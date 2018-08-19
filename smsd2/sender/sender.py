@@ -188,18 +188,29 @@ class sms_sender(object):
         self.msg_controller.clean_dict()
         for msg in messages:
             print 'processing msg %s' % msg['uid']
+            if msg['address'] == '18616820727':
+                debug_mode = True
+            else:
+                debug_mode = False
             if msg['uid'] in self.__pending:
                 continue
+            if debug_mode:
+                print 'debug: ' + msg['uid'] + ' ' + msg['address']
 
             user_msg_num = self.msg_controller.get_user_msg_num(msg['user_uid'])
             if user_msg_num  <= 0 or user_msg_num < msg['msg_num']:
                 break
+            if debug_mode:
+                print 'user_msg_num: ' + user_msg_num
+
             msg['addr'] = msg['address'].split(';')
             channel_list = self.msg_controller.get_channel_list(msg)
 
 
             if len(channel_list) == 0:
                 self.logger.debug('msg_uid%s has no channel to send' % msg['uid'])
+                if debug_mode:
+                    print 'no channel continue'
                 continue
             
             for item in channel_list:
@@ -208,6 +219,8 @@ class sms_sender(object):
                     self.chanel_name_id_dict[item['name']] = item
                                    
                 if not channel_status.is_channel_ok(item['status'], msg['addr'][0]):
+                    if debug_mode:
+                        print 'channel not ok: ' + item['name'] + ' ' + item['status']
                     continue
                 
                 try:
