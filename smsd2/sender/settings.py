@@ -150,19 +150,19 @@ class sender_settings():
             'process_req' : process_req_changshang_a
         }
         
-        settings['changshang_a_03'] = {
-            'name': 'changshang_a_03',
-            'host': '123.196.114.68',
-            'port': '8080',
-            'path': '/sms_send2.do',
-            'mode': 'POST',
-            'sub_mode': 'changshang_a',
-            'corp_id': '10108302',
-            'corp_pwd': 'f101083',
-            'corp_service':'0514yd',
-            'process_ret' : process_ret_changshang_a,
-            'process_req' : process_req_changshang_a
-        }
+        # settings['changshang_a_03'] = {
+        #     'name': 'changshang_a_03',
+        #     'host': '123.196.114.68',
+        #     'port': '8080',
+        #     'path': '/sms_send2.do',
+        #     'mode': 'POST',
+        #     'sub_mode': 'changshang_a',
+        #     'corp_id': '10108302',
+        #     'corp_pwd': 'f101083',
+        #     'corp_service':'0514yd',
+        #     'process_ret' : process_ret_changshang_a,
+        #     'process_req' : process_req_changshang_a
+        # }
         
         settings['changshang_a_04'] = {
             'name': 'changshang_a_04',
@@ -500,8 +500,8 @@ class sender_settings():
             'process_req': process_req_106i
         }
 
-        setttings['lanjing_01'] = {
-            'name': 'lanjing_01',
+        settings['changshang_a_03'] = {
+            'name': 'changshang_a_03',
             'host': '117.122.225.52',
             'path': '/eums/sms/utf8/send.do',
             'port': '8080',
