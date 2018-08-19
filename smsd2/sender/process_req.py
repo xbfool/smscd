@@ -659,7 +659,7 @@ def process_req_lanjing(http_pool, setting, msg):
                    'msg_num':msg_num,
                    'sub_num':sub_num,
                    'percent':msg['percent']},
-                  name=setting['name'],
+                  name=setting['username'],
                   seed=seed,
                   key=p2,
                   dest=','.join(msg['addr']),

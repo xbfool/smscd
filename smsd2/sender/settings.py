@@ -506,7 +506,7 @@ class sender_settings():
             'path': '/eums/sms/utf8/send.do',
             'port': '8080',
             'sub_mode': 'lanjing',
-            'name': 'jnfdhy',
+            'username': 'jnfdhy',
             'password': 'wdrjnp0c',
             'mode': 'POST',
             'process_ret': process_ret_lanjing,
