@@ -634,6 +634,7 @@ def process_req_106i(http_pool, setting, msg):
                   message=tmpmsg)
 
 def process_req_lanjing(http_pool, setting, msg):
+    print 'process_req_lanjing'
     char_num = len(msg['content'].decode('utf8'))
     single_num = 1
     if char_num <= 350:

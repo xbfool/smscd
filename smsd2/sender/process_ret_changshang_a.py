@@ -165,6 +165,8 @@ def process_ret_106i(sender, param):
 
 def process_ret_lanjing(sender, param):
     result = param['ret'][2]
+    print result
+    print 'process_ret_lanjing'
     try:
 
         rl = result.split(':')
