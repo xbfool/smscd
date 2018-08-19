@@ -167,6 +167,7 @@ def process_ret_lanjing(sender, param):
     result = param['ret'][2]
     print result
     print 'process_ret_lanjing'
+    print param['setting']['name']
     try:
 
         rl = result.split(':')
