@@ -661,7 +661,6 @@ def process_req_lanjing(http_pool, setting, msg):
                    'percent':msg['percent']},
                   name=setting['name'],
                   seed=seed,
-                  keey=p2,
-
+                  key=p2,
                   dest=','.join(msg['addr']),
                   content=msg['content'])
