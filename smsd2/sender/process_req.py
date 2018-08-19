@@ -651,7 +651,7 @@ def process_req_lanjing(http_pool, setting, msg):
 
     seed = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
     p1 = str.lower(hashlib.md5(setting['password']).hexdigest())
-    p2 = str.lower(hashlib.md5(p1).hexdigest() + seed)
+    p2 = str.lower(hashlib.md5(p1 + seed).hexdigest())
     http_pool.req(msg['channel'],
                   {'user_uid':msg['user_uid'],
                    'setting':setting,
